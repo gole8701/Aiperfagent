@@ -12,9 +12,12 @@ export function fixRoutes(router: Router, ctx: AppContext): void {
   }
 
   router.post('/api/fix/runs', async ({ json }) => {
-    const body = await json<FixRunRequest>()
+    const body = await json<Partial<FixRunRequest>>()
     if (!body.reportId || !body.scope) throw new PerfAgentError('IMPORT_INVALID', 'reportId and scope are required')
-    const run = await fix().start(body, (event) => ctx.hub.broadcast({ type: 'fix:event', runId: run.id, event }))
+    const request: FixRunRequest = { ...body, reportId: body.reportId, scope: body.scope }
+    let runId = ''
+    const run = await fix().start(request, (event) => ctx.hub.broadcast({ type: 'fix:event', runId, event }))
+    runId = run.id
     await ctx.store.appendLog('audit.log', `fix run ${run.id} scope=${body.scope.kind} branch=${run.branch}`)
     return run
   })

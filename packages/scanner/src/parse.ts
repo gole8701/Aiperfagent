@@ -24,12 +24,15 @@ export function parseSource(relativePath: string, text: string): SourceFile {
     } else if (ts.isExportAssignment(node) && (ts.isArrowFunction(node.expression) || ts.isFunctionExpression(node.expression))) {
       readFunction(node.expression, 'default', node.expression.body)
     }
-    ts.forEachChild(node, (child) => {
-      if (ts.isCallExpression(child) && isDynamicImport(child)) {
-        const arg = child.arguments[0]
-        if (arg && ts.isStringLiteral(arg)) file.imports.push({ source: arg.text, namespace: false, named: [], line: line(child), dynamic: true })
-      }
-    })
+    findDynamicImports(node)
+  }
+
+  function findDynamicImports(node: ts.Node): void {
+    if (ts.isCallExpression(node) && isDynamicImport(node)) {
+      const arg = node.arguments[0]
+      if (arg && ts.isStringLiteral(arg)) file.imports.push({ source: arg.text, namespace: false, named: [], line: line(node), dynamic: true })
+    }
+    ts.forEachChild(node, findDynamicImports)
   }
 
   function readFunction(fn: ts.SignatureDeclaration, name: string, body: ts.Node | undefined, memoized = false, anchor: ts.Node = fn): void {

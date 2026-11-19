@@ -102,8 +102,10 @@ export class ReportStore {
     const files = await readdir(this.reportsDir).catch(() => [])
     const points: HistoryPoint[] = []
     for (const f of files.filter((f) => f.endsWith('.json'))) {
-      const report = await this.get(f.replace(/\.json$/, '')).catch(() => undefined)
-      if (report) points.push({ reportId: report.id, at: report.createdAt, score: report.pages[0] ? (metricValue(report.pages[0].metrics, 'score') ?? 0) : 0, label: report.label })
+      const id = f.replace(/\.json$/, '')
+      const report = await this.get(id).catch(() => undefined)
+      // The file name is the id we can load again; a copied report may carry another id inside.
+      if (report) points.push({ reportId: id, at: report.createdAt, score: report.pages[0] ? (metricValue(report.pages[0].metrics, 'score') ?? 0) : 0, label: report.label })
     }
     return points.sort((a, b) => a.at.localeCompare(b.at))
   }

@@ -1,5 +1,6 @@
 import type { AppContext } from '../app.js'
 import type { Router } from '../router.js'
+
 import { aiRoutes } from './ai.js'
 import { compareRoutes } from './compare.js'
 import { fixRoutes } from './fix.js'

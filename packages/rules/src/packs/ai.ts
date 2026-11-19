@@ -186,7 +186,7 @@ export const noSemanticCache = base({
   why: 'FAQ-style questions repeat. Caching answers by normalised question (or embedding similarity) returns them instantly and for free.',
   docs: [docs.caching],
   steps: ['Hash the normalised question and cache the answer', 'For similar questions compare embeddings above a threshold'],
-  detect: ({ scan, pages }) => findCalls(scan, pages, (file, line) => /faq|support|help|qa\b|question/i.test(file.path) && !/cache|memo|redis|kv\./i.test(file.text), 'aiCostUsd', (v) => ({ to: v * 0.6, scoreDelta: 0 }), { confidence: 0.5 }),
+  detect: ({ scan, pages }) => findCalls(scan, pages, (file) => /faq|support|help|qa\b|question/i.test(file.path) && !/cache|memo|redis|kv\./i.test(file.text), 'aiCostUsd', (v) => ({ to: v * 0.6, scoreDelta: 0 }), { confidence: 0.5 }),
 })
 
 export const embedInLoop = base({

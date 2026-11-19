@@ -69,7 +69,7 @@ async function readConfigFile(file: string): Promise<Record<string, unknown>> {
     }
   }
   const mod = (await import(pathToFileURL(file).href)) as { default?: unknown }
-  const value = mod.default ?? mod
+  const value: unknown = mod.default ?? mod
   return (typeof value === 'object' && value !== null ? value : {}) as Record<string, unknown>
 }
 

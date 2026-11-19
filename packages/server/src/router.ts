@@ -15,7 +15,7 @@ export interface RequestContext {
   raw: () => Promise<Buffer>
 }
 
-export type Handler = (ctx: RequestContext) => Promise<unknown> | unknown
+export type Handler = (ctx: RequestContext) => unknown
 
 interface Route {
   method: Method

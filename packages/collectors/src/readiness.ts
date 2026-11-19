@@ -16,7 +16,7 @@ export interface ReadinessSignals {
 export async function collectReadiness(page: Page, url: string): Promise<ReadinessSignals> {
   const inPage = await page
     .evaluate(() => {
-      const name = (el: Element): string => (el.getAttribute('aria-label') ?? el.getAttribute('aria-labelledby') ?? el.getAttribute('title') ?? el.textContent ?? '').trim()
+      const name = (el: Element): string => (el.getAttribute('aria-label') ?? el.getAttribute('aria-labelledby') ?? el.getAttribute('title') ?? el.textContent).trim()
       const controls = [...document.querySelectorAll('button, a[href], [role="button"], input:not([type="hidden"]), select, textarea')]
       const unnamed = controls.filter((el) => {
         if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement) {

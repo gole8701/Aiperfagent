@@ -9,30 +9,35 @@ export function attachIssues(root: TreeNode, issues: Issue[]): TreeNode {
     list.push(issue)
     byFile.set(issue.location.file, list)
   }
-  const visit = (node: TreeNode): TreeNode['counts'] => {
+  const severityOf = new Map(issues.map((i) => [i.id, i.severity]))
+  const clear = (node: TreeNode): void => {
     node.issueIds = []
-    const counts = { critical: 0, warning: 0, info: 0 }
+    node.children.forEach(clear)
+  }
+  const assign = (node: TreeNode): void => {
     if (node.kind === 'file') {
-      const here = byFile.get(node.path) ?? []
-      for (const issue of here) {
-        const owner = deepestOwner(node, issue.location?.line ?? 0) ?? node
-        owner.issueIds.push(issue.id)
-      }
+      for (const issue of byFile.get(node.path) ?? []) (deepestOwner(node, issue.location?.line ?? 0) ?? node).issueIds.push(issue.id)
     }
+    node.children.forEach(assign)
+  }
+  const count = (node: TreeNode): TreeNode['counts'] => {
+    const counts = { critical: 0, warning: 0, info: 0 }
     for (const child of node.children) {
-      const c = visit(child)
+      const c = count(child)
       counts.critical += c.critical
       counts.warning += c.warning
       counts.info += c.info
     }
     for (const id of node.issueIds) {
-      const sev = issues.find((i) => i.id === id)?.severity
+      const sev = severityOf.get(id)
       if (sev) counts[sev]++
     }
     node.counts = counts
     return counts
   }
-  visit(root)
+  clear(root)
+  assign(root)
+  count(root)
   return root
 }
 

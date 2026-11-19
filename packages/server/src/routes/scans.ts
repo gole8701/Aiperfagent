@@ -50,7 +50,7 @@ export function scanRoutes(router: Router, ctx: AppContext): void {
   router.delete('/api/scans/:id', async ({ params }) => { await ctx.store.delete(params.id ?? '') })
   router.post('/api/scans/:id/annotate', async ({ params, json }) => {
     const { annotation } = await json<{ annotation: string }>()
-    await ctx.store.annotate(params.id ?? '', String(annotation).slice(0, 200))
+    await ctx.store.annotate(params.id ?? '', annotation.slice(0, 200))
   })
 
   /** Re-test one problem's page and record predicted vs actual. */

@@ -152,7 +152,7 @@ async function measureOnce(browser: Browser, options: MeasureOptions, profile: D
     longTasks,
     layoutShifts: (state?.shifts ?? []).map((s) => ({ value: s.value, timeMs: s.timeMs, element: s.element })),
     filmstrip: frames.slice(0, 12),
-    lcpElement: state?.lcpElement || undefined,
+    lcpElement: state?.lcpElement === '' ? undefined : state?.lcpElement,
     features,
     coverage,
     phases: [{ phase: 'server', ms: server }, { phase: 'download', ms: download }, { phase: 'script', ms: script }, { phase: 'render', ms: render }],
@@ -170,8 +170,8 @@ function wireNetwork(cdp: CDPSession, requests: Map<string, RequestInfo & { requ
     const r = requests.get(e.requestId)
     if (!r) return
     r.status = e.response.status
-    r.cached = Boolean(e.response.fromDiskCache || e.response.fromServiceWorker || e.response.fromPrefetchCache)
-    r.protocol = (e.response.headers['content-encoding'] ?? e.response.headers['Content-Encoding'] ?? e.response.protocol ?? '') as string
+    r.cached = Boolean(e.response.fromDiskCache) || Boolean(e.response.fromServiceWorker) || Boolean(e.response.fromPrefetchCache)
+    r.protocol = (e.response.headers['content-encoding'] ?? e.response.headers['Content-Encoding'] ?? e.response.protocol ?? '')
     const t = e.response.timing
     if (t) r.startMs = Math.max(0, Math.round(t.requestTime * 1000 - (starts.get(e.requestId) ?? 0) + (t.requestTime * 1000 - (start.at - performanceOrigin()))))
   })

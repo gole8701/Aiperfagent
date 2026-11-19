@@ -101,15 +101,28 @@ function fairnessWarnings(a: Report, b: Report): string[] {
 
 function findImpact(a: Report, b: Report, pageA?: PageResult, pageB?: PageResult): ImpactItem[] {
   const items: ImpactItem[] = []
-  const byRule = (issues: Issue[]): Map<string, Issue> => new Map(issues.map((i) => [`${i.ruleId}@${i.location?.file ?? i.route ?? ''}`, i]))
-  const before = byRule(a.issues)
-  const after = byRule(b.issues)
-  for (const [key, issue] of before) {
-    if (!after.has(key)) items.push({ kind: 'fixed', title: issue.title, plain: issue.plain, issue, effect: `${METRICS[issue.gain.metric].short} ${formatMetric(issue.gain.metric, issue.gain.from)} → ~${formatMetric(issue.gain.metric, issue.gain.to)}` })
+  // Issues are matched by rule + file (line numbers move after a fix); the same
+  // rule firing N times in one file is tracked by count.
+  const groups = (issues: Issue[]): Map<string, Issue[]> => {
+    const map = new Map<string, Issue[]>()
+    for (const i of issues) {
+      const key = `${i.ruleId}@${i.location?.file ?? i.route ?? ''}`
+      map.set(key, [...(map.get(key) ?? []), i])
+    }
+    return map
   }
-  for (const [key, issue] of after) {
-    if (!before.has(key)) items.push({ kind: 'new', title: issue.title, plain: issue.plain, issue, effect: `costs about ${issue.gain.scoreDelta} points` })
-    else items.push({ kind: 'still-open', title: issue.title, plain: issue.plain, issue, effect: `still costs about ${issue.gain.scoreDelta} points` })
+  const before = groups(a.issues)
+  const after = groups(b.issues)
+  for (const [key, issues] of before) {
+    const remaining = after.get(key)?.length ?? 0
+    for (const issue of issues.slice(remaining)) items.push({ kind: 'fixed', title: issue.title, plain: issue.plain, issue, effect: `${METRICS[issue.gain.metric].short} ${formatMetric(issue.gain.metric, issue.gain.from)} → ~${formatMetric(issue.gain.metric, issue.gain.to)}` })
+  }
+  for (const [key, issues] of after) {
+    const known = before.get(key)?.length ?? 0
+    issues.forEach((issue, index) => {
+      if (index >= known) items.push({ kind: 'new', title: issue.title, plain: issue.plain, issue, effect: `costs about ${issue.gain.scoreDelta} points` })
+      else items.push({ kind: 'still-open', title: issue.title, plain: issue.plain, issue, effect: `still costs about ${issue.gain.scoreDelta} points` })
+    })
   }
   if (pageA && pageB && pageA.requests.length && pageB.requests.length) {
     const urlsA = new Set(pageA.requests.map((r) => r.url))

@@ -1,4 +1,4 @@
-import type { CodeChange, Issue, Report } from '@perfagent/core'
+import type { AiReport, CodeChange, Issue, Report } from '@perfagent/core'
 
 /**
  * Interfaces the server, MCP server and fixer depend on. `@perfagent/ai`
@@ -31,6 +31,20 @@ export interface ProposedChange extends CodeChange {
   explanation: string
 }
 
+export interface ModelComparison {
+  provider: ProviderStatus['id']
+  model: string
+  question: string
+  firstTokenMs: number
+  totalMs: number
+  outputTokens: number
+  costUsd: number
+  /** 0–1: length sanity for now; thumbs-up ratings can feed in later. */
+  qualityScore: number
+  answer: string
+  error?: string
+}
+
 export interface AiService {
   providers(): Promise<ProviderStatus[]>
   testConnection(provider: ProviderStatus['id'], options?: { model?: string; baseUrl?: string }): Promise<{ ok: boolean; message: string; latencyMs: number }>
@@ -44,6 +58,10 @@ export interface AiService {
   usage(): Promise<AiUsage>
   /** Which free option is active when no key is configured. */
   activeProvider(): Promise<ProviderStatus['id'] | 'rules'>
+  /** Aggregates of the AI calls measured by watchAI / the proxy. */
+  report(): Promise<AiReport>
+  /** Runs the same questions through several configured models with the user's own keys. */
+  compareModels(questions: string[], models: { provider: ProviderStatus['id']; model: string }[]): Promise<ModelComparison[]>
 }
 
 export type FixScope = { kind: 'issue'; issueIds: string[] } | { kind: 'file'; file: string } | { kind: 'chip'; chip: string } | { kind: 'route'; route: string } | { kind: 'site' }
@@ -53,6 +71,9 @@ export interface FixRunRequest {
   scope: FixScope
   target?: { score?: number; lcp?: number; inp?: number; cls?: number }
   review?: boolean
+  /** Stash uncommitted changes before fixing (restored on undo). */
+  stashFirst?: boolean
+  autoCommit?: boolean
 }
 
 export type FixEvent =

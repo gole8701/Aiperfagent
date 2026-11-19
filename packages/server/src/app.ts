@@ -1,6 +1,6 @@
-import { createServer as createHttpServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http'
 import { createReadStream } from 'node:fs'
 import { stat } from 'node:fs/promises'
+import { createServer as createHttpServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http'
 import path from 'node:path'
 
 import { startLiveSession, launchBrowser, type LiveSession } from '@perfagent/collectors'
@@ -10,8 +10,8 @@ import { ReportStore, type AiService, type FixService } from '@perfagent/engine'
 import { createSessionToken, detectMode, extractToken, requestRejection, securityHeaders, tokenMatches, type ModeCheck } from '@perfagent/security'
 
 import { JobQueue } from './jobs.js'
-import { registerRoutes } from './routes/index.js'
 import { Router, sendError, sendJson } from './router.js'
+import { registerRoutes } from './routes/index.js'
 import { WsHub } from './ws.js'
 
 export interface ServerOptions {

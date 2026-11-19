@@ -4,7 +4,7 @@ import { z } from 'zod'
  * One schema for every option. The same definitions generate the Settings UI
  * and the docs, so a new option is added here and nowhere else.
  */
-const metricId = z.enum([
+export const metricIdSchema = z.enum([
   'score', 'lcp', 'inp', 'cls', 'ttfb', 'fcp', 'tbt', 'si', 'jsKb', 'requests', 'transferKb', 'memoryMb',
   'wsReconnects', 'wsMessagesPerSec', 'aiFirstTokenMs', 'aiTokensPerSec', 'aiCostUsd', 'aiCacheHitRate', 'aiErrorRate', 'agentReadiness',
 ])
@@ -103,6 +103,6 @@ export const configSchema = z
 export type PerfAgentConfig = z.infer<typeof configSchema>
 export type PerfAgentConfigInput = z.input<typeof configSchema>
 export type BudgetConfig = z.infer<typeof budgetSchema>
-export type MetricIdSchema = z.infer<typeof metricId>
+export type MetricIdSchema = z.infer<typeof metricIdSchema>
 
 export const DEFAULT_CONFIG: PerfAgentConfig = configSchema.parse({})

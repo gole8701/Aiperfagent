@@ -7,7 +7,8 @@ import tseslint from 'typescript-eslint'
 const layers = [
   ['core'],
   ['config', 'report-schema', 'security'],
-  ['collectors', 'importers', 'scanner', 'rules'],
+  ['scanner'],
+  ['collectors', 'importers', 'rules'],
   ['engine'],
   ['server', 'ai', 'fixer', 'mcp'],
   ['cli'],
@@ -29,7 +30,10 @@ export default tseslint.config(
     plugins: { 'import-x': importX },
     rules: {
       '@typescript-eslint/explicit-module-boundary-types': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_', ignoreRestSiblings: true }],
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/no-unnecessary-condition': ['error', { allowConstantLoopConditions: true }],
+      '@typescript-eslint/prefer-includes': 'off',
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
       '@typescript-eslint/no-non-null-assertion': 'error',
       'no-console': ['error', { allow: ['error'] }],
@@ -93,7 +97,9 @@ export default tseslint.config(
     rules: { 'perfagent/layer-direction': 'error' },
   },
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/test/**'],
-    rules: { '@typescript-eslint/no-unsafe-assignment': 'off', '@typescript-eslint/no-unsafe-member-access': 'off' },
+    // Tests are linted without type information: they sit outside the package tsconfigs on purpose.
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/test/**', '**/e2e/**'],
+    ...tseslint.configs.disableTypeChecked,
+    rules: { ...tseslint.configs.disableTypeChecked.rules, '@typescript-eslint/explicit-module-boundary-types': 'off', 'no-console': 'off' },
   },
 )

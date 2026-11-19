@@ -6,9 +6,19 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-  "files": ["dist"],
-  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
   "dependencies": {
     "@perfagent/collectors": "workspace:*",
     "@perfagent/config": "workspace:*",
@@ -18,7 +28,8 @@
     "@perfagent/report-schema": "workspace:*",
     "@perfagent/security": "workspace:*",
     "launch-editor": "2.11.1",
-    "ws": "8.18.3"
+    "ws": "8.18.3",
+    "zod": "3.25.76"
   },
   "devDependencies": {
     "@types/ws": "8.18.1"
