@@ -1,0 +1,3981 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "perfagent",
+    "version": "0.1.0"
+  },
+  "id": "scan_mwnzcsiv269o3e",
+  "createdAt": "2026-11-19T20:05:50.311Z",
+  "environment": {
+    "name": "local",
+    "url": "http://localhost:3000/",
+    "device": "mobile",
+    "browser": "chromium",
+    "mode": "local"
+  },
+  "build": {
+    "framework": "react",
+    "frameworkVersion": "19.2.0",
+    "dependencies": {
+      "@types/react": "19.2.6",
+      "@types/react-dom": "19.2.3",
+      "@vitejs/plugin-react": "5.1.1",
+      "typescript": "5.9.3",
+      "vite": "7.2.4",
+      "@anthropic-ai/sdk": "0.71.0",
+      "date-fns": "4.1.0",
+      "react": "19.2.0",
+      "react-dom": "19.2.0"
+    }
+  },
+  "pages": [
+    {
+      "url": "http://localhost:3000/",
+      "route": "/",
+      "device": "mobile",
+      "runs": 1,
+      "metrics": [
+        {
+          "id": "lcp",
+          "value": 12508,
+          "unit": "ms",
+          "samples": [
+            12508
+          ]
+        },
+        {
+          "id": "inp",
+          "value": 16,
+          "unit": "ms",
+          "samples": [
+            16
+          ]
+        },
+        {
+          "id": "cls",
+          "value": 0.107,
+          "unit": "ratio",
+          "samples": [
+            0.107
+          ]
+        },
+        {
+          "id": "ttfb",
+          "value": 150.1,
+          "unit": "ms",
+          "samples": [
+            150.1
+          ]
+        },
+        {
+          "id": "fcp",
+          "value": 10820,
+          "unit": "ms",
+          "samples": [
+            10820
+          ]
+        },
+        {
+          "id": "tbt",
+          "value": 0,
+          "unit": "ms",
+          "samples": [
+            0
+          ]
+        },
+        {
+          "id": "si",
+          "value": 10114,
+          "unit": "ms",
+          "samples": [
+            10114
+          ]
+        },
+        {
+          "id": "jsKb",
+          "value": 1996.7,
+          "unit": "kb",
+          "samples": [
+            1996.7
+          ]
+        },
+        {
+          "id": "requests",
+          "value": 70,
+          "unit": "count",
+          "samples": [
+            70
+          ]
+        },
+        {
+          "id": "transferKb",
+          "value": 2482,
+          "unit": "kb",
+          "samples": [
+            2482
+          ]
+        },
+        {
+          "id": "memoryMb",
+          "value": 8.9,
+          "unit": "mb",
+          "samples": [
+            8.9
+          ]
+        },
+        {
+          "id": "wsReconnects",
+          "value": 1,
+          "unit": "count",
+          "samples": [
+            1
+          ]
+        },
+        {
+          "id": "wsMessagesPerSec",
+          "value": 0,
+          "unit": "perSec",
+          "samples": [
+            0
+          ]
+        },
+        {
+          "id": "agentReadiness",
+          "value": 85,
+          "unit": "score"
+        },
+        {
+          "id": "score",
+          "value": 53,
+          "unit": "score"
+        }
+      ],
+      "phases": [
+        {
+          "phase": "server",
+          "ms": 150
+        },
+        {
+          "phase": "download",
+          "ms": 9
+        },
+        {
+          "phase": "script",
+          "ms": 287
+        },
+        {
+          "phase": "render",
+          "ms": 12062
+        }
+      ],
+      "requests": [
+        {
+          "url": "http://localhost:3000/",
+          "type": "document",
+          "transferBytes": 1019,
+          "startMs": 0,
+          "durationMs": 159,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/@vite/client",
+          "type": "script",
+          "transferBytes": 179774,
+          "startMs": 170,
+          "durationMs": 3006,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/",
+          "protocol": "http/1.1",
+          "blocking": true
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123",
+          "type": "script",
+          "transferBytes": 90603,
+          "startMs": 171,
+          "durationMs": 1609,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "http://localhost:3000/",
+          "protocol": "zstd",
+          "blocking": true
+        },
+        {
+          "url": "http://localhost:3000/src/styles/fonts.css",
+          "type": "stylesheet",
+          "transferBytes": 505,
+          "startMs": 171,
+          "durationMs": 156,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/main.tsx",
+          "type": "script",
+          "transferBytes": 2462,
+          "startMs": 171,
+          "durationMs": 193,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/",
+          "protocol": "http/1.1",
+          "blocking": true
+        },
+        {
+          "url": "http://localhost:3000/@react-refresh",
+          "type": "script",
+          "transferBytes": 112187,
+          "startMs": 174,
+          "durationMs": 1715,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/",
+          "protocol": "http/1.1",
+          "blocking": true
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=4242c424",
+          "type": "script",
+          "transferBytes": 12613,
+          "startMs": 1811,
+          "durationMs": 435,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/main.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/react.js?v=4242c424",
+          "type": "script",
+          "transferBytes": 1331,
+          "startMs": 1811,
+          "durationMs": 173,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/main.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ecdcba2b",
+          "type": "script",
+          "transferBytes": 1005660,
+          "startMs": 1811,
+          "durationMs": 8535,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/main.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/App.tsx",
+          "type": "script",
+          "transferBytes": 9014,
+          "startMs": 1811,
+          "durationMs": 383,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/main.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/styles/global.css",
+          "type": "script",
+          "transferBytes": 2279,
+          "startMs": 1812,
+          "durationMs": 296,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/main.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/styles/legacy.css",
+          "type": "script",
+          "transferBytes": 243327,
+          "startMs": 1812,
+          "durationMs": 4764,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/main.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/chunk-W4L6JAIH.js?v=005e4d40",
+          "type": "script",
+          "transferBytes": 45802,
+          "startMs": 1985,
+          "durationMs": 1345,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/node_modules/.vite/deps/react.js?v=4242c424",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/chunk-BUSYA2B4.js?v=005e4d40",
+          "type": "script",
+          "transferBytes": 1706,
+          "startMs": 1985,
+          "durationMs": 429,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/node_modules/.vite/deps/react.js?v=4242c424",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/components/CartSummary.tsx",
+          "type": "script",
+          "transferBytes": 10151,
+          "startMs": 2195,
+          "durationMs": 476,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/App.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/components/Header.tsx",
+          "type": "script",
+          "transferBytes": 7666,
+          "startMs": 2195,
+          "durationMs": 610,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/App.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/components/HeroBanner.tsx",
+          "type": "script",
+          "transferBytes": 5017,
+          "startMs": 2196,
+          "durationMs": 767,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/App.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/components/LiveStock.tsx",
+          "type": "script",
+          "transferBytes": 5093,
+          "startMs": 2196,
+          "durationMs": 909,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/App.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/components/ProductGrid.tsx",
+          "type": "script",
+          "transferBytes": 3881,
+          "startMs": 2196,
+          "durationMs": 1017,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/App.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/context/CartContext.tsx",
+          "type": "script",
+          "transferBytes": 6954,
+          "startMs": 2196,
+          "durationMs": 1207,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/App.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/lib/socket.ts",
+          "type": "script",
+          "transferBytes": 2131,
+          "startMs": 2196,
+          "durationMs": 1192,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/App.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/lib/dates.ts",
+          "type": "script",
+          "transferBytes": 1620,
+          "startMs": 2672,
+          "durationMs": 754,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/components/CartSummary.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/components/ChatWidget.tsx",
+          "type": "script",
+          "transferBytes": 8487,
+          "startMs": 2806,
+          "durationMs": 847,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/components/Header.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/@fs/Users/dev/Documents/my%20projects/first-project/perfagent/node_modules/.pnpm/vite@7.2.4_@types+node@24.10.1/node_modules/vite/dist/client/env.mjs",
+          "type": "script",
+          "transferBytes": 3768,
+          "startMs": 3179,
+          "durationMs": 466,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/@vite/client",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/src/components/ProductCard.tsx",
+          "type": "script",
+          "transferBytes": 6426,
+          "startMs": 3214,
+          "durationMs": 520,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/components/ProductGrid.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/date-fns.js?v=07e17317",
+          "type": "script",
+          "transferBytes": 192326,
+          "startMs": 3426,
+          "durationMs": 3316,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/lib/dates.ts",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "ws://localhost:3000/?token=redacted",
+          "type": "websocket",
+          "transferBytes": 20,
+          "startMs": 3665,
+          "durationMs": 0,
+          "status": 101,
+          "thirdParty": false,
+          "cached": false
+        },
+        {
+          "url": "http://localhost:3000/src/lib/emoji-data.ts",
+          "type": "script",
+          "transferBytes": 67636,
+          "startMs": 3664,
+          "durationMs": 1512,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/components/ChatWidget.tsx",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/chunk-4NWMIK64.js?v=005e4d40",
+          "type": "script",
+          "transferBytes": 16728,
+          "startMs": 10360,
+          "durationMs": 243,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ecdcba2b",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/fonts/shop-sans.woff2",
+          "type": "font",
+          "transferBytes": 1049,
+          "startMs": 10780,
+          "durationMs": 182,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "http://localhost:3000/src/styles/fonts.css",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 10804,
+          "durationMs": 394,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "ws://localhost:3000/live",
+          "type": "websocket",
+          "transferBytes": 0,
+          "startMs": 10808,
+          "durationMs": 0,
+          "status": 101,
+          "thirdParty": false,
+          "cached": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 10806,
+          "durationMs": 749,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "ws://localhost:3000/live",
+          "type": "websocket",
+          "transferBytes": 0,
+          "startMs": 10808,
+          "durationMs": 0,
+          "status": 101,
+          "thirdParty": false,
+          "cached": false
+        },
+        {
+          "url": "http://localhost:3000/hero.png",
+          "type": "image",
+          "transferBytes": 0,
+          "startMs": 0,
+          "durationMs": 0,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "http/1.1"
+        },
+        {
+          "url": "http://localhost:3000/favicon.ico",
+          "type": "other",
+          "transferBytes": 143,
+          "startMs": 10812,
+          "durationMs": 163,
+          "status": 404,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/277/480/320.jpg?hmac=bjUO_4uiyoEfmK45btEOpTdfrBqjaOpROcUOJjFfR6M",
+          "type": "image",
+          "transferBytes": 19300,
+          "startMs": 11694,
+          "durationMs": 798,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/830/480/320.jpg?hmac=Sjpu7lyGhLzrhtbaNPPiI28fFCzo1Rt-RiV8wl6UHAs",
+          "type": "image",
+          "transferBytes": 10520,
+          "startMs": 11701,
+          "durationMs": 630,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/1045/480/320.jpg?hmac=TeU2aOuG7r8Rn2vr6LuvbY2hwNW1rzU_AoomgJOdd_Q",
+          "type": "image",
+          "transferBytes": 15915,
+          "startMs": 11672,
+          "durationMs": 762,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/496/480/320.jpg?hmac=sdZnlxEbRzbDbwCa0si89dC42ciNhdCk88-ruznNfQQ",
+          "type": "image",
+          "transferBytes": 9685,
+          "startMs": 11710,
+          "durationMs": 592,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/84/480/320.jpg?hmac=2qtKDDw2Ve45FTOzgU3jAc3oapzdDQDvtESR299VlD8",
+          "type": "image",
+          "transferBytes": 16182,
+          "startMs": 11681,
+          "durationMs": 768,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/370/480/320.jpg?hmac=S_e7vFhacO3xUeNYxCgtDX6k73AoAKZCIQhTY9Jt6iY",
+          "type": "image",
+          "transferBytes": 16864,
+          "startMs": 11665,
+          "durationMs": 813,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/63/480/320.jpg?hmac=RfxDVH9z5oxy3cYwupRQ3I_unknyT8bgqanFaLFfJc0",
+          "type": "image",
+          "transferBytes": 8192,
+          "startMs": 12868,
+          "durationMs": 2645,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/828/480/320.jpg?hmac=VA-hqmRVgx_hkFG0IQZChOuO1Mwf8H-bglnHTQn54bo",
+          "type": "image",
+          "transferBytes": 24298,
+          "startMs": 12568,
+          "durationMs": 578,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/1002/480/320.jpg?hmac=Aj7QqC5VT5iPeIdT06kBhpI-8wrWQvqeGOjuJjV6EhQ",
+          "type": "image",
+          "transferBytes": 24633,
+          "startMs": 12573,
+          "durationMs": 586,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/428/480/320.jpg?hmac=Q8JDBid2koLGZbYOZshoJgxoSvA6SbhAFTqhmDX__5c",
+          "type": "image",
+          "transferBytes": 36346,
+          "startMs": 12632,
+          "durationMs": 2894,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/1013/480/320.jpg?hmac=zI0uPPYfxbQKoplE8g_-QrCwxLnzTdiZxr1JMkihgXk",
+          "type": "image",
+          "transferBytes": 24476,
+          "startMs": 12595,
+          "durationMs": 1698,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/776/480/320.jpg?hmac=Z_17UFXL9EsE45gTqWtETqNQMcaS0aCs6qykXkgN4Vo",
+          "type": "image",
+          "transferBytes": 22885,
+          "startMs": 12584,
+          "durationMs": 1104,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/502/480/320.jpg?hmac=mfLVPl3vUWlEorMiiJzhbl-YWYW5s5q7J4enAsCKVgM",
+          "type": "image",
+          "transferBytes": 40465,
+          "startMs": 12587,
+          "durationMs": 1422,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/450/480/320.jpg?hmac=xDJTZ_lDHUpKtgSs3Ch8iGi2GEfhMcJbNhfmCP7d6Zc",
+          "type": "image",
+          "transferBytes": 15757,
+          "startMs": 12602,
+          "durationMs": 1282,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/112/480/320.jpg?hmac=kWdtVplqzups2pAavwBzVhpN4x3MR7bFpwnxE52Sjxs",
+          "type": "image",
+          "transferBytes": 26743,
+          "startMs": 12626,
+          "durationMs": 2239,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/310/480/320.jpg?hmac=qJIx2GSkDx-SQSKxDh3Cr6DvJo-V-PUhzmDPd_CpNVo",
+          "type": "image",
+          "transferBytes": 9152,
+          "startMs": 12610,
+          "durationMs": 1649,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/600/480/320.jpg?hmac=enKeMsS4kMHrsT9GBmKRmCdFuLtrU-T0kgYD9hU8M2k",
+          "type": "image",
+          "transferBytes": 23550,
+          "startMs": 12818,
+          "durationMs": 2568,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/531/480/320.jpg?hmac=qVOJqrcfUWxFOZs6RngGsKOk6CHoGH8tXzuG7pFmeQA",
+          "type": "image",
+          "transferBytes": 24270,
+          "startMs": 12618,
+          "durationMs": 2000,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/109/480/320.jpg?hmac=_BenaXux3dJTCzrwbFh7uOD9CZyOt51N4HA3dPpbYCc",
+          "type": "image",
+          "transferBytes": 18974,
+          "startMs": 12851,
+          "durationMs": 2755,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/408/480/320.jpg?hmac=dBiWXHscCwXXDe8Z8HpdOkRsj3y4LkINlE80CcB5F3w",
+          "type": "image",
+          "transferBytes": 19670,
+          "startMs": 12822,
+          "durationMs": 2651,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/248/480/320.jpg?hmac=pvxJTKbxTL8PWQwcZF69J-7NXWSSkvq1FGQIT2okyXc",
+          "type": "image",
+          "transferBytes": 17019,
+          "startMs": 12859,
+          "durationMs": 2783,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/47/480/320.jpg?hmac=eTYpi7Fg6UhnkrdO0_0-8VdZapxs-oBdnX83aDTqrdg",
+          "type": "image",
+          "transferBytes": 18244,
+          "startMs": 12808,
+          "durationMs": 2556,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/911/480/320.jpg?hmac=4n5L-X2KtiiJaAl1bUoOD4Szevp_zZfG5Q9CpKagDxQ",
+          "type": "image",
+          "transferBytes": 7598,
+          "startMs": 12844,
+          "durationMs": 2431,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "https://fastly.picsum.photos/id/502/480/320.jpg?hmac=mfLVPl3vUWlEorMiiJzhbl-YWYW5s5q7J4enAsCKVgM",
+          "type": "image",
+          "transferBytes": 0,
+          "startMs": 12839,
+          "durationMs": 1170,
+          "status": 200,
+          "thirdParty": true,
+          "cached": false,
+          "initiator": "other",
+          "protocol": "h2",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 12804,
+          "durationMs": 398,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 12806,
+          "durationMs": 813,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 14804,
+          "durationMs": 530,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 14806,
+          "durationMs": 828,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 16803,
+          "durationMs": 390,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 16807,
+          "durationMs": 757,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 18803,
+          "durationMs": 393,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 18807,
+          "durationMs": 752,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 20804,
+          "durationMs": 397,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        },
+        {
+          "url": "http://localhost:3000/api/products",
+          "type": "fetch",
+          "transferBytes": 3625,
+          "startMs": 20807,
+          "durationMs": 761,
+          "status": 200,
+          "thirdParty": false,
+          "cached": false,
+          "initiator": "script",
+          "protocol": "http/1.1",
+          "blocking": false
+        }
+      ],
+      "longTasks": [
+        {
+          "startMs": 10645.20000000298,
+          "durationMs": 94,
+          "script": "unknown"
+        },
+        {
+          "startMs": 160.29999999701977,
+          "durationMs": 1649.3000000044703,
+          "script": "https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123"
+        },
+        {
+          "startMs": 10645.20000000298,
+          "durationMs": 104.39999999850988,
+          "script": "http://localhost:3000/src/main.tsx"
+        },
+        {
+          "startMs": 11199.70000000298,
+          "durationMs": 50.599999994039536,
+          "script": "http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ecdcba2b performWorkUntilDeadline()"
+        }
+      ],
+      "layoutShifts": [
+        {
+          "value": 0.010190069719456437,
+          "timeMs": 12010.10000000149,
+          "element": "h3"
+        },
+        {
+          "value": 0.09101420555049419,
+          "timeMs": 12022.60000000149,
+          "element": "article.card"
+        },
+        {
+          "value": 0.00560453834570104,
+          "timeMs": 12037.79999999702,
+          "element": "h3"
+        },
+        {
+          "value": 0.00021901373896011613,
+          "timeMs": 13205.70000000298,
+          "element": ""
+        }
+      ],
+      "filmstrip": [
+        {
+          "timeMs": 1821,
+          "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABcQERQRDhcUEhQaGBcbIjklIh8fIkYyNSk5UkhXVVFIUE5bZoNvW2F8Yk5QcptzfIeLkpSSWG2grJ+OqoOPko3/2wBDARgaGiIeIkMlJUONXlBejY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY3/wAARCAFhAPADASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AKwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH//Z"
+        },
+        {
+          "timeMs": 10821,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 11588,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 12021,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 12521,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 12788,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 13221,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 13471,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 14004,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 14254,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 14671,
+          "image": "data:image/jpeg;base64,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"
+        },
+        {
+          "timeMs": 15004,
+          "image": "data:image/jpeg;base64,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"
+        }
+      ],
+      "lcpElement": "img",
+      "features": {
+        "loaf": true,
+        "softNavigations": 0,
+        "schedulerYield": true,
+        "speculationRules": true,
+        "viewTransitions": true,
+        "computePressure": true,
+        "webGPU": true,
+        "builtInAI": true,
+        "serviceWorker": true,
+        "bfcacheEligible": true,
+        "agentReadiness": 85,
+        "missingLabels": 0,
+        "interactiveWithoutName": 0,
+        "hasLlmsTxt": true,
+        "hasStructuredData": false,
+        "pageTokens": 343
+      },
+      "coverage": [
+        {
+          "url": "http://localhost:3000/src/styles/fonts.css",
+          "totalBytes": 275,
+          "unusedBytes": 216
+        },
+        {
+          "url": "http://localhost:3000/",
+          "totalBytes": 161,
+          "unusedBytes": 0
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123",
+          "totalBytes": 242207,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/main.tsx",
+          "totalBytes": 2172,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/@react-refresh",
+          "totalBytes": 111894,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/react.js?v=4242c424",
+          "totalBytes": 1024,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/styles/global.css",
+          "totalBytes": 1989,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/App.tsx",
+          "totalBytes": 8723,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=4242c424",
+          "totalBytes": 12303,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/chunk-BUSYA2B4.js?v=005e4d40",
+          "totalBytes": 1399,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/components/CartSummary.tsx",
+          "totalBytes": 9859,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/components/Header.tsx",
+          "totalBytes": 7375,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/components/HeroBanner.tsx",
+          "totalBytes": 4727,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/components/LiveStock.tsx",
+          "totalBytes": 4803,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/@vite/client",
+          "totalBytes": 179481,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/components/ProductGrid.tsx",
+          "totalBytes": 3591,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/chunk-W4L6JAIH.js?v=005e4d40",
+          "totalBytes": 45492,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/lib/socket.ts",
+          "totalBytes": 1841,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/context/CartContext.tsx",
+          "totalBytes": 6664,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/lib/dates.ts",
+          "totalBytes": 1330,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/@fs/Users/dev/Documents/my%20projects/first-project/perfagent/node_modules/.pnpm/vite@7.2.4_@types+node@24.10.1/node_modules/vite/dist/client/env.mjs",
+          "totalBytes": 3478,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/components/ChatWidget.tsx",
+          "totalBytes": 8195,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/components/ProductCard.tsx",
+          "totalBytes": 6136,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/lib/emoji-data.ts",
+          "totalBytes": 65364,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/src/styles/legacy.css",
+          "totalBytes": 243033,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/date-fns.js?v=07e17317",
+          "totalBytes": 192014,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ecdcba2b",
+          "totalBytes": 1005278,
+          "unusedBytes": 0
+        },
+        {
+          "url": "http://localhost:3000/node_modules/.vite/deps/chunk-4NWMIK64.js?v=005e4d40",
+          "totalBytes": 16418,
+          "unusedBytes": 0
+        }
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "id": "general/lcp-image-lazy@src/components/HeroBanner.tsx:5",
+      "ruleId": "general/lcp-image-lazy",
+      "title": "Hero image is lazy-loaded",
+      "plain": "Your main picture loads late",
+      "severity": "critical",
+      "metrics": [
+        "lcp"
+      ],
+      "areas": [
+        "images"
+      ],
+      "location": {
+        "file": "src/components/HeroBanner.tsx",
+        "line": 5,
+        "symbol": "HeroBanner"
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "LCP 13 s",
+          "detail": "Time until the main content is visible"
+        },
+        {
+          "kind": "element",
+          "label": "img.herobanner"
+        },
+        {
+          "kind": "component",
+          "label": "<HeroBanner>",
+          "location": {
+            "file": "src/components/HeroBanner.tsx",
+            "line": 1
+          }
+        },
+        {
+          "kind": "code",
+          "label": "src/components/HeroBanner.tsx:5",
+          "detail": "<img className=\"hero-image\" src=\"/hero.png\" alt=\"Summer sale banner\" loading=\"lazy\" width={1600} height={900} />",
+          "location": {
+            "file": "src/components/HeroBanner.tsx",
+            "line": 5
+          }
+        }
+      ],
+      "why": "loading=\"lazy\" tells the browser to wait before downloading the image. For the biggest image on screen that delays the moment the page looks loaded.",
+      "gain": {
+        "metric": "lcp",
+        "from": 12508,
+        "to": 6879.400000000001,
+        "scoreDelta": 11
+      },
+      "fix": {
+        "steps": [
+          "Remove loading=\"lazy\" from the hero image",
+          "Add fetchpriority=\"high\" so it downloads first",
+          "Preload it in <head> if it is always on the page"
+        ],
+        "changes": [
+          {
+            "file": "src/components/HeroBanner.tsx",
+            "before": "<img className=\"hero-image\" src=\"/hero.png\" alt=\"Summer sale banner\" loading=\"lazy\" width={1600} height={900} />",
+            "after": "<img fetchpriority=\"high\" className=\"hero-image\" src=\"/hero.png\" alt=\"Summer sale banner\" width={1600} height={900} />"
+          }
+        ],
+        "automatic": true
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "lcp",
+        "max": 2500
+      },
+      "docs": [
+        {
+          "label": "web.dev: Optimize LCP",
+          "url": "https://web.dev/articles/optimize-lcp"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "general/[redacted email]:8",
+      "ruleId": "general/blocking-third-party",
+      "title": "Third-party script loads synchronously",
+      "plain": "An outside script (analytics / tag manager) holds up the page",
+      "severity": "critical",
+      "metrics": [
+        "tbt",
+        "fcp"
+      ],
+      "areas": [
+        "third-party",
+        "javascript"
+      ],
+      "location": {
+        "file": "index.html",
+        "line": 8
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "TBT 0 ms",
+          "detail": "Time the page is too busy to respond while loading"
+        },
+        {
+          "kind": "request",
+          "label": "gtm.js",
+          "detail": "88 KB, starts at 0 ms, third party"
+        },
+        {
+          "kind": "code",
+          "label": "index.html:8",
+          "detail": "<script src=\"https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123\">",
+          "location": {
+            "file": "index.html",
+            "line": 8
+          }
+        }
+      ],
+      "why": "A <script> without async or defer stops HTML parsing until it has downloaded and run. Tag managers then load more scripts on top.",
+      "gain": {
+        "metric": "tbt",
+        "from": 0,
+        "to": 100,
+        "scoreDelta": 8
+      },
+      "fix": {
+        "steps": [
+          "Add async (or defer) to the script tag",
+          "Load it after the page is interactive",
+          "Review which tags really need to run on every page"
+        ],
+        "changes": [
+          {
+            "file": "index.html",
+            "before": "<script src=\"https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123\">",
+            "after": "<script async src=\"https://www.googletagmanager.com/gtm.js?id=GTM-DEMO123\">"
+          }
+        ],
+        "automatic": true
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "tbt",
+        "max": 200
+      },
+      "docs": [
+        {
+          "label": "web.dev: Third-party JavaScript",
+          "url": "https://web.dev/articles/optimizing-content-efficiency-loading-third-party-javascript"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "general/big-javascript@/",
+      "ruleId": "general/big-javascript",
+      "title": "Too much JavaScript on the page",
+      "plain": "The page downloads a lot of code before it can work",
+      "severity": "critical",
+      "metrics": [
+        "tbt",
+        "lcp"
+      ],
+      "areas": [
+        "bundle",
+        "javascript"
+      ],
+      "route": "/",
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "JS 1.9 MB",
+          "detail": "Amount of JavaScript downloaded and run"
+        }
+      ],
+      "why": "Every kilobyte of JavaScript must be downloaded, parsed and run on the main thread before the page becomes usable.",
+      "gain": {
+        "metric": "jsKb",
+        "from": 1996.7,
+        "to": 998,
+        "scoreDelta": 8
+      },
+      "fix": {
+        "steps": [
+          "Split code per route (dynamic imports)",
+          "Replace heavy libraries",
+          "Remove unused code with the coverage tab"
+        ],
+        "changes": [],
+        "automatic": false
+      },
+      "docs": [
+        {
+          "label": "web.dev: Reduce JavaScript payloads",
+          "url": "https://web.dev/articles/reduce-javascript-payloads-with-code-splitting"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.8
+    },
+    {
+      "id": "react/effect-without-cleanup@src/components/LiveStock.tsx:8",
+      "ruleId": "react/effect-without-cleanup",
+      "title": "Effect starts setInterval without cleanup",
+      "plain": "A background task keeps running after you leave the page",
+      "severity": "critical",
+      "metrics": [
+        "memoryMb",
+        "inp"
+      ],
+      "areas": [
+        "memory",
+        "javascript"
+      ],
+      "location": {
+        "file": "src/components/LiveStock.tsx",
+        "line": 8,
+        "symbol": "LiveStock"
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "Memory 9 MB",
+          "detail": "Memory the page keeps using over time"
+        },
+        {
+          "kind": "component",
+          "label": "<LiveStock>",
+          "location": {
+            "file": "src/components/LiveStock.tsx",
+            "line": 3
+          }
+        },
+        {
+          "kind": "code",
+          "label": "src/components/LiveStock.tsx:8",
+          "detail": "// leaves another poller running in the background.\n  useEffect(() => {\n    setInterval(() => {",
+          "location": {
+            "file": "src/components/LiveStock.tsx",
+            "line": 8
+          }
+        }
+      ],
+      "why": "setInterval / addEventListener / subscriptions created in useEffect keep running after the component unmounts unless the effect returns a cleanup. Each visit adds another one, so the app gets slower and heavier over time.",
+      "frameworkRule": "React: effect without cleanup",
+      "gain": {
+        "metric": "memoryMb",
+        "from": 8.9,
+        "to": 30,
+        "scoreDelta": 5,
+        "note": "memory and INP after long sessions"
+      },
+      "fix": {
+        "steps": [
+          "Return a cleanup function from the effect",
+          "Clear the interval / remove the listener / close the socket in it"
+        ],
+        "changes": [
+          {
+            "file": "src/components/LiveStock.tsx",
+            "before": "  }, [])",
+            "after": "    return () => clearInterval(id)\n  }, [])"
+          }
+        ],
+        "automatic": false
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "memoryMb",
+        "max": 80
+      },
+      "docs": [
+        {
+          "label": "react.dev: useEffect cleanup",
+          "url": "https://react.dev/reference/react/useEffect#connecting-to-an-external-system"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "realtime/reconnect-no-backoff@src/lib/socket.ts:11",
+      "ruleId": "realtime/reconnect-no-backoff",
+      "title": "WebSocket reconnects instantly without backoff",
+      "plain": "When the live connection drops, the app hammers the server trying to reconnect",
+      "severity": "critical",
+      "metrics": [
+        "wsReconnects",
+        "inp"
+      ],
+      "areas": [
+        "websocket",
+        "network"
+      ],
+      "location": {
+        "file": "src/lib/socket.ts",
+        "line": 11
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "Reconnects 1",
+          "detail": "How often the live connection drops and reconnects"
+        },
+        {
+          "kind": "element",
+          "label": "ws.onclose"
+        },
+        {
+          "kind": "code",
+          "label": "src/lib/socket.ts:11",
+          "detail": "// Problem 4: reconnects immediately, forever. When the server restarts this\n  // becomes a storm of connections.\n  socket.onclose = () => {\n    connect()\n  }",
+          "location": {
+            "file": "src/lib/socket.ts",
+            "line": 11
+          }
+        }
+      ],
+      "why": "Reconnecting immediately in onclose creates a storm of connections when the server is down or restarting. It floods the server and keeps the browser busy.",
+      "frameworkRule": "Realtime: exponential backoff",
+      "gain": {
+        "metric": "wsReconnects",
+        "from": 1,
+        "to": 1,
+        "scoreDelta": 3,
+        "note": "server load and INP during outages"
+      },
+      "fix": {
+        "steps": [
+          "Wait before reconnecting: delay = min(30 s, 500 ms × 2^attempt) + random jitter",
+          "Reset the attempt counter after a successful open",
+          "Stop after N attempts and show a \"reconnect\" button"
+        ],
+        "changes": [
+          {
+            "file": "src/lib/socket.ts",
+            "before": "socket.onclose = () => {",
+            "after": "ws.onclose = () => {\n  const delay = Math.min(30_000, 500 * 2 ** attempt++) + Math.random() * 250\n  setTimeout(connect, delay)\n}"
+          }
+        ],
+        "automatic": false
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "wsReconnects",
+        "max": 3
+      },
+      "docs": [
+        {
+          "label": "MDN: WebSocket reconnect with backoff",
+          "url": "https://developer.mozilla.org/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "ai/sequential-await@src/server/rag.ts:28",
+      "ruleId": "ai/sequential-await",
+      "title": "4 AI steps awaited in sequence",
+      "plain": "The app waits for several AI steps in a row instead of at the same time",
+      "severity": "critical",
+      "metrics": [
+        "aiFirstTokenMs"
+      ],
+      "areas": [
+        "ai"
+      ],
+      "location": {
+        "file": "src/server/rag.ts",
+        "line": 28,
+        "symbol": "answerSupportQuestion"
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "First token 2.4 s",
+          "detail": "Time until the first word of an AI answer appears"
+        },
+        {
+          "kind": "cost",
+          "label": "4 sequential steps in answerSupportQuestion()",
+          "detail": "each waits for the previous"
+        },
+        {
+          "kind": "code",
+          "label": "src/server/rag.ts:28",
+          "detail": "export async function answerSupportQuestion(question: string, customerId: string): Promise<string> {\n  // Problem 5: three independent steps awaited one after another.\n  const vector = await embed(question)\n  const chunks = await searchChunks(vector)\n  const order = await lookupOrder(customerId)",
+          "location": {
+            "file": "src/server/rag.ts",
+            "line": 28
+          }
+        }
+      ],
+      "why": "Each awaited call waits for the previous one. Independent calls (embedding + search + lookups) can run in parallel with Promise.all, cutting seconds off every answer.",
+      "frameworkRule": "AI: parallel independent calls",
+      "gain": {
+        "metric": "aiFirstTokenMs",
+        "from": 2400,
+        "to": 900,
+        "scoreDelta": 0,
+        "note": "seconds saved per request"
+      },
+      "fix": {
+        "steps": [
+          "Find awaited calls that do not depend on each other",
+          "Run them with Promise.all([...])",
+          "Keep dependent calls sequential"
+        ],
+        "changes": [
+          {
+            "file": "src/server/rag.ts",
+            "before": "const vector = await embed(question)\nconst chunks = await searchChunks(vector)",
+            "after": "const [r1, r2] = await Promise.all([\n  embed(question),\n  searchChunks(vector)\n])"
+          }
+        ],
+        "automatic": false
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "aiFirstTokenMs",
+        "max": 1000
+      },
+      "docs": [
+        {
+          "label": "MDN: Promise.all",
+          "url": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise/all"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "ai/no-prompt-cache@src/server/rag.ts:28",
+      "ruleId": "ai/no-prompt-cache",
+      "title": "Long system prompt sent uncached every call",
+      "plain": "The same long instructions are paid for again on every request",
+      "severity": "critical",
+      "metrics": [
+        "aiFirstTokenMs",
+        "aiCostUsd",
+        "aiCacheHitRate"
+      ],
+      "areas": [
+        "ai"
+      ],
+      "location": {
+        "file": "src/server/rag.ts",
+        "line": 28
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "First token 2.4 s",
+          "detail": "Time until the first word of an AI answer appears"
+        },
+        {
+          "kind": "cost",
+          "label": "system prompt ~9,800 tokens",
+          "detail": "sent uncached on every call"
+        },
+        {
+          "kind": "code",
+          "label": "src/server/rag.ts:28",
+          "detail": "const vector = await embed(question)",
+          "location": {
+            "file": "src/server/rag.ts",
+            "line": 28
+          }
+        }
+      ],
+      "why": "A long system prompt or document set is re-processed on every call. Prompt caching lets the provider reuse it, cutting first-token time and cost by half or more.",
+      "gain": {
+        "metric": "aiFirstTokenMs",
+        "from": 2400,
+        "to": 1080,
+        "scoreDelta": 0,
+        "note": "cost per message −50–60%"
+      },
+      "fix": {
+        "steps": [
+          "Mark the stable prefix as cacheable (cache_control: { type: 'ephemeral' } on Anthropic; prefix caching is automatic on OpenAI when the prefix is stable)",
+          "Put the stable part first and the changing part last"
+        ],
+        "changes": [
+          {
+            "file": "src/server/rag.ts",
+            "before": "const vector = await embed(question)",
+            "after": "const vector = await embed(question)"
+          }
+        ],
+        "automatic": false
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "aiCacheHitRate",
+        "max": 0.7
+      },
+      "docs": [
+        {
+          "label": "Anthropic: Prompt caching",
+          "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.7
+    },
+    {
+      "id": "general/uncached-api@src/server/api/products.ts:22",
+      "ruleId": "general/uncached-api",
+      "title": "API response is never cached",
+      "plain": "The same data is fetched from the server on every visit",
+      "severity": "warning",
+      "metrics": [
+        "ttfb",
+        "lcp"
+      ],
+      "areas": [
+        "api",
+        "caching",
+        "server"
+      ],
+      "location": {
+        "file": "src/server/api/products.ts",
+        "line": 22,
+        "symbol": "json"
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "TTFB 150 ms",
+          "detail": "Time until the server starts answering"
+        },
+        {
+          "kind": "server",
+          "label": "json() handler",
+          "detail": "105 ms"
+        },
+        {
+          "kind": "code",
+          "label": "src/server/api/products.ts:22",
+          "detail": "res.end(JSON.stringify(body))",
+          "location": {
+            "file": "src/server/api/products.ts",
+            "line": 22
+          }
+        }
+      ],
+      "why": "Without Cache-Control every visit waits for the server and database again, even when the data has not changed.",
+      "gain": {
+        "metric": "ttfb",
+        "from": 150.1,
+        "to": 200,
+        "scoreDelta": 5
+      },
+      "fix": {
+        "steps": [
+          "Add a Cache-Control header (e.g. s-maxage=60, stale-while-revalidate)",
+          "Use the framework’s revalidate option for static data",
+          "Keep no-store only for personal data"
+        ],
+        "changes": [
+          {
+            "file": "src/server/api/products.ts",
+            "before": "res.end(JSON.stringify(body))",
+            "after": "res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')\nres.end(JSON.stringify(body))"
+          }
+        ],
+        "automatic": false
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "ttfb",
+        "max": 800
+      },
+      "docs": [
+        {
+          "label": "MDN: Cache-Control",
+          "url": "https://developer.mozilla.org/docs/Web/HTTP/Headers/Cache-Control"
+        },
+        {
+          "label": "web.dev: Optimize TTFB",
+          "url": "https://web.dev/articles/optimize-ttfb"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.7
+    },
+    {
+      "id": "general/image-missing-dimensions@src/components/ProductCard.tsx:10",
+      "ruleId": "general/image-missing-dimensions",
+      "title": "Image without width and height",
+      "plain": "A picture makes the page jump when it appears",
+      "severity": "warning",
+      "metrics": [
+        "cls"
+      ],
+      "areas": [
+        "images",
+        "rendering"
+      ],
+      "location": {
+        "file": "src/components/ProductCard.tsx",
+        "line": 10,
+        "symbol": "ProductCard"
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "CLS 0.11",
+          "detail": "How much the page jumps around while loading"
+        },
+        {
+          "kind": "element",
+          "label": "<img> in ProductCard"
+        },
+        {
+          "kind": "component",
+          "label": "<ProductCard>",
+          "location": {
+            "file": "src/components/ProductCard.tsx",
+            "line": 5
+          }
+        },
+        {
+          "kind": "code",
+          "label": "src/components/ProductCard.tsx:10",
+          "detail": "<img src={product.image} alt={product.name} />",
+          "location": {
+            "file": "src/components/ProductCard.tsx",
+            "line": 10
+          }
+        }
+      ],
+      "why": "Without width and height the browser does not reserve space, so content below jumps down when the image arrives.",
+      "gain": {
+        "metric": "cls",
+        "from": 0.107,
+        "to": 0.047,
+        "scoreDelta": 4
+      },
+      "fix": {
+        "steps": [
+          "Add width and height matching the real image ratio",
+          "Keep CSS max-width: 100% so it still scales"
+        ],
+        "changes": [
+          {
+            "file": "src/components/ProductCard.tsx",
+            "before": "<img src={product.image} alt={product.name} />",
+            "after": "<img width={800} height={450} src={product.image} alt={product.name} />"
+          }
+        ],
+        "automatic": false
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "cls",
+        "max": 0.1
+      },
+      "docs": [
+        {
+          "label": "web.dev: Set image dimensions",
+          "url": "https://web.dev/articles/optimize-cls#images-without-dimensions"
+        },
+        {
+          "label": "web.dev: Optimize CLS",
+          "url": "https://web.dev/articles/optimize-cls"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.7
+    },
+    {
+      "id": "general/no-compression@/",
+      "ruleId": "general/no-compression",
+      "title": "Text files served without compression",
+      "plain": "Scripts and styles are sent uncompressed",
+      "severity": "warning",
+      "metrics": [
+        "lcp",
+        "fcp"
+      ],
+      "areas": [
+        "network",
+        "server"
+      ],
+      "route": "/",
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "LCP 13 s",
+          "detail": "Time until the main content is visible"
+        },
+        {
+          "kind": "request",
+          "label": "client",
+          "detail": "176 KB, starts at 170 ms"
+        }
+      ],
+      "why": "Brotli or gzip typically shrinks JavaScript and CSS by 70%. Without it every visitor downloads several times more.",
+      "gain": {
+        "metric": "lcp",
+        "from": 12508,
+        "to": 10006.400000000001,
+        "scoreDelta": 4
+      },
+      "fix": {
+        "steps": [
+          "Enable Brotli/gzip on the server or CDN",
+          "Check the Content-Encoding response header"
+        ],
+        "changes": [],
+        "automatic": false
+      },
+      "docs": [
+        {
+          "label": "web.dev: Text compression",
+          "url": "https://web.dev/articles/reduce-network-payloads-using-text-compression"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.7
+    },
+    {
+      "id": "react/namespace-import@src/lib/dates.ts:2",
+      "ruleId": "react/namespace-import",
+      "title": "Whole date-fns imported",
+      "plain": "The whole date-fns library (78 KB) is downloaded although only a few functions are used",
+      "severity": "warning",
+      "metrics": [
+        "tbt",
+        "lcp",
+        "jsKb"
+      ],
+      "areas": [
+        "bundle",
+        "javascript"
+      ],
+      "location": {
+        "file": "src/lib/dates.ts",
+        "line": 2
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "JS 1.9 MB",
+          "detail": "Amount of JavaScript downloaded and run"
+        },
+        {
+          "kind": "dependency",
+          "label": "date-fns",
+          "detail": "78 KB"
+        },
+        {
+          "kind": "code",
+          "label": "src/lib/dates.ts:2",
+          "detail": "import * as dateFns from 'date-fns'",
+          "location": {
+            "file": "src/lib/dates.ts",
+            "line": 2
+          }
+        }
+      ],
+      "why": "import * as lib (or the default import of moment/lodash) stops the bundler from dropping unused functions, so the whole package ends up in the bundle.",
+      "gain": {
+        "metric": "jsKb",
+        "from": 1996.7,
+        "to": 1934.3,
+        "scoreDelta": 4
+      },
+      "fix": {
+        "steps": [
+          "Import only the functions you use",
+          "Or switch to a lighter library"
+        ],
+        "changes": [
+          {
+            "file": "src/lib/dates.ts",
+            "before": "import * as dateFns from 'date-fns'",
+            "after": "import { format } from 'date-fns'"
+          }
+        ],
+        "automatic": true
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "jsKb",
+        "max": 250
+      },
+      "docs": [
+        {
+          "label": "Bundlephobia",
+          "url": "https://bundlephobia.com/"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "react/eager-conditional-import@src/App.tsx:3",
+      "ruleId": "react/eager-conditional-import",
+      "title": "CartSummary loaded eagerly",
+      "plain": "The CartSummary code (~63 KB) is downloaded by every visitor although it only shows on demand",
+      "severity": "warning",
+      "metrics": [
+        "tbt",
+        "jsKb"
+      ],
+      "areas": [
+        "code-splitting",
+        "bundle"
+      ],
+      "location": {
+        "file": "src/App.tsx",
+        "line": 3,
+        "symbol": "App"
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "JS 1.9 MB",
+          "detail": "Amount of JavaScript downloaded and run"
+        },
+        {
+          "kind": "dependency",
+          "label": "CartSummary",
+          "detail": "63 KB"
+        },
+        {
+          "kind": "component",
+          "label": "<App>",
+          "location": {
+            "file": "src/App.tsx",
+            "line": 12
+          }
+        },
+        {
+          "kind": "code",
+          "label": "src/App.tsx:3",
+          "detail": "import { CartSummary } from './components/CartSummary'",
+          "location": {
+            "file": "src/App.tsx",
+            "line": 3
+          }
+        }
+      ],
+      "why": "The component is only rendered behind a condition (a button, a toggle) but is imported statically, so its code ships with the first load.",
+      "frameworkRule": "React: lazy() for conditional components",
+      "gain": {
+        "metric": "jsKb",
+        "from": 1996.7,
+        "to": 1933.7,
+        "scoreDelta": 4
+      },
+      "fix": {
+        "steps": [
+          "Replace the static import with React.lazy(() => import(...)) or next/dynamic",
+          "Wrap it in <Suspense> with a small fallback"
+        ],
+        "changes": [
+          {
+            "file": "src/App.tsx",
+            "before": "import { CartSummary } from './components/CartSummary'",
+            "after": "const CartSummary = lazy(() => import('./components/CartSummary'))"
+          }
+        ],
+        "automatic": false
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "jsKb",
+        "max": 250
+      },
+      "docs": [
+        {
+          "label": "react.dev: lazy",
+          "url": "https://react.dev/reference/react/lazy"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "react/eager-conditional-import@src/App.tsx:7",
+      "ruleId": "react/eager-conditional-import",
+      "title": "ProductGrid loaded eagerly",
+      "plain": "The ProductGrid code (~63 KB) is downloaded by every visitor although it only shows on demand",
+      "severity": "warning",
+      "metrics": [
+        "tbt",
+        "jsKb"
+      ],
+      "areas": [
+        "code-splitting",
+        "bundle"
+      ],
+      "location": {
+        "file": "src/App.tsx",
+        "line": 7,
+        "symbol": "App"
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "JS 1.9 MB",
+          "detail": "Amount of JavaScript downloaded and run"
+        },
+        {
+          "kind": "dependency",
+          "label": "ProductGrid",
+          "detail": "63 KB"
+        },
+        {
+          "kind": "component",
+          "label": "<App>",
+          "location": {
+            "file": "src/App.tsx",
+            "line": 12
+          }
+        },
+        {
+          "kind": "code",
+          "label": "src/App.tsx:7",
+          "detail": "import { ProductGrid } from './components/ProductGrid'",
+          "location": {
+            "file": "src/App.tsx",
+            "line": 7
+          }
+        }
+      ],
+      "why": "The component is only rendered behind a condition (a button, a toggle) but is imported statically, so its code ships with the first load.",
+      "frameworkRule": "React: lazy() for conditional components",
+      "gain": {
+        "metric": "jsKb",
+        "from": 1996.7,
+        "to": 1933.7,
+        "scoreDelta": 4
+      },
+      "fix": {
+        "steps": [
+          "Replace the static import with React.lazy(() => import(...)) or next/dynamic",
+          "Wrap it in <Suspense> with a small fallback"
+        ],
+        "changes": [
+          {
+            "file": "src/App.tsx",
+            "before": "import { ProductGrid } from './components/ProductGrid'",
+            "after": "const ProductGrid = lazy(() => import('./components/ProductGrid'))"
+          }
+        ],
+        "automatic": false
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "jsKb",
+        "max": 250
+      },
+      "docs": [
+        {
+          "label": "react.dev: lazy",
+          "url": "https://react.dev/reference/react/lazy"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "react/eager-conditional-import@src/components/Header.tsx:3",
+      "ruleId": "react/eager-conditional-import",
+      "title": "ChatWidget loaded eagerly",
+      "plain": "The ChatWidget code (~81 KB) is downloaded by every visitor although it only shows on demand",
+      "severity": "warning",
+      "metrics": [
+        "tbt",
+        "jsKb"
+      ],
+      "areas": [
+        "code-splitting",
+        "bundle"
+      ],
+      "location": {
+        "file": "src/components/Header.tsx",
+        "line": 3,
+        "symbol": "Header"
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "JS 1.9 MB",
+          "detail": "Amount of JavaScript downloaded and run"
+        },
+        {
+          "kind": "dependency",
+          "label": "ChatWidget",
+          "detail": "81 KB"
+        },
+        {
+          "kind": "component",
+          "label": "<Header>",
+          "location": {
+            "file": "src/components/Header.tsx",
+            "line": 6
+          }
+        },
+        {
+          "kind": "code",
+          "label": "src/components/Header.tsx:3",
+          "detail": "import { ChatWidget } from './ChatWidget'",
+          "location": {
+            "file": "src/components/Header.tsx",
+            "line": 3
+          }
+        }
+      ],
+      "why": "The component is only rendered behind a condition (a button, a toggle) but is imported statically, so its code ships with the first load.",
+      "frameworkRule": "React: lazy() for conditional components",
+      "gain": {
+        "metric": "jsKb",
+        "from": 1996.7,
+        "to": 1915.7,
+        "scoreDelta": 4
+      },
+      "fix": {
+        "steps": [
+          "Replace the static import with React.lazy(() => import(...)) or next/dynamic",
+          "Wrap it in <Suspense> with a small fallback"
+        ],
+        "changes": [
+          {
+            "file": "src/components/Header.tsx",
+            "before": "import { ChatWidget } from './ChatWidget'",
+            "after": "const ChatWidget = lazy(() => import('./ChatWidget'))"
+          }
+        ],
+        "automatic": false
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "jsKb",
+        "max": 250
+      },
+      "docs": [
+        {
+          "label": "react.dev: lazy",
+          "url": "https://react.dev/reference/react/lazy"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "general/font-display-missing@src/styles/fonts.css:2",
+      "ruleId": "general/font-display-missing",
+      "title": "Web font without font-display",
+      "plain": "Text jumps or stays invisible while the font loads",
+      "severity": "warning",
+      "metrics": [
+        "cls",
+        "fcp"
+      ],
+      "areas": [
+        "fonts",
+        "rendering"
+      ],
+      "location": {
+        "file": "src/styles/fonts.css",
+        "line": 2
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "CLS 0.11",
+          "detail": "How much the page jumps around while loading"
+        },
+        {
+          "kind": "element",
+          "label": "text in custom font"
+        },
+        {
+          "kind": "code",
+          "label": "src/styles/fonts.css:2",
+          "detail": "@font-face {\n  font-family: 'Shop Sans';\n  src: url('/fonts/shop-sans.woff2') format('woff2');",
+          "location": {
+            "file": "src/styles/fonts.css",
+            "line": 2
+          }
+        }
+      ],
+      "why": "Without font-display the browser may hide text until the custom font arrives, then swap it with a different size, which shifts the layout.",
+      "gain": {
+        "metric": "cls",
+        "from": 0.107,
+        "to": 0.056999999999999995,
+        "scoreDelta": 3
+      },
+      "fix": {
+        "steps": [
+          "Add font-display: swap (or optional) to every @font-face",
+          "For Google Fonts add &display=swap to the link",
+          "Preload the main font file"
+        ],
+        "changes": [
+          {
+            "file": "src/styles/fonts.css",
+            "before": "@font-face {",
+            "after": "@font-face {\n  font-display: swap;"
+          }
+        ],
+        "automatic": true
+      },
+      "prevent": {
+        "route": "/",
+        "metric": "cls",
+        "max": 0.1
+      },
+      "docs": [
+        {
+          "label": "web.dev: font-display",
+          "url": "https://web.dev/articles/font-best-practices"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.85
+    },
+    {
+      "id": "general/unused-css@src/styles/legacy.css:1",
+      "ruleId": "general/unused-css",
+      "title": "Most of a stylesheet is unused",
+      "plain": "A 234 KB stylesheet is loaded on every page",
+      "severity": "warning",
+      "metrics": [
+        "fcp",
+        "lcp"
+      ],
+      "areas": [
+        "css",
+        "unused-code"
+      ],
+      "location": {
+        "file": "src/styles/legacy.css",
+        "line": 1
+      },
+      "chain": [
+        {
+          "kind": "metric",
+          "label": "FCP 11 s",
+          "detail": "Time until anything appears on screen"
+        },
+        {
+          "kind": "request",
+          "label": "src/styles/legacy.css",
+          "detail": "234 KB, starts at 0 ms"
+        },
+        {
+          "kind": "code",
+          "label": "src/styles/legacy.css:1",
+          "detail": "/* Legacy theme: thousands of rules the shop no longer uses. */",
+          "location": {
+            "file": "src/styles/legacy.css",
+            "line": 1
+          }
+        }
+      ],
+      "why": "Stylesheets block rendering until fully downloaded and parsed. Unused rules make that wait longer for nothing.",
+      "gain": {
+        "metric": "fcp",
+        "from": 10820,
+        "to": 9197,
+        "scoreDelta": 3
+      },
+      "fix": {
+        "steps": [
+          "Split the stylesheet per page or component",
+          "Enable CSS purging (Tailwind content, PurgeCSS)",
+          "Inline the critical CSS and load the rest later"
+        ],
+        "changes": [],
+        "automatic": false
+      },
+      "docs": [
+        {
+          "label": "Chrome: Coverage",
+          "url": "https://developer.chrome.com/docs/devtools/coverage"
+        }
+      ],
+      "status": "open",
+      "confidence": 0.6
+    }
+  ],
+  "tree": {
+    "id": "demo-shop",
+    "name": "demo-shop",
+    "kind": "root",
+    "path": "",
+    "tag": "ROOT",
+    "issueIds": [],
+    "counts": {
+      "critical": 1,
+      "warning": 6,
+      "info": 0
+    },
+    "children": [
+      {
+        "id": "demo-shop/src",
+        "name": "src",
+        "kind": "dir",
+        "path": "src",
+        "tag": "DIR",
+        "issueIds": [],
+        "counts": {
+          "critical": 0,
+          "warning": 6,
+          "info": 0
+        },
+        "children": [
+          {
+            "id": "demo-shop/src/components",
+            "name": "components",
+            "kind": "dir",
+            "path": "src/components",
+            "tag": "DIR",
+            "issueIds": [],
+            "counts": {
+              "critical": 0,
+              "warning": 1,
+              "info": 0
+            },
+            "children": [
+              {
+                "id": "demo-shop/src/components/CartSummary.tsx",
+                "name": "CartSummary.tsx",
+                "kind": "file",
+                "path": "src/components/CartSummary.tsx",
+                "tag": "TSX",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/components/CartSummary.tsx#CartSummary",
+                    "name": "CartSummary",
+                    "kind": "component",
+                    "path": "src/components/CartSummary.tsx",
+                    "tag": "<>",
+                    "line": 4,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": [
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:35:button",
+                        "name": "<button>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 35,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:21:input",
+                        "name": "<input>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 21,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:19:label",
+                        "name": "<label>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 19,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:25:li",
+                        "name": "<li>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 25,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:31:p",
+                        "name": "<p>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 31,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:18:section",
+                        "name": "<section>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 18,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:26:span",
+                        "name": "<span>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 26,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:27:span",
+                        "name": "<span>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 27,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:32:span",
+                        "name": "<span>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 32,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:33:strong",
+                        "name": "<strong>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 33,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/CartSummary.tsx#CartSummary:23:ul",
+                        "name": "<ul>",
+                        "kind": "element",
+                        "path": "src/components/CartSummary.tsx",
+                        "tag": "EL",
+                        "line": 23,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "sizeBytes": 1315,
+                "imports": [
+                  "src/context/CartContext.tsx",
+                  "src/lib/dates.ts"
+                ]
+              },
+              {
+                "id": "demo-shop/src/components/ChatWidget.tsx",
+                "name": "ChatWidget.tsx",
+                "kind": "file",
+                "path": "src/components/ChatWidget.tsx",
+                "tag": "TSX",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/components/ChatWidget.tsx#ChatWidget",
+                    "name": "ChatWidget",
+                    "kind": "component",
+                    "path": "src/components/ChatWidget.tsx",
+                    "tag": "<>",
+                    "line": 6,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": [
+                      {
+                        "id": "demo-shop/src/components/ChatWidget.tsx#ChatWidget:18:aside",
+                        "name": "<aside>",
+                        "kind": "element",
+                        "path": "src/components/ChatWidget.tsx",
+                        "tag": "EL",
+                        "line": 18,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ChatWidget.tsx#ChatWidget:19:button",
+                        "name": "<button>",
+                        "kind": "element",
+                        "path": "src/components/ChatWidget.tsx",
+                        "tag": "EL",
+                        "line": 19,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ChatWidget.tsx#ChatWidget:30:button",
+                        "name": "<button>",
+                        "kind": "element",
+                        "path": "src/components/ChatWidget.tsx",
+                        "tag": "EL",
+                        "line": 30,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ChatWidget.tsx#ChatWidget:29:input",
+                        "name": "<input>",
+                        "kind": "element",
+                        "path": "src/components/ChatWidget.tsx",
+                        "tag": "EL",
+                        "line": 29,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ChatWidget.tsx#ChatWidget:24:li",
+                        "name": "<li>",
+                        "kind": "element",
+                        "path": "src/components/ChatWidget.tsx",
+                        "tag": "EL",
+                        "line": 24,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ChatWidget.tsx#ChatWidget:25:small",
+                        "name": "<small>",
+                        "kind": "element",
+                        "path": "src/components/ChatWidget.tsx",
+                        "tag": "EL",
+                        "line": 25,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ChatWidget.tsx#ChatWidget:22:ul",
+                        "name": "<ul>",
+                        "kind": "element",
+                        "path": "src/components/ChatWidget.tsx",
+                        "tag": "EL",
+                        "line": 22,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "sizeBytes": 1094,
+                "imports": [
+                  "src/lib/emoji-data.ts",
+                  "src/lib/dates.ts"
+                ]
+              },
+              {
+                "id": "demo-shop/src/components/Header.tsx",
+                "name": "Header.tsx",
+                "kind": "file",
+                "path": "src/components/Header.tsx",
+                "tag": "TSX",
+                "issueIds": [
+                  "react/eager-conditional-import@src/components/Header.tsx:3"
+                ],
+                "counts": {
+                  "critical": 0,
+                  "warning": 1,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/components/Header.tsx#Header",
+                    "name": "Header",
+                    "kind": "component",
+                    "path": "src/components/Header.tsx",
+                    "tag": "<>",
+                    "line": 6,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": [
+                      {
+                        "id": "demo-shop/src/components/Header.tsx#Header:15:button",
+                        "name": "<button>",
+                        "kind": "element",
+                        "path": "src/components/Header.tsx",
+                        "tag": "EL",
+                        "line": 15,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/Header.tsx#Header:18:button",
+                        "name": "<button>",
+                        "kind": "element",
+                        "path": "src/components/Header.tsx",
+                        "tag": "EL",
+                        "line": 18,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/Header.tsx#Header:21:button",
+                        "name": "<button>",
+                        "kind": "element",
+                        "path": "src/components/Header.tsx",
+                        "tag": "EL",
+                        "line": 21,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/Header.tsx#Header:12:header",
+                        "name": "<header>",
+                        "kind": "element",
+                        "path": "src/components/Header.tsx",
+                        "tag": "EL",
+                        "line": 12,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/Header.tsx#Header:14:nav",
+                        "name": "<nav>",
+                        "kind": "element",
+                        "path": "src/components/Header.tsx",
+                        "tag": "EL",
+                        "line": 14,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/Header.tsx#Header:13:strong",
+                        "name": "<strong>",
+                        "kind": "element",
+                        "path": "src/components/Header.tsx",
+                        "tag": "EL",
+                        "line": 13,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "sizeBytes": 950,
+                "imports": [
+                  "src/components/ChatWidget.tsx",
+                  "src/context/CartContext.tsx"
+                ]
+              },
+              {
+                "id": "demo-shop/src/components/HeroBanner.tsx",
+                "name": "HeroBanner.tsx",
+                "kind": "file",
+                "path": "src/components/HeroBanner.tsx",
+                "tag": "TSX",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/components/HeroBanner.tsx#HeroBanner",
+                    "name": "HeroBanner",
+                    "kind": "component",
+                    "path": "src/components/HeroBanner.tsx",
+                    "tag": "<>",
+                    "line": 1,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": [
+                      {
+                        "id": "demo-shop/src/components/HeroBanner.tsx#HeroBanner:6:div",
+                        "name": "<div>",
+                        "kind": "element",
+                        "path": "src/components/HeroBanner.tsx",
+                        "tag": "EL",
+                        "line": 6,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/HeroBanner.tsx#HeroBanner:7:h1",
+                        "name": "<h1>",
+                        "kind": "element",
+                        "path": "src/components/HeroBanner.tsx",
+                        "tag": "EL",
+                        "line": 7,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/HeroBanner.tsx#HeroBanner:5:img",
+                        "name": "<img>",
+                        "kind": "element",
+                        "path": "src/components/HeroBanner.tsx",
+                        "tag": "EL",
+                        "line": 5,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/HeroBanner.tsx#HeroBanner:8:p",
+                        "name": "<p>",
+                        "kind": "element",
+                        "path": "src/components/HeroBanner.tsx",
+                        "tag": "EL",
+                        "line": 8,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/HeroBanner.tsx#HeroBanner:3:section",
+                        "name": "<section>",
+                        "kind": "element",
+                        "path": "src/components/HeroBanner.tsx",
+                        "tag": "EL",
+                        "line": 3,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "sizeBytes": 433,
+                "imports": []
+              },
+              {
+                "id": "demo-shop/src/components/LiveStock.tsx",
+                "name": "LiveStock.tsx",
+                "kind": "file",
+                "path": "src/components/LiveStock.tsx",
+                "tag": "TSX",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/components/LiveStock.tsx#LiveStock",
+                    "name": "LiveStock",
+                    "kind": "component",
+                    "path": "src/components/LiveStock.tsx",
+                    "tag": "<>",
+                    "line": 3,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": [
+                      {
+                        "id": "demo-shop/src/components/LiveStock.tsx#LiveStock:16:p",
+                        "name": "<p>",
+                        "kind": "element",
+                        "path": "src/components/LiveStock.tsx",
+                        "tag": "EL",
+                        "line": 16,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "sizeBytes": 635,
+                "imports": []
+              },
+              {
+                "id": "demo-shop/src/components/ProductCard.tsx",
+                "name": "ProductCard.tsx",
+                "kind": "file",
+                "path": "src/components/ProductCard.tsx",
+                "tag": "TSX",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/components/ProductCard.tsx#ProductCard",
+                    "name": "ProductCard",
+                    "kind": "component",
+                    "path": "src/components/ProductCard.tsx",
+                    "tag": "<>",
+                    "line": 5,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": [
+                      {
+                        "id": "demo-shop/src/components/ProductCard.tsx#ProductCard:8:article",
+                        "name": "<article>",
+                        "kind": "element",
+                        "path": "src/components/ProductCard.tsx",
+                        "tag": "EL",
+                        "line": 8,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ProductCard.tsx#ProductCard:14:button",
+                        "name": "<button>",
+                        "kind": "element",
+                        "path": "src/components/ProductCard.tsx",
+                        "tag": "EL",
+                        "line": 14,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ProductCard.tsx#ProductCard:11:h3",
+                        "name": "<h3>",
+                        "kind": "element",
+                        "path": "src/components/ProductCard.tsx",
+                        "tag": "EL",
+                        "line": 11,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ProductCard.tsx#ProductCard:10:img",
+                        "name": "<img>",
+                        "kind": "element",
+                        "path": "src/components/ProductCard.tsx",
+                        "tag": "EL",
+                        "line": 10,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ProductCard.tsx#ProductCard:12:p",
+                        "name": "<p>",
+                        "kind": "element",
+                        "path": "src/components/ProductCard.tsx",
+                        "tag": "EL",
+                        "line": 12,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/components/ProductCard.tsx#ProductCard:13:small",
+                        "name": "<small>",
+                        "kind": "element",
+                        "path": "src/components/ProductCard.tsx",
+                        "tag": "EL",
+                        "line": 13,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "sizeBytes": 693,
+                "imports": [
+                  "src/context/CartContext.tsx",
+                  "src/lib/dates.ts",
+                  "src/lib/types.ts"
+                ]
+              },
+              {
+                "id": "demo-shop/src/components/ProductGrid.tsx",
+                "name": "ProductGrid.tsx",
+                "kind": "file",
+                "path": "src/components/ProductGrid.tsx",
+                "tag": "TSX",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/components/ProductGrid.tsx#ProductGrid",
+                    "name": "ProductGrid",
+                    "kind": "component",
+                    "path": "src/components/ProductGrid.tsx",
+                    "tag": "<>",
+                    "line": 4,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": [
+                      {
+                        "id": "demo-shop/src/components/ProductGrid.tsx#ProductGrid:6:section",
+                        "name": "<section>",
+                        "kind": "element",
+                        "path": "src/components/ProductGrid.tsx",
+                        "tag": "EL",
+                        "line": 6,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "sizeBytes": 325,
+                "imports": [
+                  "src/components/ProductCard.tsx",
+                  "src/lib/types.ts"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "demo-shop/src/context",
+            "name": "context",
+            "kind": "dir",
+            "path": "src/context",
+            "tag": "DIR",
+            "issueIds": [],
+            "counts": {
+              "critical": 0,
+              "warning": 0,
+              "info": 0
+            },
+            "children": [
+              {
+                "id": "demo-shop/src/context/CartContext.tsx",
+                "name": "CartContext.tsx",
+                "kind": "file",
+                "path": "src/context/CartContext.tsx",
+                "tag": "TSX",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/context/CartContext.tsx#CartProvider",
+                    "name": "CartProvider",
+                    "kind": "component",
+                    "path": "src/context/CartContext.tsx",
+                    "tag": "<>",
+                    "line": 14,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "demo-shop/src/context/CartContext.tsx#useCart",
+                    "name": "useCart()",
+                    "kind": "function",
+                    "path": "src/context/CartContext.tsx",
+                    "tag": "fn",
+                    "line": 36,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  }
+                ],
+                "sizeBytes": 1188,
+                "imports": [
+                  "src/lib/types.ts"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "demo-shop/src/lib",
+            "name": "lib",
+            "kind": "dir",
+            "path": "src/lib",
+            "tag": "DIR",
+            "issueIds": [],
+            "counts": {
+              "critical": 0,
+              "warning": 1,
+              "info": 0
+            },
+            "children": [
+              {
+                "id": "demo-shop/src/lib/dates.ts",
+                "name": "dates.ts",
+                "kind": "file",
+                "path": "src/lib/dates.ts",
+                "tag": "TS",
+                "issueIds": [
+                  "react/namespace-import@src/lib/dates.ts:2"
+                ],
+                "counts": {
+                  "critical": 0,
+                  "warning": 1,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/lib/dates.ts#formatAdded",
+                    "name": "formatAdded()",
+                    "kind": "function",
+                    "path": "src/lib/dates.ts",
+                    "tag": "fn",
+                    "line": 4,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "demo-shop/src/lib/dates.ts#formatPrice",
+                    "name": "formatPrice()",
+                    "kind": "function",
+                    "path": "src/lib/dates.ts",
+                    "tag": "fn",
+                    "line": 8,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  }
+                ],
+                "sizeBytes": 399,
+                "imports": []
+              },
+              {
+                "id": "demo-shop/src/lib/emoji-data.ts",
+                "name": "emoji-data.ts",
+                "kind": "file",
+                "path": "src/lib/emoji-data.ts",
+                "tag": "TS",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [],
+                "sizeBytes": 20485,
+                "imports": []
+              },
+              {
+                "id": "demo-shop/src/lib/socket.ts",
+                "name": "socket.ts",
+                "kind": "file",
+                "path": "src/lib/socket.ts",
+                "tag": "TS",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/lib/socket.ts#connect",
+                    "name": "connect()",
+                    "kind": "function",
+                    "path": "src/lib/socket.ts",
+                    "tag": "fn",
+                    "line": 3,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "demo-shop/src/lib/socket.ts#send",
+                    "name": "send()",
+                    "kind": "function",
+                    "path": "src/lib/socket.ts",
+                    "tag": "fn",
+                    "line": 16,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  }
+                ],
+                "sizeBytes": 576,
+                "imports": []
+              },
+              {
+                "id": "demo-shop/src/lib/types.ts",
+                "name": "types.ts",
+                "kind": "file",
+                "path": "src/lib/types.ts",
+                "tag": "TS",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [],
+                "sizeBytes": 181,
+                "imports": []
+              }
+            ]
+          },
+          {
+            "id": "demo-shop/src/server",
+            "name": "server",
+            "kind": "dir",
+            "path": "src/server",
+            "tag": "DIR",
+            "issueIds": [],
+            "counts": {
+              "critical": 0,
+              "warning": 0,
+              "info": 0
+            },
+            "children": [
+              {
+                "id": "demo-shop/src/server/api",
+                "name": "api",
+                "kind": "dir",
+                "path": "src/server/api",
+                "tag": "DIR",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/server/api/products.ts",
+                    "name": "products.ts",
+                    "kind": "file",
+                    "path": "src/server/api/products.ts",
+                    "tag": "TS",
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": [
+                      {
+                        "id": "demo-shop/src/server/api/products.ts#json",
+                        "name": "json()",
+                        "kind": "function",
+                        "path": "src/server/api/products.ts",
+                        "tag": "fn",
+                        "line": 20,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "demo-shop/src/server/api/products.ts#productsHandler",
+                        "name": "productsHandler()",
+                        "kind": "function",
+                        "path": "src/server/api/products.ts",
+                        "tag": "fn",
+                        "line": 11,
+                        "issueIds": [],
+                        "counts": {
+                          "critical": 0,
+                          "warning": 0,
+                          "info": 0
+                        },
+                        "children": []
+                      }
+                    ],
+                    "sizeBytes": 897,
+                    "imports": []
+                  }
+                ]
+              },
+              {
+                "id": "demo-shop/src/server/product-guide.ts",
+                "name": "product-guide.ts",
+                "kind": "file",
+                "path": "src/server/product-guide.ts",
+                "tag": "TS",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [],
+                "sizeBytes": 476,
+                "imports": []
+              },
+              {
+                "id": "demo-shop/src/server/rag.ts",
+                "name": "rag.ts",
+                "kind": "file",
+                "path": "src/server/rag.ts",
+                "tag": "TS",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/server/rag.ts#answerSupportQuestion",
+                    "name": "answerSupportQuestion()",
+                    "kind": "function",
+                    "path": "src/server/rag.ts",
+                    "tag": "fn",
+                    "line": 26,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "demo-shop/src/server/rag.ts#embed",
+                    "name": "embed()",
+                    "kind": "function",
+                    "path": "src/server/rag.ts",
+                    "tag": "fn",
+                    "line": 7,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "demo-shop/src/server/rag.ts#lookupOrder",
+                    "name": "lookupOrder()",
+                    "kind": "function",
+                    "path": "src/server/rag.ts",
+                    "tag": "fn",
+                    "line": 21,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "demo-shop/src/server/rag.ts#searchChunks",
+                    "name": "searchChunks()",
+                    "kind": "function",
+                    "path": "src/server/rag.ts",
+                    "tag": "fn",
+                    "line": 16,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  }
+                ],
+                "sizeBytes": 1572,
+                "imports": [
+                  "src/server/product-guide.ts"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "demo-shop/src/styles",
+            "name": "styles",
+            "kind": "dir",
+            "path": "src/styles",
+            "tag": "DIR",
+            "issueIds": [],
+            "counts": {
+              "critical": 0,
+              "warning": 2,
+              "info": 0
+            },
+            "children": [
+              {
+                "id": "demo-shop/src/styles/fonts.css",
+                "name": "fonts.css",
+                "kind": "file",
+                "path": "src/styles/fonts.css",
+                "tag": "CSS",
+                "issueIds": [
+                  "general/font-display-missing@src/styles/fonts.css:2"
+                ],
+                "counts": {
+                  "critical": 0,
+                  "warning": 1,
+                  "info": 0
+                },
+                "children": [],
+                "sizeBytes": 275
+              },
+              {
+                "id": "demo-shop/src/styles/global.css",
+                "name": "global.css",
+                "kind": "file",
+                "path": "src/styles/global.css",
+                "tag": "CSS",
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [],
+                "sizeBytes": 1376
+              },
+              {
+                "id": "demo-shop/src/styles/legacy.css",
+                "name": "legacy.css",
+                "kind": "file",
+                "path": "src/styles/legacy.css",
+                "tag": "CSS",
+                "issueIds": [
+                  "general/unused-css@src/styles/legacy.css:1"
+                ],
+                "counts": {
+                  "critical": 0,
+                  "warning": 1,
+                  "info": 0
+                },
+                "children": [],
+                "sizeBytes": 240104
+              }
+            ]
+          },
+          {
+            "id": "demo-shop/src/App.tsx",
+            "name": "App.tsx",
+            "kind": "file",
+            "path": "src/App.tsx",
+            "tag": "TSX",
+            "issueIds": [
+              "react/eager-conditional-import@src/App.tsx:3",
+              "react/eager-conditional-import@src/App.tsx:7"
+            ],
+            "counts": {
+              "critical": 0,
+              "warning": 2,
+              "info": 0
+            },
+            "children": [
+              {
+                "id": "demo-shop/src/App.tsx#App",
+                "name": "App",
+                "kind": "component",
+                "path": "src/App.tsx",
+                "tag": "<>",
+                "line": 12,
+                "issueIds": [],
+                "counts": {
+                  "critical": 0,
+                  "warning": 0,
+                  "info": 0
+                },
+                "children": [
+                  {
+                    "id": "demo-shop/src/App.tsx#App:33:h1",
+                    "name": "<h1>",
+                    "kind": "element",
+                    "path": "src/App.tsx",
+                    "tag": "EL",
+                    "line": 33,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "demo-shop/src/App.tsx#App:32:main",
+                    "name": "<main>",
+                    "kind": "element",
+                    "path": "src/App.tsx",
+                    "tag": "EL",
+                    "line": 32,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "demo-shop/src/App.tsx#App:37:main",
+                    "name": "<main>",
+                    "kind": "element",
+                    "path": "src/App.tsx",
+                    "tag": "EL",
+                    "line": 37,
+                    "issueIds": [],
+                    "counts": {
+                      "critical": 0,
+                      "warning": 0,
+                      "info": 0
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "sizeBytes": 1226,
+            "imports": [
+              "src/components/CartSummary.tsx",
+              "src/components/Header.tsx",
+              "src/components/HeroBanner.tsx",
+              "src/components/LiveStock.tsx",
+              "src/components/ProductGrid.tsx",
+              "src/context/CartContext.tsx",
+              "src/lib/socket.ts",
+              "src/lib/types.ts"
+            ]
+          },
+          {
+            "id": "demo-shop/src/main.tsx",
+            "name": "main.tsx",
+            "kind": "file",
+            "path": "src/main.tsx",
+            "tag": "TSX",
+            "issueIds": [],
+            "counts": {
+              "critical": 0,
+              "warning": 0,
+              "info": 0
+            },
+            "children": [],
+            "sizeBytes": 268,
+            "imports": [
+              "src/App.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "demo-shop/index.html",
+        "name": "index.html",
+        "kind": "file",
+        "path": "index.html",
+        "tag": "HTML",
+        "issueIds": [
+          "general/[redacted email]:8"
+        ],
+        "counts": {
+          "critical": 1,
+          "warning": 0,
+          "info": 0
+        },
+        "children": [],
+        "sizeBytes": 511
+      },
+      {
+        "id": "demo-shop/vite.config.ts",
+        "name": "vite.config.ts",
+        "kind": "file",
+        "path": "vite.config.ts",
+        "tag": "TS",
+        "issueIds": [],
+        "counts": {
+          "critical": 0,
+          "warning": 0,
+          "info": 0
+        },
+        "children": [],
+        "sizeBytes": 634,
+        "imports": [
+          "src/server/api/products.ts"
+        ]
+      }
+    ]
+  },
+  "ai": {
+    "calls": [],
+    "callSites": [
+      {
+        "file": "src/server/rag.ts",
+        "line": 28,
+        "symbol": "answerSupportQuestion"
+      }
+    ],
+    "models": []
+  },
+  "readiness": {
+    "score": 85,
+    "missingLabels": 0,
+    "interactiveWithoutName": 0,
+    "hasLlmsTxt": true,
+    "hasStructuredData": false,
+    "pageTokens": 343,
+    "notes": [
+      "No structured data (JSON-LD)"
+    ]
+  }
+}

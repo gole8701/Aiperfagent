@@ -1,0 +1,10 @@
+/* Problem 8: no font-display, so text is invisible and then jumps when the font arrives. */
+@font-face {
+  font-family: 'Shop Sans';
+  src: url('/fonts/shop-sans.woff2') format('woff2');
+  font-weight: 400 700;
+}
+
+body {
+  font-family: 'Shop Sans', system-ui, sans-serif;
+}

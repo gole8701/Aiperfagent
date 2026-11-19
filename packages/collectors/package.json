@@ -1,0 +1,20 @@
+{
+  "name": "@perfagent/collectors",
+  "version": "0.1.0",
+  "description": "Measures pages with a real browser (Playwright + Chrome DevTools Protocol): Web Vitals, requests, long tasks, layout shifts, filmstrip, coverage, WebSocket frames, memory, agent readiness and live mode.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "dependencies": {
+    "@perfagent/core": "workspace:*",
+    "@perfagent/security": "workspace:*",
+    "playwright-core": "1.57.0"
+  },
+  "optionalDependencies": {
+    "playwright": "1.57.0"
+  }
+}

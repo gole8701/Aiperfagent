@@ -1,0 +1,18 @@
+{
+  "name": "@perfagent/fixer",
+  "version": "0.1.0",
+  "description": "AI fix loop for local mode: gathers context, asks the user's AI for patches, applies them on a new git branch after review, runs the project's checks, re-tests and can undo everything. Never pushes or merges.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "dependencies": {
+    "@perfagent/config": "workspace:*",
+    "@perfagent/core": "workspace:*",
+    "@perfagent/engine": "workspace:*",
+    "@perfagent/security": "workspace:*"
+  }
+}

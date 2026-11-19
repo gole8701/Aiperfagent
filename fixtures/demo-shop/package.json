@@ -1,0 +1,26 @@
+{
+  "name": "demo-shop",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Sample shop with 12 deliberate performance problems. PerfAgent's test project; never fix the problems on main.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3000 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --port 3000 --strictPort",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.71.0",
+    "date-fns": "4.1.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.6",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.1",
+    "typescript": "5.9.3",
+    "vite": "7.2.4"
+  }
+}

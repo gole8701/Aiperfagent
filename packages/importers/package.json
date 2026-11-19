@@ -1,0 +1,17 @@
+{
+  "name": "@perfagent/importers",
+  "version": "0.1.0",
+  "description": "Turns any performance report into a PerfAgent report: PerfAgent JSON, Lighthouse, HAR, Chrome trace, bundle stats, OpenTelemetry, PageSpeed/CrUX, CSV, PDF, Excel, Word and pasted text. Every input is untrusted.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "dependencies": {
+    "@perfagent/core": "workspace:*",
+    "@perfagent/report-schema": "workspace:*",
+    "@perfagent/security": "workspace:*"
+  }
+}

@@ -1,0 +1,1 @@
+{ "name": "perfagent-scripts", "private": true, "type": "module", "dependencies": { "@perfagent/collectors": "workspace:*" } }

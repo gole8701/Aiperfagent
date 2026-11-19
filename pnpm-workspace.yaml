@@ -1,0 +1,9 @@
+packages:
+  - 'packages/*'
+  - 'apps/*'
+  - 'fixtures/demo-shop'
+  - 'scripts'
+
+onlyBuiltDependencies:
+  - esbuild
+  - playwright

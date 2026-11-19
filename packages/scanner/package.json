@@ -1,0 +1,18 @@
+{
+  "name": "@perfagent/scanner",
+  "version": "0.1.0",
+  "description": "Project scanner: folders → files → imports → components → functions → JSX elements, with framework detection.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "dependencies": {
+    "@perfagent/config": "workspace:*",
+    "@perfagent/core": "workspace:*",
+    "@perfagent/security": "workspace:*",
+    "typescript": "5.9.3"
+  }
+}

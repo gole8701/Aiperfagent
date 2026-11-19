@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+*.tsbuildinfo
+packages/web/dist-static/
+apps/site/dist/
+
+# local data: scans, settings, keys never leave the machine
+.perfagent/
+*.local.json
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# test + tooling output
+coverage/
+playwright-report/
+test-results/
+.vitest/
+
+# editors + OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log

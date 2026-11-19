@@ -1,0 +1,16 @@
+{
+  "name": "@perfagent/rules",
+  "version": "0.1.0",
+  "description": "Rule engine and rule packs (general web, React, Next.js, realtime, AI). Every rule gives file:line, root-cause chain, fix and estimated gain without any AI.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "dependencies": {
+    "@perfagent/core": "workspace:*",
+    "@perfagent/scanner": "workspace:*"
+  }
+}

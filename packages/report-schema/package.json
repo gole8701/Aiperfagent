@@ -1,0 +1,16 @@
+{
+  "name": "@perfagent/report-schema",
+  "version": "0.1.0",
+  "description": "Versioned zod schema for perfagent-report.json. Every imported report is validated here before anything reads it.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "dependencies": {
+    "@perfagent/core": "workspace:*",
+    "zod": "3.25.76"
+  }
+}

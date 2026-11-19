@@ -1,0 +1,40 @@
+{
+  "name": "perfagent",
+  "version": "0.1.0",
+  "description": "PerfAgent finds, explains and fixes web and AI performance problems down to the exact file and line. Run `npx perfagent` in your project.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "perfagent": "./dist/bin.js" },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./ai": { "types": "./dist/ai.d.ts", "import": "./dist/ai.js" }
+  },
+  "files": ["dist", "dashboard", "guides", "README.md"],
+  "keywords": ["performance", "web-vitals", "lighthouse", "lcp", "inp", "cls", "ai", "mcp", "dashboard", "fix"],
+  "repository": { "type": "git", "url": "https://github.com/gole8701/perfagent" },
+  "homepage": "https://github.com/gole8701/perfagent#readme",
+  "bugs": "https://github.com/gole8701/perfagent/issues",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepack": "node scripts/prepack.mjs"
+  },
+  "dependencies": {
+    "@perfagent/ai": "workspace:*",
+    "@perfagent/collectors": "workspace:*",
+    "@perfagent/config": "workspace:*",
+    "@perfagent/core": "workspace:*",
+    "@perfagent/engine": "workspace:*",
+    "@perfagent/fixer": "workspace:*",
+    "@perfagent/importers": "workspace:*",
+    "@perfagent/mcp": "workspace:*",
+    "@perfagent/report-schema": "workspace:*",
+    "@perfagent/rules": "workspace:*",
+    "@perfagent/scanner": "workspace:*",
+    "@perfagent/security": "workspace:*",
+    "@perfagent/server": "workspace:*"
+  }
+}

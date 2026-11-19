@@ -1,0 +1,26 @@
+{
+  "name": "@perfagent/server",
+  "version": "0.1.0",
+  "description": "Local dashboard server: 127.0.0.1 only, token + origin checks, REST + WebSocket, scan jobs, editor launch. Write routes exist only in local mode.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "dependencies": {
+    "@perfagent/collectors": "workspace:*",
+    "@perfagent/config": "workspace:*",
+    "@perfagent/core": "workspace:*",
+    "@perfagent/engine": "workspace:*",
+    "@perfagent/importers": "workspace:*",
+    "@perfagent/report-schema": "workspace:*",
+    "@perfagent/security": "workspace:*",
+    "launch-editor": "2.11.1",
+    "ws": "8.18.3"
+  },
+  "devDependencies": {
+    "@types/ws": "8.18.1"
+  }
+}

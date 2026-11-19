@@ -1,0 +1,21 @@
+{
+  "name": "@perfagent/engine",
+  "version": "0.1.0",
+  "description": "Scan pipeline (project scan + browser measurement + rules → report), local report store, budgets and the service interfaces the server, MCP and fixer share.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "dependencies": {
+    "@perfagent/collectors": "workspace:*",
+    "@perfagent/config": "workspace:*",
+    "@perfagent/core": "workspace:*",
+    "@perfagent/report-schema": "workspace:*",
+    "@perfagent/rules": "workspace:*",
+    "@perfagent/scanner": "workspace:*",
+    "@perfagent/security": "workspace:*"
+  }
+}

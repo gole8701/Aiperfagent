@@ -1,0 +1,21 @@
+{
+  "name": "@perfagent/ai",
+  "version": "0.1.0",
+  "description": "Bring-your-own AI: providers (Anthropic, OpenAI-compatible, Gemini, Ollama, in-browser), OS keychain key storage, the watchAI() wrapper that measures AI calls in the user's app, OpenTelemetry GenAI import and the local measuring proxy.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./watch": { "types": "./dist/watch/index.d.ts", "import": "./dist/watch/index.js" }
+  },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "dependencies": {
+    "@perfagent/config": "workspace:*",
+    "@perfagent/core": "workspace:*",
+    "@perfagent/engine": "workspace:*",
+    "@perfagent/security": "workspace:*"
+  }
+}

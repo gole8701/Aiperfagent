@@ -1,0 +1,36 @@
+{
+  "name": "perfagent-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "PerfAgent: finds, explains and fixes web and AI performance problems down to the exact file and line.",
+  "license": "MIT",
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r --filter './packages/**' run build",
+    "dev": "pnpm --filter @perfagent/web dev",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r --filter './packages/**' run typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "pnpm --filter @perfagent/web e2e",
+    "perf-budget": "node scripts/perf-budget.mjs",
+    "demo": "pnpm --filter demo-shop dev",
+    "perfagent": "node packages/cli/dist/bin.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.1",
+    "@types/node": "24.10.1",
+    "eslint": "9.39.1",
+    "eslint-plugin-import-x": "4.16.1",
+    "globals": "16.5.0",
+    "prettier": "3.6.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.48.0",
+    "vitest": "3.2.4"
+  }
+}
