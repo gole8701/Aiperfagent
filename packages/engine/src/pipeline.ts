@@ -63,6 +63,7 @@ export async function runScan(request: ScanRequest, ctx: ScanContext): Promise<R
             device: request.device ?? config.device,
             runs,
             coverage: request.coverage ?? true,
+            projectFiles: scan ? new Set(scan.files.map((f) => f.path)) : undefined,
             onProgress: (run, total) => progress({ phase: 'browser', message: `Measuring ${url} (run ${run} of ${total})`, fraction: 0.22 + 0.6 * ((i + run / total) / urls.length) }),
           }),
         )

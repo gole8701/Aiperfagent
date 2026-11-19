@@ -7,9 +7,7 @@ import { SourceMapConsumer, type RawSourceMap } from 'source-map-js'
  * alone is enough; production bundles need the `.map` file referenced by
  * `//# sourceMappingURL=`.
  */
-export interface Fetcher {
-  (url: string): Promise<string | undefined>
-}
+export type Fetcher = (url: string) => Promise<string | undefined>
 
 export interface BundledPosition {
   url: string
@@ -39,10 +37,10 @@ export class SourceMapper {
     const consumer = await this.consumerFor(position.url)
     if (!consumer) return undefined
     const original = consumer.originalPositionFor({ line, column: Math.max(0, column - 1) })
-    if (!original.source || original.line === null) return undefined
+    if (!original.source) return undefined
     const file = this.projectPath(original.source)
     if (!file) return undefined
-    return { file, line: original.line, column: (original.column ?? 0) + 1, symbol: original.name ?? undefined, bundled: { file: position.url, line, column } }
+    return { file, line: original.line, column: original.column + 1, symbol: original.name === '' ? undefined : original.name, bundled: { file: position.url, line, column } }
   }
 
   /** `http://localhost:3000/src/components/LiveStock.tsx?t=123` → `src/components/LiveStock.tsx`. */

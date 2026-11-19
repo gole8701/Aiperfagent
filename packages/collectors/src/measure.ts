@@ -5,6 +5,7 @@ import type { Browser, CDPSession, Page } from 'playwright-core'
 import { INJECTED_SCRIPT, type InjectedState } from './inject.js'
 import { PROFILES, type DeviceProfile } from './profiles.js'
 import { collectReadiness } from './readiness.js'
+import { SourceMapper } from './sourcemap.js'
 
 export interface MeasureOptions {
   url: string
@@ -17,6 +18,8 @@ export interface MeasureOptions {
   coverage?: boolean
   /** Run the agent-readiness checks on the first run. */
   readiness?: boolean
+  /** Relative project file paths; lets long tasks map back to source file:line. */
+  projectFiles?: Set<string>
   timeoutMs?: number
   onProgress?: (run: number, total: number) => void
 }
@@ -112,6 +115,7 @@ async function measureOnce(browser: Browser, options: MeasureOptions, profile: D
   await page.waitForTimeout(800)
 
   const state = await page.evaluate(() => (window as unknown as { __perfagent: InjectedState }).__perfagent).catch(() => undefined)
+  const mapper = options.projectFiles ? new SourceMapper({ projectFiles: options.projectFiles, fetch: (u) => page.request.get(u, { timeout: 5000 }).then((r) => (r.ok() ? r.text() : undefined)) }) : undefined
   const timing = await page.evaluate(() => {
     const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
     const mem = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory
@@ -130,11 +134,12 @@ async function measureOnce(browser: Browser, options: MeasureOptions, profile: D
 
   const features: Record<string, boolean | number | string> = { ...(state?.features ?? {}), softNavigations: state?.softNav ?? 0 }
   if (firstRun && options.readiness !== false) Object.assign(features, await collectReadiness(page, options.url))
+  // Source maps are fetched through the page's own session, so this runs before the context closes.
+  const longTasks: LongTask[] = (state?.longTasks ?? []).map((t) => ({ startMs: t.startMs, durationMs: t.durationMs, script: t.script }))
+  for (const f of state?.loaf ?? []) if (f.script) longTasks.push({ startMs: f.startMs, durationMs: f.durationMs, script: `${f.script}${f.fn ? ` ${f.fn}()` : ''}`, location: await mapScript(mapper, f.script, f.line) })
   await context.close()
 
   const requestList = [...requests.values()].map(({ requestId: _id, ...r }) => r)
-  const longTasks: LongTask[] = (state?.longTasks ?? []).map((t) => ({ startMs: t.startMs, durationMs: t.durationMs, script: t.script }))
-  for (const f of state?.loaf ?? []) if (f.script) longTasks.push({ startMs: f.startMs, durationMs: f.durationMs, script: `${f.script}${f.fn ? ` ${f.fn}()` : ''}` })
   const fcp = state?.fcp ?? 0
   const tbt = (state?.longTasks ?? []).filter((t) => t.startMs >= fcp).reduce((sum, t) => sum + Math.max(0, t.durationMs - 50), 0)
   const inp = worstInteraction(state?.interactions ?? [])
@@ -190,6 +195,11 @@ function wireNetwork(cdp: CDPSession, requests: Map<string, RequestInfo & { requ
     const r = requests.get(e.requestId)
     if (r) r.transferBytes += e.response.payloadData.length
   })
+}
+
+async function mapScript(mapper: SourceMapper | undefined, url: string, charOffset: number | undefined): Promise<LongTask['location']> {
+  if (!mapper || !/^https?:/.test(url)) return undefined
+  return mapper.toSource(charOffset === undefined ? { url, line: 1, column: 1 } : { url, charOffset })
 }
 
 function performanceOrigin(): number {
