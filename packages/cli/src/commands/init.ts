@@ -13,7 +13,9 @@ export async function init(args: ParsedArgs): Promise<void> {
   if (existing && args.flags.force !== true) {
     print(`  ${color.yellow('Config already exists:')} ${existing}  ${color.dim('(use --force to overwrite)')}`)
   } else {
-    const file = path.join(cwd, 'perfagent.config.ts')
+    // Node 23+ loads .ts config natively; older versions get the same file as ESM JavaScript.
+    const nativeTs = Number(process.versions.node.split('.')[0]) >= 23
+    const file = path.join(cwd, nativeTs ? 'perfagent.config.ts' : 'perfagent.config.mjs')
     await writeFile(file, CONFIG_TEMPLATE, 'utf8')
     print(`  ${color.green('✔')} Created ${file}`)
   }
