@@ -1,0 +1,58 @@
+name: Website
+
+# Builds apps/site (landing page, docs, PageSpeed quick test, static demo dashboard when
+# packages/web is built) and deploys it to GitHub Pages on every push to main.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/site/**'
+      - 'docs/**'
+      - 'packages/web/**'
+      - '.github/workflows/site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build packages and the static dashboard
+        run: |
+          pnpm build
+          pnpm --filter @perfagent/web build:static || echo "No static dashboard build yet; the site links to /app/ once it exists"
+      - name: Build the site
+        run: pnpm --filter perfagent-site build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

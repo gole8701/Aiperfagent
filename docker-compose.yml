@@ -1,0 +1,29 @@
+# Self-hosted PerfAgent for one project.
+#
+#   docker compose up --build
+#   → read the dashboard URL with its token from the logs: docker compose logs perfagent
+#
+# The server binds to 127.0.0.1 inside the container, so this file uses network_mode: host: the
+# dashboard is reachable at http://127.0.0.1:4545/?token=… on the Docker host only. For a shared
+# team instance put a reverse proxy with authentication in front instead of opening the port.
+
+services:
+  perfagent:
+    build: .
+    image: ghcr.io/gole8701/perfagent:latest
+    network_mode: host
+    environment:
+      PERFAGENT_SERVER_PORT: '4545'
+      # Uncomment to allow file access and fixes on a new branch (the project must be a git repo).
+      # PERFAGENT_FORCE_LOCAL: 'true'
+      # Pages to measure; the app under test must be reachable from the container (host network).
+      PERFAGENT_URLS: 'http://localhost:3000'
+    volumes:
+      - ./:/project
+      # Reports, settings and the audit log persist here (git-ignored).
+      - perfagent-data:/project/.perfagent
+    init: true
+    restart: unless-stopped
+
+volumes:
+  perfagent-data:

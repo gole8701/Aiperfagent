@@ -36,6 +36,12 @@ importers:
         specifier: 3.2.4
         version: 3.2.4(@types/node@24.10.1)(jsdom@26.1.0)
 
+  apps/site:
+    devDependencies:
+      marked:
+        specifier: 15.0.12
+        version: 15.0.12
+
   fixtures/demo-shop:
     dependencies:
       '@anthropic-ai/sdk':
@@ -2519,6 +2525,11 @@ packages:
   mammoth@1.13.0:
     resolution: {integrity: sha512-2cawcYFcP7ISfXbBcL9lmVgTNWo88v/52ND1gnywHtVT/pX0//puPnf0iMPV9ZgmuvNOE+zkIhDgZ9M2c2dDDg==}
     engines: {node: '>=12.0.0'}
+    hasBin: true
+
+  marked@15.0.12:
+    resolution: {integrity: sha512-8dD6FusOQSrpv9Z1rdNMdlSgQOIP880DHqnohobOmYLElGEqAL/JvxvuxZO16r4HtjTlfPRDC1hbvxC9dPN2nA==}
+    engines: {node: '>= 18'}
     hasBin: true
 
   marked@16.4.2:
@@ -5488,6 +5499,8 @@ snapshots:
       lop: 0.4.2
       underscore: 1.13.8
       xmlbuilder: 10.1.1
+
+  marked@15.0.12: {}
 
   marked@16.4.2: {}
 

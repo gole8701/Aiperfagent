@@ -19,6 +19,7 @@
     "test:watch": "vitest",
     "e2e": "pnpm --filter @perfagent/web e2e",
     "perf-budget": "node scripts/perf-budget.mjs",
+    "docs:check": "node docs/guides/check.mjs",
     "demo": "pnpm --filter demo-shop dev",
     "perfagent": "node packages/cli/dist/bin.js"
   },

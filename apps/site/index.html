@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PerfAgent · find, explain and fix web and AI performance problems</title>
+    <meta
+      name="description"
+      content="PerfAgent finds, explains and fixes web and AI performance problems down to the exact file and line. Local only, read-only by default, your own AI, MIT."
+    />
+    <link rel="stylesheet" href="site.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./">PerfAgent</a>
+      <nav>
+        <a href="docs/">Docs</a><a href="app/">Demo</a
+        ><a href="https://github.com/gole8701/perfagent">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>
+          PerfAgent finds, explains and fixes web and AI performance problems — down to the exact
+          file and line.
+        </h1>
+        <p>
+          A local dashboard for your project: a globe of your code with glowing problems, a deep
+          dive with the root cause chain and the fix, plain-language charts, and your own AI to fix
+          it on a branch you review.
+        </p>
+        <div class="install">
+          <pre
+            id="install"
+          ><code>npm i -D perfagent &amp;&amp; npx perfagent init &amp;&amp; npx perfagent</code></pre>
+          <button type="button" id="copy" aria-label="Copy install command">Copy</button>
+        </div>
+        <div class="cta">
+          <a href="app/"><button type="button">Try the demo dashboard</button></a
+          ><a href="docs/guide-install.html"
+            ><button type="button" class="secondary">Read the install guide</button></a
+          >
+        </div>
+      </section>
+
+      <section class="promises" aria-label="Promises">
+        <div class="card">
+          <h3>Local only</h3>
+          <p>Runs on 127.0.0.1 with a secret token. Nothing is uploaded. No telemetry.</p>
+        </div>
+        <div class="card">
+          <h3>Read-only by default</h3>
+          <p>
+            Code changes only in local mode, on a new branch, after your review. It never pushes or
+            deploys.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Your AI, your tokens</h3>
+          <p>
+            Anthropic, OpenAI, Gemini or a company endpoint with your key in your keychain, or free
+            local Ollama. No keys of ours.
+          </p>
+        </div>
+      </section>
+
+      <section class="quick" aria-labelledby="quick-h">
+        <h2 id="quick-h">Quick test any URL</h2>
+        <p class="muted">
+          Runs Google PageSpeed Insights from your browser (mobile). No key, nothing stored. For
+          file-and-line causes, run <code>npx perfagent</code> in your project.
+        </p>
+        <form id="quick-form">
+          <label for="url" class="muted" style="width: 100%">Page address</label>
+          <input id="url" name="url" type="url" placeholder="https://example.com" required />
+          <button type="submit">Test</button>
+        </form>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+        <div class="tiles" id="tiles" hidden></div>
+        <p class="sentences" id="sentences"></p>
+      </section>
+
+      <section class="grid" aria-label="Features">
+        <div class="card">
+          <h3>3D globe</h3>
+          <p>
+            Folders as rings, files as points, problems glowing by severity and gain. Click to fly
+            to the cause.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Chips</h3>
+          <p>
+            Filter by metric (LCP, INP, CLS, TTFB, TBT, AI first token, AI cost) or by area,
+            consistently across every screen.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Deep dive</h3>
+          <p>
+            file:line, root cause chain, why, before/after fix, estimated gain, re-test, open in
+            your editor.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Flow diagram</h3>
+          <p>Root to any depth, left to right, problem counts on every branch.</p>
+        </div>
+        <div class="card">
+          <h3>Charts in plain language</h3>
+          <p>
+            Eight tabs; every chart is a question with a one-sentence answer. "In simple words"
+            needs no AI.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Compare anything</h3>
+          <p>
+            Before/after, page vs page, release vs release; scans, URLs, Lighthouse or PageSpeed
+            JSON, and (planned) PDF, Excel, Word.
+          </p>
+        </div>
+        <div class="card">
+          <h3>A guide for every feature</h3>
+          <p>31 guides with written steps and animated walkthroughs; English, Hindi, Marathi.</p>
+        </div>
+        <div class="card">
+          <h3>Live mode</h3>
+          <p>Requests, latency, WebSocket reconnects and memory every second.</p>
+        </div>
+        <div class="card">
+          <h3>AI performance</h3>
+          <p>
+            watchAI() records first token, tokens, cost, cache hits and errors; 15 static AI rules
+            find problems in code.
+          </p>
+        </div>
+        <div class="card">
+          <h3>MCP</h3>
+          <p>Claude Code, Cursor, Windsurf, Copilot, Cline, Zed: <code>npx perfagent mcp</code>.</p>
+        </div>
+        <div class="card">
+          <h3>Fix loop</h3>
+          <p>
+            Planned for the first release: propose, review, apply on a branch, test, re-test, undo.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Budgets in CI</h3>
+          <p><code>npx perfagent ci</code> fails the build and writes a pull-request comment.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      MIT licence · <a href="https://github.com/gole8701/perfagent">Source</a> ·
+      <a href="https://github.com/gole8701/perfagent/blob/main/SECURITY.md">Security</a> · Local
+      only, no telemetry, your own AI.
+    </footer>
+
+    <script>
+      // Copy the install command.
+      document.getElementById('copy').addEventListener('click', async () => {
+        const text = document.getElementById('install').textContent
+        try {
+          await navigator.clipboard.writeText(text)
+          document.getElementById('copy').textContent = 'Copied'
+        } catch {
+          document.getElementById('copy').textContent = 'Select and copy'
+        }
+        setTimeout(() => {
+          document.getElementById('copy').textContent = 'Copy'
+        }, 1500)
+      })
+
+      // Quick test: PageSpeed Insights API from the browser. Same thresholds as packages/core/src/metrics.ts.
+      const METRICS = {
+        score: {
+          label: 'Performance score',
+          plain: 'One 0–100 summary of how fast the page is',
+          good: 90,
+          poor: 50,
+          lowerIsBetter: false,
+          fmt: (v) => String(Math.round(v)),
+        },
+        lcp: {
+          label: 'LCP',
+          plain: 'Time until the main content is visible',
+          good: 2500,
+          poor: 4000,
+          lowerIsBetter: true,
+          fmt: ms,
+        },
+        inp: {
+          label: 'INP',
+          plain: 'Delay after a tap or click before the screen reacts',
+          good: 200,
+          poor: 500,
+          lowerIsBetter: true,
+          fmt: ms,
+        },
+        cls: {
+          label: 'CLS',
+          plain: 'How much the page jumps around while loading',
+          good: 0.1,
+          poor: 0.25,
+          lowerIsBetter: true,
+          fmt: (v) => v.toFixed(2),
+        },
+      }
+      function ms(v) {
+        return v >= 1000 ? `${(v / 1000).toFixed(1)} s` : `${Math.round(v)} ms`
+      }
+      function rate(m, v) {
+        const d = METRICS[m]
+        if (d.lowerIsBetter) return v <= d.good ? 'good' : v <= d.poor ? 'needs-work' : 'poor'
+        return v >= d.good ? 'good' : v >= d.poor ? 'needs-work' : 'poor'
+      }
+      const words = { good: 'good', 'needs-work': 'needs work', poor: 'poor' }
+
+      document.getElementById('quick-form').addEventListener('submit', async (e) => {
+        e.preventDefault()
+        const url = document.getElementById('url').value.trim()
+        const status = document.getElementById('status'),
+          tiles = document.getElementById('tiles'),
+          sentences = document.getElementById('sentences')
+        tiles.hidden = true
+        tiles.innerHTML = ''
+        sentences.textContent = ''
+        status.textContent = 'Testing with PageSpeed Insights (20–40 s)…'
+        try {
+          const api = new URL('https://www.googleapis.com/pagespeedonline/v5/runPagespeed')
+          api.searchParams.set('url', url)
+          api.searchParams.set('strategy', 'mobile')
+          api.searchParams.set('category', 'performance')
+          const res = await fetch(api, { signal: AbortSignal.timeout(90_000) })
+          if (!res.ok) throw new Error(`PageSpeed answered ${res.status}`)
+          const data = await res.json()
+          const a = data.lighthouseResult?.audits ?? {}
+          const field = data.loadingExperience?.metrics ?? {}
+          const values = {
+            score: (data.lighthouseResult?.categories?.performance?.score ?? 0) * 100,
+            lcp: a['largest-contentful-paint']?.numericValue,
+            inp: field.INTERACTION_TO_NEXT_PAINT?.percentile,
+            cls: a['cumulative-layout-shift']?.numericValue,
+          }
+          const notGreen = []
+          for (const [id, v] of Object.entries(values)) {
+            if (v === undefined || v === null) continue
+            const r = rate(id, v)
+            const d = METRICS[id]
+            const el = document.createElement('div')
+            el.className = 'tile'
+            el.innerHTML = `<div class="k">${d.label}</div><div class="v">${d.fmt(v)}</div><div class="r rating-${r}">${words[r]}${id === 'inp' ? ' (real users, p75)' : ''}</div>`
+            tiles.appendChild(el)
+            if (id !== 'score' && r !== 'good')
+              notGreen.push(
+                `${d.plain.charAt(0).toLowerCase()}${d.plain.slice(1)} is ${d.fmt(v)} (${words[r]})`,
+              )
+          }
+          tiles.hidden = false
+          const s = values.score
+          const head =
+            s >= 90
+              ? 'Fast and healthy.'
+              : s >= 50
+                ? 'Usable, but visitors will notice the slow parts.'
+                : 'Slow: visitors will notice.'
+          sentences.textContent = `${head} ${notGreen.length ? `Right now ${notGreen.join('; ')}.` : 'All measured Core Web Vitals are in the green.'} For the file and line behind each number, run npx perfagent in the project.`
+          status.textContent =
+            values.inp === undefined
+              ? 'INP needs real-user data; this page has none in the Chrome UX Report.'
+              : ''
+        } catch (err) {
+          status.textContent = `Could not test: ${err.message}. The address must be public; PageSpeed has a free quota per minute.`
+        }
+      })
+    </script>
+  </body>
+</html>

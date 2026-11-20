@@ -1,0 +1,14 @@
+{
+  "name": "perfagent-site",
+  "private": true,
+  "version": "0.1.0",
+  "description": "PerfAgent public website: landing page, docs, PageSpeed quick test and the static demo dashboard. Plain HTML, no framework.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "preview": "node -e \"import('node:http').then(h=>{const fs=require('fs'),p=require('path');h.createServer((q,s)=>{let f=p.join('dist',decodeURIComponent(q.url.split('?')[0]));if(fs.existsSync(f)&&fs.statSync(f).isDirectory())f=p.join(f,'index.html');if(!fs.existsSync(f)){s.writeHead(404);return s.end()}s.setHeader('Content-Type',{'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json','.md':'text/markdown','.svg':'image/svg+xml'}[p.extname(f)]||'application/octet-stream');fs.createReadStream(f).pipe(s)}).listen(8080,()=>console.log('http://localhost:8080'))})\""
+  },
+  "devDependencies": {
+    "marked": "15.0.12"
+  }
+}

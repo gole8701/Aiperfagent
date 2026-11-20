@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.5/schema.json",
+  "changelog": ["@changesets/changelog-github", { "repo": "gole8701/perfagent" }],
+  "commit": false,
+  "fixed": [["perfagent", "@perfagent/*"]],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [
+    "perfagent-monorepo",
+    "perfagent-site",
+    "perfagent-scripts",
+    "demo-shop",
+    "@perfagent/web"
+  ]
+}

@@ -1,0 +1,66 @@
+# Example: using PerfAgent in YOUR project's CI.
+#
+# Copy this file into your repository as .github/workflows/perfagent.yml, adjust the three
+# "your app" lines, and add `budgets` to perfagent.config.ts. On every pull request PerfAgent
+# starts your app, measures the pages in your config, checks the budgets and posts a comment
+# with the table and the top problems (file:line). A broken budget fails the job.
+#
+# This workflow is an example and is not run in the PerfAgent repository itself (workflow_dispatch only).
+
+name: PerfAgent budgets (example)
+
+on:
+  workflow_dispatch:
+  # pull_request:          # ← enable in your repository
+
+permissions:
+  contents: read
+  pull-requests: write # to post the comment
+
+jobs:
+  budgets:
+    runs-on: ubuntu-latest # Google Chrome is preinstalled; no browser download needed
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install your app
+        run: npm ci
+
+      - name: Build your app
+        run: npm run build # ← your app
+
+      - name: Start your app
+        run: |
+          npm start &                          # ← your app, on the URL(s) in perfagent.config.ts
+          npx wait-on http://localhost:3000 --timeout 120000
+
+      - name: Scan and check budgets
+        id: perfagent
+        run: npx perfagent ci --comment comment.md
+        continue-on-error: true # so the comment is posted even when a budget is over
+
+      - name: Post the comment on the pull request
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: comment.md
+
+      - name: Keep the exported report
+        uses: actions/upload-artifact@v4
+        with:
+          name: perfagent-report
+          path: .perfagent/reports/*.json
+          retention-days: 14
+
+      - name: Fail when a budget is over
+        if: steps.perfagent.outcome == 'failure'
+        run: |
+          echo "A performance budget is over its limit. See the pull-request comment."
+          exit 1
