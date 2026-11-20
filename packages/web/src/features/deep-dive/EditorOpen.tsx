@@ -71,6 +71,7 @@ export function EditorOpen({
         <Button variant="primary" onClick={() => void open()} busy={busy}>
           {label}
         </Button>
+        <CopyButton text={fileLine} label="Copy path" />
       </div>
       {result ? (
         <div
