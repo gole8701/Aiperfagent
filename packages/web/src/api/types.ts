@@ -154,4 +154,4 @@ export interface Snippet {
 
 export type ScanList = HistoryPoint[]
 
-export type IssuesResponse = { reportId?: string; issues: Issue[]; chips: { metrics: Record<string, number>; areas: Record<string, number>; total: number } }
+export interface IssuesResponse { reportId?: string; issues: Issue[]; chips: { metrics: Record<string, number>; areas: Record<string, number>; total: number } }

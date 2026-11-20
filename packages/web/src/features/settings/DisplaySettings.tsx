@@ -3,6 +3,7 @@ import { Select, Toggle } from '../../components/Fields'
 import { useSettings } from '../../state/settings'
 import { THEME_LABELS, useDisplay, type Theme } from '../../state/theme'
 import { IS_STATIC } from '../../static/env'
+
 import { SchemaRows } from './SchemaRows'
 import { SettingsShell } from './SettingsShell'
 

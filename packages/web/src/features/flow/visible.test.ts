@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { generateTree } from '../../test/generate-tree'
+
 import { allBranchIds, idsOnPathTo, visibleGraph } from './visible'
 
 describe('visibleGraph', () => {

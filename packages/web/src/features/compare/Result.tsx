@@ -8,6 +8,7 @@ import { axisStyle, baseOption } from '../../charts/definitions/helpers'
 import { Button, CopyButton, LinkButton } from '../../components/Button'
 import { Card } from '../../components/Card'
 import { Toggle } from '../../components/Fields'
+
 import { comparisonToMarkdown } from './markdown'
 import type { CompareMode } from './types'
 

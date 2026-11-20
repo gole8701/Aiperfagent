@@ -36,7 +36,7 @@ function sampleCalls(): AiCallSample[] {
 
 function ai(ctx: ChartContext): { report: AiReport; sample: boolean } {
   const real = ctx.report.ai
-  if (real && real.calls.length) return { report: real, sample: false }
+  if (real?.calls.length) return { report: real, sample: false }
   const calls = sampleCalls()
   return { report: { calls, callSites: real?.callSites ?? [], models: summariseModels(calls), budgetUsdPerDay: real?.budgetUsdPerDay ?? 4 }, sample: true }
 }

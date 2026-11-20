@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '../../components/Button'
 import { token, useDisplay } from '../../state/theme'
+
 import type { GlobeLayout, GlobePoint } from './layout'
 import { GlobeScene } from './scene'
 
@@ -42,7 +43,10 @@ export default function Globe({ layout, selectedId, highlighted, filtering, onSe
         colors: colours(),
         reducedMotion,
         onSelect: (id) => onSelect(id ? byId.get(id) : undefined),
-        onHover: (id, x, y) => setHover(id && byId.get(id) ? { point: byId.get(id) as GlobePoint, x, y } : undefined),
+        onHover: (id, x, y) => {
+          const point = id ? byId.get(id) : undefined
+          setHover(point ? { point, x, y } : undefined)
+        },
       })
     } catch {
       setWebgl(false)
@@ -72,7 +76,6 @@ export default function Globe({ layout, selectedId, highlighted, filtering, onSe
       sceneRef.current = null
     }
     // The scene is rebuilt only when the layout changes; selection and colours are pushed below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layout, reducedMotion])
 
   useEffect(() => {

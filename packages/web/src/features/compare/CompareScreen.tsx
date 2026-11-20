@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 
 import { api, describeError } from '../../api/client'
-import type { CompareResponse, CompareSource, ImportResult } from '../../api/types'
+import type { CompareResponse, CompareSource } from '../../api/types'
 import type { ChartContext } from '../../charts/definitions'
 import { readPalette } from '../../charts/palette'
 import { Button } from '../../components/Button'
@@ -18,6 +18,7 @@ import { getStaticReport, listStaticReports } from '../../static/data'
 import { IS_STATIC } from '../../static/env'
 import { quickTest } from '../../static/psi'
 import { FixRunView } from '../deep-dive/FixRunView'
+
 import { DetectedValues } from './DetectedValues'
 import { Result } from './Result'
 import { SourceCard } from './Sources'
@@ -149,7 +150,7 @@ export default function CompareScreen() {
             api
               .post(`/api/scans/${reportB.id}/annotate`, { annotation: 'baseline' })
               .then(() => setNotice('Saved as the new baseline'))
-              .catch((err) => setError(describeError(err)))
+              .catch((err: unknown) => setError(describeError(err)))
           }}
           onBudgets={(diffs) => {
             if (IS_STATIC) return setNotice('Budgets are saved by the installed tool.')
@@ -161,7 +162,7 @@ export default function CompareScreen() {
             }
             save({ budgets })
               .then(() => setNotice(`Budgets added for ${diffs.map((d) => METRICS[d.metric].short).join(', ')}`))
-              .catch((err) => setError(describeError(err)))
+              .catch((err: unknown) => setError(describeError(err)))
           }}
         />
       ) : null}

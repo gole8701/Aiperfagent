@@ -5,6 +5,7 @@ import { attachIssues, type Report } from '@perfagent/core'
 import { describe, expect, it } from 'vitest'
 
 import { generateTree } from '../../test/generate-tree'
+
 import { layoutGlobe, orbitPosition } from './layout'
 
 const sample = JSON.parse(readFileSync(path.resolve(__dirname, '../../../../../fixtures/reports/demo-shop-before.json'), 'utf8')) as Report

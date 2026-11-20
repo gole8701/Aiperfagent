@@ -74,7 +74,7 @@ export function ExportMenu() {
           <button role="menuitem" onClick={() => void run(png)}>
             PNG of this screen
           </button>
-          <button role="menuitem" onClick={() => void run(async () => window.print())}>
+          <button role="menuitem" onClick={() => void run(() => Promise.resolve(window.print()))}>
             PDF (print)
           </button>
         </div>

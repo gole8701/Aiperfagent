@@ -62,7 +62,7 @@ export function LeftColumn({ report, filter, onFilter }: LeftColumnProps) {
           <div className="vital-row" key={severity}>
             <span className="row" style={{ gap: 8 }}>
               <span className={`dot dot-${severity}`} aria-hidden="true" />
-              {severity === 'info' ? 'Info' : severity[0]?.toUpperCase() + severity.slice(1)}
+              {severity === 'info' ? 'Info' : severity.charAt(0).toUpperCase() + severity.slice(1)}
             </span>
             <strong>{bySeverity[severity]}</strong>
           </div>

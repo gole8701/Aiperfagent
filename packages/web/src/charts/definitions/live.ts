@@ -15,7 +15,7 @@ const SAMPLE: LiveStats = {
 }
 
 function live(ctx: ChartContext): { stats: LiveStats; sample: boolean } {
-  return ctx.report.live && ctx.report.live.requestsPerSec.length ? { stats: ctx.report.live, sample: false } : { stats: SAMPLE, sample: true }
+  return ctx.report.live?.requestsPerSec.length ? { stats: ctx.report.live, sample: false } : { stats: SAMPLE, sample: true }
 }
 
 function labels(stats: LiveStats): string[] {

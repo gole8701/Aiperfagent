@@ -1,4 +1,5 @@
 import { IS_STATIC } from '../static/env'
+
 import { sessionToken } from './client'
 import type { FixEvent, LiveTick } from './types'
 

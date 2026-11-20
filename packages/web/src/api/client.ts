@@ -65,11 +65,11 @@ function safeJson(text: string): unknown {
 }
 
 export const api = {
-  get: <T>(path: string) => request<T>('GET', path),
-  post: <T>(path: string, body?: unknown) => request<T>('POST', path, { body }),
-  put: <T>(path: string, body?: unknown) => request<T>('PUT', path, { body }),
-  delete: <T>(path: string) => request<T>('DELETE', path),
-  upload: <T>(path: string, file: Blob, filename: string) =>
+  get: <T>(path: string): Promise<T> => request<T>('GET', path),
+  post: <T>(path: string, body?: unknown): Promise<T> => request<T>('POST', path, { body }),
+  put: <T>(path: string, body?: unknown): Promise<T> => request<T>('PUT', path, { body }),
+  delete: <T>(path: string): Promise<T> => request<T>('DELETE', path),
+  upload: <T>(path: string, file: Blob, filename: string): Promise<T> =>
     request<T>('POST', path, { rawBody: file, headers: { 'X-Filename': encodeURIComponent(filename), 'Content-Type': 'application/octet-stream' } }),
   /** Downloads an authenticated file (exports) through a blob URL so the token never lands in a link. */
   download: async (path: string, filename: string): Promise<void> => {

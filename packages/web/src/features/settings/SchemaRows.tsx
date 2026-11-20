@@ -18,7 +18,7 @@ export function SchemaRows({ include, labels = {} }: SchemaRowsProps) {
   return (
     <div className="stack" style={{ gap: 12 }} aria-busy={saving}>
       {rows.map((row) => (
-        <OptionRow key={row.path} row={row} value={configValue(config, row.path)} label={labels[row.path] ?? humanise(row.path)} onSave={(value) => save(patchFor(row.path, value)).catch(() => undefined)} />
+        <OptionRow key={row.path} row={row} value={configValue(config, row.path)} label={labels[row.path] ?? humanise(row.path)} onSave={(value) => void save(patchFor(row.path, value)).catch(() => undefined)} />
       ))}
     </div>
   )
@@ -39,7 +39,7 @@ function OptionRow({ row, value, label, onSave }: OptionRowProps) {
   if (row.type === 'choice' && row.choices) {
     return (
       <div className="field">
-        <Select label={label} value={String(value ?? row.default ?? '')} options={row.choices.map((c) => ({ value: c, label: c }))} onChange={onSave} />
+        <Select label={label} value={(value ?? row.default ?? '') as string} options={row.choices.map((c) => ({ value: c, label: c }))} onChange={onSave} />
         <span>{row.description}</span>
       </div>
     )
@@ -65,7 +65,7 @@ function stringify(value: unknown, type: string): string {
   if (value === undefined || value === null) return ''
   if (type === 'list' && Array.isArray(value)) return value.join(', ')
   if (type === 'map' || typeof value === 'object') return JSON.stringify(value)
-  return String(value)
+  return String(value as string | number | boolean)
 }
 
 function parse(text: string, type: string): unknown {

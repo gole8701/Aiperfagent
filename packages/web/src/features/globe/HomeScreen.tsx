@@ -8,10 +8,11 @@ import { ImportDrop } from '../../components/ImportDrop'
 import { filterToString, parseFilter, useReport, visibleIssues } from '../../state/report'
 import { IS_STATIC } from '../../static/env'
 import { DeepDive } from '../deep-dive/DeepDive'
+
 import { CornerCards } from './CornerCards'
-import { layoutGlobe, type GlobePoint } from './layout'
 import { LeftColumn } from './LeftColumn'
 import { ProblemsTable, whereLabel } from './ProblemsTable'
+import { layoutGlobe, type GlobePoint } from './layout'
 import './globe.css'
 
 const Globe = lazy(() => import('./Globe'))
@@ -28,7 +29,6 @@ export function HomeScreen() {
     const parsed = parseFilter(urlFilter)
     if (filterToString(parsed) !== filterToString(filter)) setFilter(parsed)
     // Only the URL drives the filter; the store mirrors it.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlFilter])
 
   const issues = visibleIssues({ report, filter, route })
@@ -52,7 +52,7 @@ export function HomeScreen() {
 
   const openIssue = useCallback(
     (issue: Issue | undefined) => {
-      navigate(issue ? `/issues/${encodeURIComponent(issue.id)}${params.toString() ? `?${params}` : ''}` : `/${params.toString() ? `?${params}` : ''}`)
+      void navigate(issue ? `/issues/${encodeURIComponent(issue.id)}${params.toString() ? `?${params}` : ''}` : `/${params.toString() ? `?${params}` : ''}`)
     },
     [navigate, params],
   )

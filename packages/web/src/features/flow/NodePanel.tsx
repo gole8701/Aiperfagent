@@ -5,8 +5,9 @@ import type { Status } from '../../api/types'
 import { Button, LinkButton } from '../../components/Button'
 import { Card, SeverityDot } from '../../components/Card'
 import { useFix } from '../../state/fix'
-import { FixRunView } from '../deep-dive/FixRunView'
 import { EditorOpen } from '../deep-dive/EditorOpen'
+import { FixRunView } from '../deep-dive/FixRunView'
+
 import { issueIdsWithin } from './visible'
 
 interface NodePanelProps {

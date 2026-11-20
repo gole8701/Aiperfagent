@@ -90,7 +90,7 @@ const pages = []
 for (const file of readdirSync(docsDir).filter((f) => f.endsWith('.md'))) {
   const name = file.replace(/\.md$/, '')
   const text = readFileSync(path.join(docsDir, file), 'utf8')
-  const title = (/^# (.+)$/m.exec(text) ?? [, name])[1]
+  const title = /^# (.+)$/m.exec(text)?.[1] ?? name
   pages.push({ name, title })
   writeFileSync(
     path.join(dist, 'docs', `${name}.html`),

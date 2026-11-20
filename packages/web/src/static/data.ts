@@ -3,6 +3,7 @@ import { metricValue } from '@perfagent/core'
 import { parseReport } from '@perfagent/report-schema'
 
 import type { GuideDoc, GuideMeta, Status } from '../api/types'
+
 import { DEMO_REPORT_URL, GUIDES_BASE } from './env'
 import { convertLighthouse, isLighthouseJson } from './lighthouse'
 

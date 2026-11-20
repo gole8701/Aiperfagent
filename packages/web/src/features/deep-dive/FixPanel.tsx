@@ -10,6 +10,7 @@ import { CodeDiff } from '../../components/CodeDiff'
 import { Select } from '../../components/Fields'
 import { useFix } from '../../state/fix'
 import { filterToString, useReport } from '../../state/report'
+
 import { FixRunView } from './FixRunView'
 
 interface FixPanelProps {

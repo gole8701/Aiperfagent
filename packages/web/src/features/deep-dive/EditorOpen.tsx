@@ -20,7 +20,8 @@ export function EditorOpen({ location, status, label = 'Open in editor at this l
   const [busy, setBusy] = useState(false)
   const fileLine = `${location.file}:${location.line}`
   const editors = status?.editors ?? {}
-  const editor = String(config?.editor ?? status?.config.editor ?? 'auto')
+  const configured = config?.editor ?? status?.config.editor
+  const editor = typeof configured === 'string' ? configured : 'auto'
 
   if (!status?.capabilities.openEditor) {
     return (

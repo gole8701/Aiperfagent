@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router'
 import { Button } from '../components/Button'
 import { InfoLink } from '../components/Fields'
 import { useDisplay } from '../state/theme'
+
 import type { ChartContext, ChartDefinition } from './definitions/types'
 import { echarts } from './echarts'
 
@@ -53,7 +54,7 @@ export function Chart({ definition, ctx }: ChartProps) {
           Sample data · {sample}
         </div>
       ) : null}
-      {error ? <div className="error-box">{error}</div> : <Body definition={definition} ctx={ctx} instance={instance} onError={setError} onClick={(click) => navigate(click.issueId ? `/issues/${encodeURIComponent(click.issueId)}` : `/?filter=${click.filter ?? 'all'}`)} />}
+      {error ? <div className="error-box">{error}</div> : <Body definition={definition} ctx={ctx} instance={instance} onError={setError} onClick={(click) => void navigate(click.issueId ? `/issues/${encodeURIComponent(click.issueId)}` : `/?filter=${click.filter ?? 'all'}`)} />}
       <p className="chart-takeaway">
         <strong>What this means:</strong> {definition.takeaway(ctx)}
       </p>
@@ -124,7 +125,7 @@ function EChart({ definition, ctx, instance, onError, onClick }: BodyProps & { d
     const observer = new ResizeObserver(() => chart.resize())
     observer.observe(el)
     chart.on('click', (params) => {
-      const click = definition.onClick?.({ name: String(params.name ?? ''), dataIndex: params.dataIndex, seriesName: params.seriesName }, ctx)
+      const click = definition.onClick?.({ name: params.name, dataIndex: params.dataIndex, seriesName: params.seriesName }, ctx)
       if (click) onClick(click)
     })
     return () => {
@@ -133,7 +134,6 @@ function EChart({ definition, ctx, instance, onError, onClick }: BodyProps & { d
       instance.current = null
     }
     // The chart instance lives as long as the element; options are pushed in the effect below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

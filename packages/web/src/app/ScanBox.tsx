@@ -6,8 +6,8 @@ import { Button, LinkButton } from '../components/Button'
 import { Progress } from '../components/Card'
 import { Select } from '../components/Fields'
 import { useReport } from '../state/report'
-import { quickTest } from '../static/psi'
 import { IS_STATIC } from '../static/env'
+import { quickTest } from '../static/psi'
 
 /** Top-bar scan controls: environment picker, "Paste any URL", Scan, Live. */
 export function ScanBox() {
@@ -32,7 +32,7 @@ export function ScanBox() {
       if (IS_STATIC) {
         if (!target) throw new Error('Paste a public URL to test it with PageSpeed Insights')
         useAsReport(await quickTest(normalise(target)))
-        navigate('/')
+        void navigate('/')
         return
       }
       const envUrl = environments.find(([name]) => name === environment)?.[1].url

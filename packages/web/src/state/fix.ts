@@ -19,7 +19,7 @@ let unsubscribe: (() => void) | undefined
 
 /** One fix run at a time; events stream in over the WebSocket and append to the run. */
 export const useFix = create<FixState>((set, get) => {
-  const call = async (work: () => Promise<FixRun | void>): Promise<void> => {
+  const call = async (work: () => Promise<FixRun | undefined>): Promise<void> => {
     set({ busy: true, error: undefined })
     try {
       const run = await work()

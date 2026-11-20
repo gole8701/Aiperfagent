@@ -13,6 +13,8 @@ interface FlowCanvasProps {
   onToggle: (node: TreeNode) => void
 }
 
+// A type alias, not an interface: xyflow requires node data to fit Record<string, unknown>.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type FlowNodeData = { node: TreeNode; expanded: boolean; hasChildren: boolean; match: boolean; selected: boolean; onToggle: (node: TreeNode) => void }
 type FlowNode = Node<FlowNodeData, 'tree'>
 
@@ -62,7 +64,7 @@ export function FlowCanvas({ graph, selectedId, onSelect, onToggle }: FlowCanvas
 
   useEffect(() => {
     let cancelled = false
-    layoutGraph(graph).then((next) => {
+    void layoutGraph(graph).then((next) => {
       if (!cancelled) setPositions(next)
     })
     return () => {
@@ -102,7 +104,7 @@ export function FlowCanvas({ graph, selectedId, onSelect, onToggle }: FlowCanvas
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
-        onNodeClick={(_event, node) => onSelect((node.data as FlowNodeData).node)}
+        onNodeClick={(_event, node) => onSelect(node.data.node)}
         onlyRenderVisibleElements
         fitView
         minZoom={0.1}

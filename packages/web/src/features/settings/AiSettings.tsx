@@ -7,6 +7,7 @@ import { Button, CopyButton } from '../../components/Button'
 import { Card, ErrorBox } from '../../components/Card'
 import { Select, TextField, Toggle } from '../../components/Fields'
 import { configValue, useSettings } from '../../state/settings'
+
 import { SchemaRows } from './SchemaRows'
 import { SettingsShell } from './SettingsShell'
 
@@ -32,7 +33,7 @@ function AiBody() {
     api
       .get<ProvidersResponse>('/api/ai/providers')
       .then(setData)
-      .catch((err) => setError(describeError(err)))
+      .catch((err: unknown) => setError(describeError(err)))
   useEffect(() => {
     void refresh()
   }, [])
@@ -50,7 +51,8 @@ function AiBody() {
   if (error) return <ErrorBox error={error} />
   const providers = data?.providers ?? []
   const ollama = providers.find((p) => p.id === 'ollama')
-  const active = String(configValue(config, 'ai.provider') ?? 'none')
+  const provider = configValue(config, 'ai.provider')
+  const active = typeof provider === 'string' ? provider : 'none'
 
   return (
     <div className="settings-grid">
@@ -107,10 +109,10 @@ function AiBody() {
                       small
                       variant="danger"
                       onClick={() =>
-                        api
+                        void api
                           .delete(`/api/ai/keys/${p.id}`)
                           .then(refresh)
-                          .catch((err) => setError(describeError(err)))
+                          .catch((err: unknown) => setError(describeError(err)))
                       }
                     >
                       Remove

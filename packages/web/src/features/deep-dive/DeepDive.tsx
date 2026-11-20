@@ -8,11 +8,12 @@ import { Card, SeverityDot } from '../../components/Card'
 import { useReport } from '../../state/report'
 import { useSettings } from '../../state/settings'
 import type { GlobePoint } from '../globe/layout'
+
 import { EditorOpen } from './EditorOpen'
 import { FixPanel } from './FixPanel'
-import { issueToMarkdown } from './issue-markdown'
 import { Snippet } from './Snippet'
 import { Verify } from './Verify'
+import { issueToMarkdown } from './issue-markdown'
 
 interface DeepDiveProps {
   issue?: Issue
@@ -114,7 +115,7 @@ export function DeepDive({ issue, point, status, onClose }: DeepDiveProps) {
       </Section>
 
       <Section n={6} title="Verify">
-        <Verify issue={issue} enabled={Boolean(status?.capabilities.scanProject || status?.mode === 'deployed')} />
+        <Verify issue={issue} enabled={status?.capabilities.scanProject || status?.mode === 'deployed'} />
       </Section>
 
       <Section n={7} title="Stop it coming back">

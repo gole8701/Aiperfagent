@@ -23,7 +23,7 @@ export interface ChartContext {
   palette: Palette
 }
 
-export type ChartClick = { issueId?: string; filter?: string }
+export interface ChartClick { issueId?: string; filter?: string }
 
 interface BaseDefinition {
   id: string

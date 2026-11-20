@@ -1,4 +1,5 @@
 import { token } from '../state/theme'
+
 import type { Palette } from './definitions/types'
 
 /** Colour-blind-safe chart palette read from the active theme's CSS tokens. */

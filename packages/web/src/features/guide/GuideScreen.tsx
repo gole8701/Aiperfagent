@@ -7,9 +7,10 @@ import { CopyButton, LinkButton } from '../../components/Button'
 import { Card, Empty, Spinner } from '../../components/Card'
 import { Select, Toggle } from '../../components/Fields'
 import { useReport } from '../../state/report'
+
+import { Walkthrough } from './Walkthrough'
 import { fetchGuide, fetchGuides, GROUP_ORDER, LANGUAGES, type Language } from './guides-api'
 import { parseGuide } from './markdown'
-import { Walkthrough } from './Walkthrough'
 import './guide.css'
 
 const LANG_KEY = 'perfagent.guide.language'
@@ -29,7 +30,7 @@ export default function GuideScreen() {
   // Body search: topics load lazily the first time the visitor types.
   useEffect(() => {
     if (!query || !guides || Object.keys(bodies).length) return
-    Promise.all(guides.map((g) => fetchGuide(g.topic, 'en').then((d) => [g.topic, d?.body ?? ''] as const))).then((pairs) => setBodies(Object.fromEntries(pairs)))
+    void Promise.all(guides.map((g) => fetchGuide(g.topic, 'en').then((d) => [g.topic, d?.body ?? ''] as const))).then((pairs) => setBodies(Object.fromEntries(pairs)))
   }, [query, guides, bodies])
 
   const filtered = useMemo(() => {
@@ -118,7 +119,7 @@ function Topic({ topic, guides, language, expert }: { topic: string; guides: Gui
   useEffect(() => {
     setDoc(undefined)
     setStep(0)
-    fetchGuide(topic, language).then((d) => setDoc(d ?? null))
+    void fetchGuide(topic, language).then((d) => setDoc(d ?? null))
   }, [topic, language])
 
   if (doc === undefined) return <Spinner label="Loading topic" />

@@ -6,6 +6,7 @@ import { Select } from '../components/Fields'
 import { useReport } from '../state/report'
 import { THEME_LABELS, useDisplay, type Theme } from '../state/theme'
 import { IS_STATIC } from '../static/env'
+
 import { ExportMenu } from './ExportMenu'
 import { ScanBox } from './ScanBox'
 import './shell.css'

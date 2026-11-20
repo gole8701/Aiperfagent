@@ -6,6 +6,7 @@ import { Button } from '../../components/Button'
 import { Empty, ErrorBox, Spinner } from '../../components/Card'
 import { Toggle } from '../../components/Fields'
 import { useReport } from '../../state/report'
+
 import { FlowCanvas } from './FlowCanvas'
 import { NodePanel } from './NodePanel'
 import { allBranchIds, idsOnPathTo, visibleGraph } from './visible'
@@ -47,7 +48,7 @@ export default function FlowScreen() {
     (node: TreeNode) => {
       setSelectedId(node.id)
       if (node.children.length) setExpanded((prev) => new Set([...prev, node.id]))
-      navigate(node.kind === 'file' ? `/flow/${node.path}` : '/flow', { replace: true })
+      void navigate(node.kind === 'file' ? `/flow/${node.path}` : '/flow', { replace: true })
     },
     [navigate],
   )
@@ -110,7 +111,7 @@ export default function FlowScreen() {
           <span>Red / amber border and line = problem inside</span>
         </div>
       </div>
-      <NodePanel node={selected} issues={report?.issues ?? []} status={status} reportId={report?.id} />
+      <NodePanel node={selected} issues={report.issues} status={status} reportId={report.id} />
     </div>
   )
 }

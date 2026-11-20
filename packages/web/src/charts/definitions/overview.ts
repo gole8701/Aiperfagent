@@ -121,7 +121,7 @@ const vsTarget: ChartDefinition = {
       const max = Math.max((m.poor ?? 1) * 1.6, value * 1.15)
       return { id, value, good: m.good ?? 0, poor: m.poor ?? 0, max }
     })
-    const label = (id: MetricId): string => (ctx.expert ? `${METRICS[id].short}` : `${METRICS[id].plain} (${METRICS[id].short})`)
+    const label = (id: MetricId): string => (ctx.expert ? METRICS[id].short : `${METRICS[id].plain} (${METRICS[id].short})`)
     return {
       ...baseOption(p),
       grid: { left: 12, right: 80, top: 8, bottom: 8, containLabel: true },

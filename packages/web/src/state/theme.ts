@@ -39,7 +39,7 @@ export const useDisplay = create<DisplayState>((set, get) => {
   const initial = read()
   apply(initial)
   media?.addEventListener('change', () => apply(get()))
-  motion?.addEventListener('change', () => set({ reducedMotion: Boolean(motion.matches) }))
+  motion?.addEventListener('change', () => set({ reducedMotion: motion.matches }))
   const update = (patch: Partial<DisplayState>): void => {
     set(patch)
     apply(get())

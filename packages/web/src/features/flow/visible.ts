@@ -41,7 +41,7 @@ export function visibleGraph(root: TreeNode, view: ViewState): VisibleGraph {
   const edges: VisibleEdge[] = []
   const walk = (node: TreeNode, depth: number, parentId?: string): void => {
     const children = node.children.filter((child) => keep(child, view.problemsOnly, matches))
-    const expanded = view.expanded.has(node.id) || (matches !== undefined && matches.ancestors.has(node.id))
+    const expanded = view.expanded.has(node.id) || matches?.ancestors.has(node.id) === true
     nodes.push({ node, depth, parentId, expanded, hasChildren: children.length > 0, match: matches?.hits.has(node.id) ?? false })
     if (!expanded) return
     for (const child of children) {
