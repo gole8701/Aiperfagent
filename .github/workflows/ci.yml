@@ -39,7 +39,7 @@ jobs:
       - name: Install (frozen lockfile)
         run: pnpm install --frozen-lockfile
 
-      - name: Build packages
+      - name: Build packages (includes the dashboard)
         run: pnpm build
 
       - name: Lint
@@ -56,9 +56,6 @@ jobs:
 
       - name: Unit and integration tests
         run: pnpm test
-
-      - name: Build dashboard
-        run: pnpm --filter @perfagent/web build
 
       - name: Install Playwright browsers (web package only)
         run: pnpm --filter @perfagent/web exec playwright install --with-deps chromium
