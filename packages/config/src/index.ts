@@ -19,9 +19,9 @@ export function defineConfig(config: PerfAgentConfigInput): PerfAgentConfigInput
   return config
 }
 
-export const CONFIG_TEMPLATE = `import { defineConfig } from 'perfagent'
-
-export default defineConfig({
+export const CONFIG_TEMPLATE = `// A plain object, so it also works with "npx perfagent" when the package is not installed.
+/** @type {import('perfagent').PerfAgentConfigInput} */
+export default {
   // Pages to measure. Leave empty to paste URLs in the dashboard.
   urls: ['http://localhost:3000'],
   root: '.',
@@ -44,5 +44,5 @@ export default defineConfig({
     autoCommit: false,
     protected: [],
   },
-})
+}
 `

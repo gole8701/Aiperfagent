@@ -38,6 +38,7 @@ export async function init(args: ParsedArgs): Promise<void> {
     print(
       `  ${color.yellow('!')} This folder is not a git repository. AI fixes need git (they go to a new branch). Run "git init" first.`,
     )
+  if (args.command !== 'init') return
   print()
   print(
     `  Next: ${color.cyan('npx perfagent')} to open the dashboard, or ${color.cyan('npx perfagent scan http://localhost:3000')}.`,
