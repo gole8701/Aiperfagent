@@ -53,7 +53,7 @@ Out of scope: an attacker already running code as the user on the user's machine
 
 - **Local mode trusts the local user.** Anyone with the token and access to the loopback interface has the same powers as the user who started PerfAgent. The token is printed in the terminal and in the browser URL; a screen recording or shared terminal leaks it for the lifetime of that process. Restart to rotate.
 - **Redaction is pattern-based.** Unusual secret formats can slip through. `ai.sendCode: 'none'` removes the risk for AI; exports should still be reviewed before sharing.
-- **The AI can be wrong or manipulated.** A prompt injection in a scanned page can produce a misleading patch. Review before accept is the control; `fix.autoAccept` disables it on purpose and still runs tests and re-tests.
+- **The AI can be wrong or manipulated.** A prompt injection in a scanned page can produce a misleading patch. Review before accept is the control; `fix.review: false` turns it off on purpose and still runs tests and re-tests.
 - **Redirect-time SSRF.** `assertUrlAllowed` checks the URL before navigation; redirects inside the browser to private addresses are not re-checked today. Hosted instances must run the browser in an isolated network namespace.
 - **Static website quick test** calls Google's PageSpeed Insights API from the visitor's browser; Google's quota and privacy terms apply.
 - **Dependencies.** Playwright, zod, ws, ECharts, Three.js, React and the MCP SDK are large; Dependabot and CodeQL reduce but do not remove the risk.

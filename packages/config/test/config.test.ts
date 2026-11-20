@@ -19,7 +19,6 @@ describe('config', () => {
     expect(DEFAULT_CONFIG.ai.provider).toBe('none')
     expect(DEFAULT_CONFIG.fix.review).toBe(true)
     expect(DEFAULT_CONFIG.fix.autoCommit).toBe(false)
-    expect(DEFAULT_CONFIG.fix.openPr).toBe(false)
   })
 
   it('rejects unknown keys and bad values', () => {
@@ -35,14 +34,14 @@ describe('config', () => {
     const env = {
       PERFAGENT_SERVER_PORT: '5000',
       PERFAGENT_AI_PROVIDER: 'ollama',
-      PERFAGENT_FIX_AUTOACCEPT: 'true',
+      PERFAGENT_FIX_AUTOCOMMIT: 'true',
       PERFAGENT_URLS: 'http://a.test,http://b.test',
       OTHER: 'x',
     }
     expect(envOverrides(env)).toEqual({
       server: { port: 5000 },
       ai: { provider: 'ollama' },
-      fix: { autoAccept: true },
+      fix: { autoCommit: true },
       urls: ['http://a.test', 'http://b.test'],
     })
   })

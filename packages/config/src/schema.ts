@@ -141,10 +141,6 @@ export const configSchema = z
     fix: z
       .object({
         review: z.boolean().default(true).describe('Show a diff for Accept / Edit / Skip'),
-        autoAccept: z
-          .boolean()
-          .default(false)
-          .describe('Apply without review (safety checks still run)'),
         runTests: z.boolean().default(true).describe('Run the project tests after each change'),
         testCommand: z
           .string()
@@ -154,7 +150,6 @@ export const configSchema = z
           .boolean()
           .default(false)
           .describe('Commit each accepted fix on the fix branch'),
-        openPr: z.boolean().default(false).describe('Open a pull request when done (never merges)'),
         maxRounds: z
           .number()
           .int()

@@ -48,7 +48,6 @@ export default defineConfig({
   fix: {
     review: true,
     autoCommit: false,
-    openPr: false,
     protected: ['src/payments/**', 'infra/**'],
   },
 })

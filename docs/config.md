@@ -80,22 +80,20 @@ API keys are never in this file; the dashboard stores them in the OS keychain.
 
 ### Fix loop
 
-| Path               | Type          | Default | Description                                             |
-| ------------------ | ------------- | ------- | ------------------------------------------------------- |
-| `fix.review`       | boolean       | `true`  | Show a diff for Accept / Edit / Skip                    |
-| `fix.autoAccept`   | boolean       | `false` | Apply without review (safety checks still run)          |
-| `fix.runTests`     | boolean       | `true`  | Run the project tests after each change                 |
-| `fix.testCommand`  | string        | —       | Test command; default comes from `package.json`         |
-| `fix.autoCommit`   | boolean       | `false` | Commit each accepted fix on the fix branch              |
-| `fix.openPr`       | boolean       | `false` | Open a pull request when done (never merges)            |
-| `fix.maxRounds`    | number 1–50   | `10`    | Maximum fix → re-test rounds                            |
-| `fix.maxFiles`     | number ≥ 1    | `40`    | Maximum files changed per run                           |
-| `fix.maxCostUsd`   | number ≥ 0    | `5`     | Maximum AI spend per run                                |
-| `fix.protected`    | list of globs | `[]`    | Globs the AI may never edit, e.g. `['src/payments/**']` |
-| `fix.target.score` | number 0–100  | —       | Stop when the score reaches this                        |
-| `fix.target.lcp`   | number (ms)   | —       | Stop when LCP is under this                             |
-| `fix.target.inp`   | number (ms)   | —       | Stop when INP is under this                             |
-| `fix.target.cls`   | number        | —       | Stop when CLS is under this                             |
+| Path               | Type          | Default | Description                                                    |
+| ------------------ | ------------- | ------- | -------------------------------------------------------------- |
+| `fix.review`       | boolean       | `true`  | Show a diff for Accept / Edit / Skip                           |
+| `fix.runTests`     | boolean       | `true`  | Run the project tests after each change                        |
+| `fix.testCommand`  | string        | —       | Test command; default comes from `package.json`                |
+| `fix.autoCommit`   | boolean       | `false` | Commit each accepted fix on the fix branch                     |
+| `fix.maxRounds`    | number 1–50   | `10`    | Maximum fix → re-test rounds                                   |
+| `fix.maxFiles`     | number ≥ 1    | `40`    | Maximum files changed per run                                  |
+| `fix.maxCostUsd`   | number ≥ 0    | `5`     | Maximum AI spend per run                                       |
+| `fix.protected`    | list of globs | `[]`    | Globs the AI may never edit, e.g. `['src/payments/**']`        |
+| `fix.target.score` | number 0–100  | —       | Stop when the score reaches this                               |
+| `fix.target.lcp`   | number (ms)   | —       | Accepted but not used yet; only `fix.target.score` stops a run |
+| `fix.target.inp`   | number (ms)   | —       | Accepted but not used yet                                      |
+| `fix.target.cls`   | number        | —       | Accepted but not used yet                                      |
 
 ### Live mode
 

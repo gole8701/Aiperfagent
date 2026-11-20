@@ -40,16 +40,14 @@ Hours of work in minutes, reviewed. Each round shows predicted vs actual, so you
 export default defineConfig({
   fix: {
     review: true, // show a diff for Accept / Edit / Skip
-    autoAccept: false, // apply without review (safety checks still run)
     runTests: true, // run the project tests after each change
     testCommand: undefined, // default: the test script in package.json
     autoCommit: false, // commit each accepted fix on the fix branch
-    openPr: false, // open a pull request when done (never merges)
     maxRounds: 10,
     maxFiles: 40,
     maxCostUsd: 5,
     protected: ['src/payments/**'],
-    target: { score: 90, lcp: 2500, inp: 200, cls: 0.1 },
+    target: { score: 90 }, // only score stops a run today
   },
 })
 ```
@@ -64,7 +62,7 @@ export default defineConfig({
 - If the working tree has uncommitted changes, the run stops with an error unless the request sets `stashFirst: true`; then PerfAgent runs `git stash push -m perfagent` first and **Undo** pops the stash again.
 - Every run is logged to `.perfagent/audit.log` with scope and branch; code sent to the AI follows `ai.sendCode` (`snippets` by default) and is redacted.
 - Checks after each change, in order: `tsc --noEmit` (when `tsconfig.json` and a local `tsc` exist), the `lint` script, the tests (`fix.testCommand` or the `test` script, when `fix.runTests` is on) and the `build` script.
-- The run stops at `fix.maxRounds`, `fix.maxFiles` or `fix.maxCostUsd`, or when `fix.target.score` is reached; `target.lcp`, `target.inp` and `target.cls` are accepted but not yet used as stop conditions. `fix.autoAccept` and `fix.openPr` are accepted by the config but not used by the fixer yet; review is controlled by `fix.review`, and PerfAgent never opens pull requests.
+- The run stops at `fix.maxRounds`, `fix.maxFiles` or `fix.maxCostUsd`, or when `fix.target.score` is reached; `target.lcp`, `target.inp` and `target.cls` are accepted but not yet used as stop conditions. Review is controlled by `fix.review`, and PerfAgent never opens pull requests.
 
 ## Walkthrough
 
