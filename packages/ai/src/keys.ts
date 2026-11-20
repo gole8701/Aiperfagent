@@ -97,7 +97,14 @@ function keychainFor(platform: NodeJS.Platform): Keychain | undefined {
   if (platform === 'darwin') {
     return {
       read: async (p) => (await run('security', ['find-generic-password', '-s', SERVICE, '-a', p, '-w'], opts)).stdout.trim() || undefined,
-      store: async (p, key) => { await run('security', ['add-generic-password', '-U', '-s', SERVICE, '-a', p, '-w', key], opts) },
+      // `security -i` reads the command from stdin, so the key never appears in the process list.
+      store: async (p, key) => {
+        if (/["\\\s]/.test(key)) throw new Error('Key has characters the keychain command cannot take')
+        await runWithStdin('security', ['-i'], `add-generic-password -U -s "${SERVICE}" -a "${p}" -w "${key}"\n`)
+        // `security -i` exits 0 even when the command fails, so read the key back.
+        const saved = (await run('security', ['find-generic-password', '-s', SERVICE, '-a', p, '-w'], opts)).stdout.trim()
+        if (saved !== key) throw new Error('Keychain did not store the key')
+      },
       remove: async (p) => { await run('security', ['delete-generic-password', '-s', SERVICE, '-a', p], opts) },
     }
   }
