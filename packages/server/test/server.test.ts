@@ -263,3 +263,28 @@ describe('reports', () => {
     expect(good.config.root).toBeUndefined()
   })
 })
+
+describe('dashboard files', () => {
+  it('never caches index.html and 404s a missing chunk instead of returning HTML', async () => {
+    const dir = await mkdtemp(path.join(os.tmpdir(), 'perfagent-dash-'))
+    await mkdir(path.join(dir, 'assets'))
+    await writeFile(path.join(dir, 'index.html'), '<!doctype html>')
+    await writeFile(path.join(dir, 'assets', 'app-1.js'), 'export {}')
+    const server = await createServer({
+      config: configSchema.parse({ root, server: { port: 4703 } }),
+      version: 'test',
+      dashboardDir: dir,
+    })
+    try {
+      const base = `http://127.0.0.1:${server.port}`
+      const page = await fetch(`${base}/charts/overview`)
+      expect(page.headers.get('cache-control')).toBe('no-store')
+      expect((await fetch(`${base}/assets/app-1.js`)).headers.get('cache-control')).toContain(
+        'immutable',
+      )
+      expect((await fetch(`${base}/assets/app-0.js`)).status).toBe(404)
+    } finally {
+      await server.close()
+    }
+  })
+})

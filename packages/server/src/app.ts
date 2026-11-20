@@ -159,12 +159,24 @@ async function serveDashboard(
     )
     return
   }
-  const pathname = decodeURIComponent(new URL(url, 'http://127.0.0.1').pathname)
+  let pathname: string
+  try {
+    pathname = decodeURIComponent(new URL(url, 'http://127.0.0.1').pathname)
+  } catch {
+    pathname = '/'
+  }
   const safe = path.normalize(pathname).replace(/^(\.\.[/\\])+/, '')
   let file = path.join(dir, safe)
   if (!file.startsWith(dir)) file = path.join(dir, 'index.html')
   const info = await stat(file).catch(() => undefined)
-  if (!info?.isFile()) file = path.join(dir, 'index.html')
+  if (!info?.isFile()) {
+    // A missing hashed chunk (old tab after a rebuild) must fail loudly, not come back as HTML.
+    if (pathname.startsWith('/assets/')) {
+      res.writeHead(404, { 'Cache-Control': 'no-store' }).end()
+      return
+    }
+    file = path.join(dir, 'index.html')
+  }
   const ext = path.extname(file)
   const type = MIME[ext] ?? 'application/octet-stream'
   const cache = ext === '.html' ? 'no-store' : 'public, max-age=31536000, immutable'
