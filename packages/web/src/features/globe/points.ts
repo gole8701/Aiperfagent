@@ -11,6 +11,9 @@ export interface GlobeColors {
   dim: string
 }
 
+/** At the default camera distance a dot of size 4 is about 7 CSS px: small marks, not glowing blobs. */
+const POINT_SCALE = 6
+
 const VERTEX = `
 attribute float size;
 attribute vec3 tint;
@@ -38,7 +41,7 @@ void main() {
   float d = length(gl_PointCoord - 0.5) * 2.0;
   if (d > 1.0) discard;
   float core = smoothstep(0.55, 0.0, d);
-  float halo = smoothstep(1.0, 0.3, d) * 0.5;
+  float halo = smoothstep(1.0, 0.3, d) * 0.25;
   gl_FragColor = vec4(vTint, (core + halo) * vAlpha);
 }`
 
@@ -82,7 +85,7 @@ export class GlobePoints {
       transparent: true,
       depthWrite: false,
       blending: AdditiveBlending,
-      uniforms: { uTime: { value: 0 }, uCameraDir: { value: new Vector3(0, 0, 1) }, uScale: { value: 300 } },
+      uniforms: { uTime: { value: 0 }, uCameraDir: { value: new Vector3(0, 0, 1) }, uScale: { value: POINT_SCALE } },
     })
     this.mesh = new Points(this.geometry, this.material)
     this.mesh.frustumCulled = true
@@ -117,7 +120,7 @@ export class GlobePoints {
   tick(time: number, dt: number, cameraDir: Vector3, pixelRatio: number): void {
     this.material.uniforms.uTime!.value = time
     ;(this.material.uniforms.uCameraDir!.value as Vector3).copy(cameraDir)
-    this.material.uniforms.uScale!.value = 300 * pixelRatio
+    this.material.uniforms.uScale!.value = POINT_SCALE * pixelRatio
     if (dt === 0) return
     const points = this.layout.points
     for (let i = 0; i < points.length; i++) {
