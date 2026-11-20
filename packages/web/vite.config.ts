@@ -8,6 +8,8 @@ export default defineConfig({
   build: {
     outDir: isStatic ? 'dist-static' : 'dist',
     sourcemap: false,
+    // scripts/perf-budget.mjs reads it to find the entry chunk and its static imports.
+    manifest: true,
     chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
