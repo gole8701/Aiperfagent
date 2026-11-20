@@ -186,8 +186,8 @@ export function HomeScreen() {
             <LinkButton to="/charts/overview" variant="primary">
               Open charts view
             </LinkButton>
-            <Link to="/flow">Flow diagram</Link>
-            <Link to="/compare">Compare</Link>
+            <LinkButton to="/flow">Flow diagram</LinkButton>
+            <LinkButton to="/compare">Compare</LinkButton>
           </div>
         </Card>
       </div>
