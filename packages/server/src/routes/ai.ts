@@ -73,7 +73,9 @@ export const MCP_CONFIGS: Record<string, { label: string; file: string; snippet:
     label: 'ChatGPT (connectors)',
     file: 'remote',
     snippet:
-      'npx perfagent mcp --http --port 4546\n# then add http://<your-host>:4546/mcp as a connector (needs login; see the guide)',
+      'PERFAGENT_MCP_TOKEN=<long-random-token> npx perfagent mcp --http --port 4546\n' +
+      '# ChatGPT needs a remote HTTPS endpoint: put this behind an HTTPS tunnel or proxy\n' +
+      '# that sends "Authorization: Bearer $PERFAGENT_MCP_TOKEN", then add https://<tunnel>/mcp',
   },
 }
 
