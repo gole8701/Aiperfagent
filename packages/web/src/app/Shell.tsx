@@ -71,7 +71,7 @@ export function Shell({ children }: { children: ReactNode }) {
             {status.project.name ?? 'project'} · {status.mode} mode
           </span>
         ) : null}
-        {framework ? <span className="badge">Detected: {framework}</span> : null}
+        {framework ? <span className="badge badge-framework">Detected: {framework}</span> : null}
         <nav className="nav-menu" aria-label="Screens">
           {NAV.filter((n) => !IS_STATIC || !['/live', '/settings/ai'].includes(n.to)).map((n) => (
             <NavLink key={n.to} to={n.to} end={n.end}>
@@ -80,16 +80,18 @@ export function Shell({ children }: { children: ReactNode }) {
           ))}
         </nav>
         <ScanBox />
-        <Select
-          label="Theme"
-          hideLabel
-          value={theme}
-          options={(Object.keys(THEME_LABELS) as Theme[]).map((t) => ({
-            value: t,
-            label: THEME_LABELS[t],
-          }))}
-          onChange={(value) => setTheme(value as Theme)}
-        />
+        <span className="theme-picker">
+          <Select
+            label="Theme"
+            hideLabel
+            value={theme}
+            options={(Object.keys(THEME_LABELS) as Theme[]).map((t) => ({
+              value: t,
+              label: THEME_LABELS[t],
+            }))}
+            onChange={(value) => setTheme(value as Theme)}
+          />
+        </span>
         <ExportMenu />
         {topic ? (
           <Link

@@ -53,7 +53,7 @@
 }
 
 .nav-menu a {
-  padding: 6px 10px;
+  padding: 6px 8px;
   border-radius: var(--radius-sm);
   color: var(--muted);
   text-decoration: none;
@@ -102,6 +102,26 @@
   padding: 6px 20px;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
+}
+
+/* The nav must keep every screen visible; the badge and theme picker (also in Settings) go first. */
+@media (max-width: 1500px) {
+  .badge-framework,
+  .theme-picker {
+    display: none;
+  }
+}
+
+/* Not enough room for every screen in one line: the nav gets a row of its own. */
+@media (max-width: 1340px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+
+  .nav-menu {
+    order: 10;
+    flex: 1 1 100%;
+  }
 }
 
 @media (max-width: 700px) {
