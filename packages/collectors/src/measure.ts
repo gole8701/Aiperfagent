@@ -445,11 +445,11 @@ async function interact(page: Page): Promise<void> {
     await button.click({ timeout: 2000, trial: false }).catch(() => undefined)
 }
 
-function worstInteraction(list: { durationMs: number }[]): number {
-  if (list.length === 0) return 0
+/** Undefined when no event timing entry was seen: INP was not measured, which is not the same as 0 ms. */
+export function worstInteraction(list: { durationMs: number }[]): number | undefined {
   const sorted = [...list].sort((a, b) => b.durationMs - a.durationMs)
   // INP ignores the single worst interaction once there are many; with few, it's the max.
-  return sorted[Math.min(sorted.length - 1, Math.floor(list.length / 50))]?.durationMs ?? 0
+  return sorted[Math.min(sorted.length - 1, Math.floor(list.length / 50))]?.durationMs
 }
 
 /** Speed Index from the filmstrip: area above the "visual completeness" curve, using JPEG byte size as a cheap similarity proxy. */
