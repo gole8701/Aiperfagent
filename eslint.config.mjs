@@ -4,10 +4,11 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 // Packages may only depend "downwards". The order here is the allowed import direction.
+// agent is the dependency-free browser snippet; web (the dashboard bundle) sits low so it cannot pull in Node packages.
 const layers = [
-  ['core'],
+  ['core', 'agent'],
   ['config', 'report-schema', 'security'],
-  ['scanner'],
+  ['scanner', 'web'],
   ['collectors', 'importers', 'rules'],
   ['engine'],
   ['server', 'ai', 'fixer', 'mcp'],
@@ -53,7 +54,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['packages/*/src/**/*.ts'],
+    files: ['packages/*/src/**/*.ts', 'packages/*/src/**/*.tsx'],
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -66,7 +67,7 @@ export default tseslint.config(
   },
   {
     // Dependency direction between packages: a package may import only packages in a lower layer.
-    files: ['packages/*/src/**/*.ts'],
+    files: ['packages/*/src/**/*.ts', 'packages/*/src/**/*.tsx'],
     rules: { 'no-restricted-syntax': 'off' },
     plugins: {
       perfagent: {
@@ -98,7 +99,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['packages/*/src/**/*.ts'],
+    files: ['packages/*/src/**/*.ts', 'packages/*/src/**/*.tsx'],
     rules: { 'perfagent/layer-direction': 'error' },
   },
   {

@@ -30,16 +30,16 @@ PerfAgent is a pnpm monorepo of small TypeScript packages. One npm package, `per
 Enforced by the `perfagent/layer-direction` rule in `eslint.config.mjs`. A package may import only packages in a lower layer:
 
 ```
-core
+core · agent
   ← config · report-schema · security
-      ← scanner
+      ← scanner · web
           ← collectors · importers · rules
               ← engine
                   ← server · ai · fixer · mcp
                       ← cli
 ```
 
-`web` is not in the layer list; it talks to `server` only over HTTP/WebSocket through `packages/web/src/api`. `agent` has no dependencies at all. Import cycles are a lint error (`import-x/no-cycle`), and importing a package's `dist/` is forbidden.
+`web` sits low on purpose: it may import `core` and `report-schema` (types and schema) but no Node package, and talks to `server` only over HTTP/WebSocket through `packages/web/src/api`. `agent` sits with `core`, so it cannot import anything. Import cycles are a lint error (`import-x/no-cycle`), and importing a package's `dist/` is forbidden.
 
 ## Data flow: scan → rules → report → dashboard
 
