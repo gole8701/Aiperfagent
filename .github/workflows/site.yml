@@ -42,7 +42,9 @@ jobs:
       - name: Build the site
         run: pnpm --filter perfagent-site build
       - uses: actions/configure-pages@v5
+        if: ${{ !github.event.repository.private }}
       - uses: actions/upload-pages-artifact@v3
+        if: ${{ !github.event.repository.private }}
         with:
           path: apps/site/dist
 

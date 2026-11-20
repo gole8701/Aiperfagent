@@ -43,6 +43,9 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+        env:
+          # Type-aware lint loads every package's types at once; the default heap is too small on runners.
+          NODE_OPTIONS: --max-old-space-size=6144
 
       - name: Format check
         run: pnpm format:check
