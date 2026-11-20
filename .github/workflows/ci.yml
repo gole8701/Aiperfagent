@@ -25,7 +25,7 @@ jobs:
       # Collector tests use the Google Chrome preinstalled on ubuntu runners (Playwright channel "chrome").
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # The version comes from "packageManager" in package.json.
       - uses: pnpm/action-setup@v4
