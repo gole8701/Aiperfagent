@@ -1,4 +1,5 @@
 import { execFile } from 'node:child_process'
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
 import { chmod, mkdir, readFile, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
@@ -41,25 +42,75 @@ export function maskKey(key: string): string {
 
 /**
  * Keys live in the OS keychain (macOS `security`, Linux `secret-tool`), called
- * with fixed argument arrays. Without a keychain tool they go to a 0600 file.
+ * with fixed argument arrays. Without a keychain tool they go to a 0600 file,
+ * encrypted with AES-256-GCM under a random per-machine secret kept in a second 0600 file.
  */
 export function createKeyStore(options: KeyStoreOptions = {}): KeyStore {
   const dir = options.dir ?? path.join(os.homedir(), '.perfagent')
   const file = path.join(dir, 'keys.json')
   const keychain = options.fileOnly ? undefined : keychainFor(process.platform)
 
+  const secretFile = path.join(dir, '.keysecret')
+
+  async function writePrivate(target: string, data: string | Buffer): Promise<void> {
+    await mkdir(dir, { recursive: true, mode: 0o700 })
+    await writeFile(target, data, { mode: 0o600 })
+    await chmod(target, 0o600).catch(() => undefined)
+  }
+
+  async function secret(): Promise<Buffer> {
+    const existing = await readFile(secretFile).catch(() => undefined)
+    if (existing?.length === 32) return existing
+    const created = randomBytes(32)
+    await writePrivate(secretFile, created)
+    return created
+  }
+
   async function readFileStore(): Promise<Record<string, string>> {
+    let parsed: { v?: number; iv?: string; tag?: string; data?: string } & Record<string, unknown>
     try {
-      return JSON.parse(await readFile(file, 'utf8')) as Record<string, string>
+      parsed = JSON.parse(await readFile(file, 'utf8')) as typeof parsed
     } catch {
+      return {}
+    }
+    if (parsed.v !== 1) {
+      // Plaintext file from an older version: encrypt it in place once.
+      const keys = parsed as Record<string, string>
+      await writeFileStore(keys)
+      return keys
+    }
+    try {
+      const decipher = createDecipheriv(
+        'aes-256-gcm',
+        await secret(),
+        Buffer.from(parsed.iv ?? '', 'base64'),
+      )
+      decipher.setAuthTag(Buffer.from(parsed.tag ?? '', 'base64'))
+      const plain = Buffer.concat([
+        decipher.update(Buffer.from(parsed.data ?? '', 'base64')),
+        decipher.final(),
+      ])
+      return JSON.parse(plain.toString('utf8')) as Record<string, string>
+    } catch {
+      // Wrong or missing secret: the stored keys cannot be recovered, so treat them as absent.
       return {}
     }
   }
 
   async function writeFileStore(keys: Record<string, string>): Promise<void> {
-    await mkdir(dir, { recursive: true, mode: 0o700 })
-    await writeFile(file, JSON.stringify(keys), { mode: 0o600 })
-    await chmod(file, 0o600).catch(() => undefined)
+    const iv = randomBytes(12)
+    const cipher = createCipheriv('aes-256-gcm', await secret(), iv)
+    const data = Buffer.concat([cipher.update(JSON.stringify(keys), 'utf8'), cipher.final()])
+    const tag = cipher.getAuthTag()
+    await writePrivate(
+      file,
+      JSON.stringify({
+        v: 1,
+        iv: iv.toString('base64'),
+        tag: tag.toString('base64'),
+        data: data.toString('base64'),
+      }),
+    )
   }
 
   return {
@@ -144,7 +195,7 @@ function keychainFor(platform: NodeJS.Platform): Keychain | undefined {
       },
     }
   }
-  // Windows: cmdkey cannot read secrets back without extra modules, so the 0600 file is used.
+  // Windows: cmdkey cannot read secrets back without extra modules, so the encrypted 0600 file is used.
   return undefined
 }
 

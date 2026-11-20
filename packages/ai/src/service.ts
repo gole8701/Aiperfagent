@@ -136,7 +136,7 @@ export function createAiService(options: AiServiceOptions): AiService {
           ? stored.source === 'env'
             ? 'from environment'
             : stored.source === 'file'
-              ? `key ${maskKey(stored.key)} · stored in ~/.perfagent/keys.json (no OS keychain found; file is readable only by you)`
+              ? `key ${maskKey(stored.key)} · stored encrypted in ~/.perfagent/keys.json (no OS keychain found; readable only by you)`
               : `key ${maskKey(stored.key)} · stored in OS keychain`
           : endpoint
             ? `endpoint ${endpoint}`

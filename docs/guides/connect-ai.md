@@ -30,7 +30,7 @@ Better fixes for the harder problems: splitting a context, restructuring an effe
 
 1. **Settings:** open **Settings → AI**. The provider list shows Ollama (free), Anthropic, OpenAI, OpenAI-compatible, Gemini and in-browser AI, with what is configured.
 2. **Settings:** for Ollama press **Install hint** if it is not running, then pick a model such as `qwen2.5-coder`.
-3. **Settings:** for a paid provider paste the key. It is stored in the OS keychain (on Windows, a private file in `~/.perfagent`), never in `perfagent.config.ts` or the project's `.perfagent/`.
+3. **Settings:** for a paid provider paste the key. It is stored in the OS keychain (on Windows, an encrypted private file in `~/.perfagent`), never in `perfagent.config.ts` or the project's `.perfagent/`.
 4. **Settings:** press **Test connection**; it reports ok, a message and the latency.
 5. **Settings:** set `sendCode` (`snippets`, `files` or `none`), `monthlyBudgetUsd` and `maxPerFixUsd`, and keep `redact` and `auditLog` on.
 
@@ -62,7 +62,7 @@ ollama serve
 
 - Routes: `GET /api/ai/providers` (statuses, active provider, month usage, `ai` config), `POST /api/ai/test { provider, model?, baseUrl? }`, `POST /api/ai/keys { provider, key }` (minimum 8 characters, writes an audit line), `DELETE /api/ai/keys/:provider`, `POST /api/ai/explain { reportId?, issueId }`, `POST /api/ai/summary`, `POST /api/ai/suggest { issueIds }` (text only, applies nothing; available in every mode).
 - `activeProvider()` returns `'rules'` when nothing is connected: the free built-in engine answers.
-- Keys are read from `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY` first, then from the OS keychain (macOS Keychain via `security`, libsecret via `secret-tool` on Linux). On Windows, or without a keychain tool, they go to a file readable only by you (mode 0600) in `~/.perfagent`. The dashboard shows them masked (`••••3f9`). They travel only to the provider they belong to.
+- Keys are read from `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY` first, then from the OS keychain (macOS Keychain via `security`, libsecret via `secret-tool` on Linux). On Windows, or on Linux without `secret-tool`, they go to `~/.perfagent/keys.json`, encrypted with AES-256-GCM under a random 32-byte per-machine secret in `~/.perfagent/.keysecret` (created on first use); both files are mode 0600. This stops a copied or backed-up `keys.json` from leaking keys, but anyone who can read both files as you can decrypt them. A plaintext `keys.json` from an older version is encrypted the first time it is read. The dashboard shows them masked (`••••3f9`). They travel only to the provider they belong to.
 - `sendCode: 'snippets'` sends the lines around each problem; `'files'` sends whole files; `'none'` sends only the problem description. Everything passes through `redact` first (API keys, tokens, JWTs, emails, private keys, password-like values).
 - The CSP `connect-src` of the dashboard allows the local server and localhost ports (Ollama runs on `127.0.0.1:11434`); provider APIs are called from the server, not from the browser, except the in-browser AI option.
 - Page and file content sent to the AI is treated as data, never instructions; the AI has no tools that write files, run commands or call the network.
