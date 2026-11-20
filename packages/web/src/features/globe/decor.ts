@@ -67,7 +67,7 @@ export class GlobeDecor {
     for (const r of this.rings) (r.material as MeshBasicMaterial).color.set(accent)
     ;(this.shell.material as MeshBasicMaterial).color.set(accent)
     ;(this.grid.material as LineBasicMaterial).color.set(accent)
-    ;((this.atmosphere.material as ShaderMaterial).uniforms.uColor!.value as Color).set(accent)
+    ;((this.atmosphere.material as ShaderMaterial).uniforms.uColor?.value as Color | undefined)?.set(accent)
     ;(this.stars.material as PointsMaterial).color.set(starColour)
     if (this.link) (this.link.material as LineDashedMaterial).color = new Color(accent)
   }
