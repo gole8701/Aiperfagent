@@ -1,6 +1,6 @@
 .topbar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 10px;
   padding: 10px 20px;
@@ -9,6 +9,14 @@
   position: sticky;
   top: 0;
   z-index: 40;
+}
+
+.topbar .badge {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .brand {
@@ -30,18 +38,18 @@
   box-shadow: 0 0 10px var(--accent);
 }
 
-.topbar-spacer {
-  flex: 1 1 20px;
-}
-
 .topbar .input {
-  flex: 0 1 260px;
+  flex: 0 1 200px;
+  min-width: 140px;
 }
 
 .nav-menu {
   display: flex;
   gap: 2px;
-  flex-wrap: wrap;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .nav-menu a {
@@ -50,6 +58,7 @@
   color: var(--muted);
   text-decoration: none;
   font-size: 13px;
+  white-space: nowrap;
 }
 
 .nav-menu a:hover,
@@ -66,31 +75,40 @@
   text-align: center;
 }
 
-.guide-fab {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 45;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--accent-ink);
-  font-weight: 600;
-  text-decoration: none;
+.help-button {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: var(--shadow);
+  justify-content: center;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
 }
 
+.help-button:hover {
+  background: var(--panel-2);
+}
+
+/* Hangs below the bar so a running scan never pushes the header onto two lines. */
 .scan-progress {
-  flex: 1 1 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  padding: 6px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
 }
 
 @media (max-width: 700px) {
   .topbar {
-    padding: 10px 12px;
+    position: static;
+    flex-wrap: wrap;
+    padding: 10px 12px 14px;
   }
 
   .topbar .input {
@@ -99,14 +117,20 @@
 
   .nav-menu {
     flex: 1 1 100%;
-    overflow-x: auto;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+
+  .scan-progress {
+    position: static;
+    flex: 1 1 100%;
+    padding: 0;
+    border: 0;
   }
 }
 
 @media print {
   .topbar,
-  .guide-fab,
   .banner {
     display: none;
   }

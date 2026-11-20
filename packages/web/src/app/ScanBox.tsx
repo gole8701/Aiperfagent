@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { api, describeError } from '../api/client'
-import { Button, LinkButton } from '../components/Button'
+import { Button } from '../components/Button'
 import { Progress } from '../components/Card'
 import { Select } from '../components/Fields'
 import { useReport } from '../state/report'
 import { IS_STATIC } from '../static/env'
 import { quickTest } from '../static/psi'
 
-/** Top-bar scan controls: environment picker, "Paste any URL", Scan, Live. */
+/** Top-bar scan controls: environment picker, "Paste any URL", Scan. */
 export function ScanBox() {
   const status = useReport((s) => s.status)
   const scan = useReport((s) => s.scan)
@@ -87,11 +87,6 @@ export function ScanBox() {
       >
         Scan
       </Button>
-      {!IS_STATIC && status?.capabilities.live ? (
-        <LinkButton to="/live" variant="danger">
-          Live
-        </LinkButton>
-      ) : null}
       {error ? (
         <span role="alert" className="sev-critical" style={{ fontSize: 12 }}>
           {error}

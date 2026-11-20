@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode, type RefObject } from 'react'
 import { Link, NavLink, useLocation } from 'react-router'
 
 import { onWsMessage } from '../api/ws'
@@ -21,7 +21,7 @@ const NAV = [
   { to: '/settings/ai', label: 'Settings' },
 ]
 
-/** Which guide topic the floating "? Guide" button opens on each screen. */
+/** Which guide topic the header "?" button opens on each screen. */
 const GUIDE_BY_ROUTE: [RegExp, string][] = [
   [/^\/issues/, 'deep-dive'],
   [/^\/flow/, 'flow-diagram'],
@@ -39,7 +39,9 @@ export function Shell({ children }: { children: ReactNode }) {
   const status = useReport((s) => s.status)
   const { theme, setTheme } = useDisplay()
   const location = useLocation()
+  const header = useRef<HTMLElement>(null)
   useServerEvents()
+  useTopbarHeight(header)
 
   const topic = GUIDE_BY_ROUTE.find(([pattern]) => pattern.test(location.pathname))?.[1] ?? 'globe'
   const framework = status?.project.framework
@@ -48,7 +50,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <header className="topbar no-print" data-tour="header">
+      <header ref={header} className="topbar no-print" data-tour="header">
         <Link to="/" className="brand" aria-label="PerfAgent home">
           <span className="brand-mark" aria-hidden="true" />
           PerfAgent
@@ -66,7 +68,6 @@ export function Shell({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
         </nav>
-        <span className="topbar-spacer" />
         <ScanBox />
         <Select
           label="Theme"
@@ -79,6 +80,16 @@ export function Shell({ children }: { children: ReactNode }) {
           onChange={(value) => setTheme(value as Theme)}
         />
         <ExportMenu />
+        {topic ? (
+          <Link
+            to={`/guide/${topic}`}
+            className="help-button"
+            aria-label="Help for this screen"
+            title="Help for this screen"
+          >
+            ?
+          </Link>
+        ) : null}
       </header>
       {status && status.mode !== 'local' && status.mode !== 'static' ? (
         <div className="banner no-print" role="status">
@@ -92,17 +103,21 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
       ) : null}
       <main id="main">{children}</main>
-      {topic ? (
-        <Link
-          to={`/guide/${topic}`}
-          className="guide-fab no-print"
-          aria-label="Open the guide for this screen"
-        >
-          ? Guide
-        </Link>
-      ) : null}
     </>
   )
+}
+
+/** Publishes the header height as --topbar-h so sticky panels sit right under it. */
+function useTopbarHeight(header: RefObject<HTMLElement | null>): void {
+  useEffect(() => {
+    const el = header.current
+    if (!el) return
+    const observer = new ResizeObserver(() => {
+      document.documentElement.style.setProperty('--topbar-h', `${el.offsetHeight}px`)
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [header])
 }
 
 /** One WebSocket for the whole app: scan progress updates the store, finished scans reload the report. */
