@@ -5,11 +5,9 @@ import { SettingsShell } from './SettingsShell'
 
 const LABELS: Record<string, string> = {
   'fix.review': 'Review each change',
-  'fix.autoAccept': 'Auto-accept changes',
   'fix.runTests': 'Run tests after each change',
   'fix.testCommand': 'Test command',
   'fix.autoCommit': 'Auto-commit to fix branch',
-  'fix.openPr': 'Open pull request when done',
   'fix.protected': 'Protected folders',
   'fix.maxRounds': 'Max rounds',
   'fix.maxFiles': 'Max files changed per run',
