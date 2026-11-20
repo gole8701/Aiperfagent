@@ -2,6 +2,8 @@
 
 **PerfAgent finds, explains and fixes web and AI performance problems — down to the exact file and line.**
 
+![The PerfAgent dashboard: a 3D globe of the project with problems glowing by severity, Core Web Vitals and filter chips](docs/images/globe.jpg)
+
 - It measures your pages in a real browser (Playwright + Chrome DevTools Protocol) and reads your source code, then connects the two: "your main picture loads late" becomes `src/components/HeroBanner.tsx:5`, with the cause, the fix and the expected gain.
 - It explains everything twice: in plain words for anyone on the team, and in technical terms for the person fixing it. Thirty-one built-in guides cover every metric and feature.
 - It is local, read-only by default and uses your own AI if you want AI at all. Nothing is uploaded, nothing phones home.
@@ -29,7 +31,7 @@ Needs Node.js 22+ and Google Chrome or Edge on the machine (or `npx playwright i
 - **A guide for every feature**: written steps naming the screen, an animated walkthrough over the real UI, beginner/expert, English, Hindi and Marathi.
 - **Live mode**: requests, latency, WebSocket messages, reconnects and memory every second from a browser PerfAgent controls, or from real users with a tiny agent snippet.
 - **AI performance** in the same dashboard: wrap your client with `watchAI()` to record first token, tokens, cost, cache hits, errors and agent steps; 15 static AI rules find problems without any measurement.
-- **Bring your own AI**: Anthropic, OpenAI, OpenAI-compatible or Gemini with your key in the OS keychain, a company endpoint, or free local Ollama.
+- **Bring your own AI, no key needed**: free local Ollama or LM Studio, the Claude Code / Codex / Gemini CLI you are already signed in to, a one-click OpenRouter login, or (under Advanced) an Anthropic, OpenAI, Gemini or company key kept in your OS keychain. Assistants such as Cursor, VS Code, Claude Code and Claude Desktop connect in one click.
 - **MCP server** for Claude Code, Claude Desktop, Cursor, Windsurf, VS Code Copilot, Cline, Zed and (over Streamable HTTP with a bearer token) ChatGPT: `npx perfagent mcp`.
 - **Fix loop**: your AI proposes, you review, changes land on a new branch, your tests run, the page is re-tested, and _Undo_ restores everything.
 - **Budgets in CI**: limits per route in the config; `npx perfagent ci` fails the build and writes a pull-request comment.
@@ -155,11 +157,15 @@ Prompts and answers are not stored unless you set `ai.logPrompts: true`.
 
 ## Screenshots
 
-Captured from the real dashboard; see [docs/images/README.md](docs/images/README.md) for how. Not committed yet.
+All taken from the real dashboard scanning the [demo shop](fixtures/demo-shop) (how: [docs/images/README.md](docs/images/README.md)).
 
-| Globe                   | Deep dive                   | Charts                   |
-| ----------------------- | --------------------------- | ------------------------ |
-| `docs/images/globe.png` | `docs/images/deep-dive.png` | `docs/images/charts.png` |
+| Problem detail: file, line and root cause                                                                                                           | Flow diagram: where problems sit in your code                                                                                                                    |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Deep dive on "Your main picture loads late": HeroBanner.tsx line 5 highlighted, root cause chain from LCP to the code](docs/images/deep-dive.jpg) | ![Flow diagram from the project root to src/components, with problem counts per folder and the problems listed beside it](docs/images/flow.jpg)                  |
+| **Charts in plain words**                                                                                                                           | **Compare two scans**                                                                                                                                            |
+| ![Charts overview: "Usable, but 17 things slow it down" and a bar chart of what to fix first](docs/images/charts.jpg)                               | ![Compare: score 51 to 54 with what got better and worse, metric by metric](docs/images/compare.jpg)                                                             |
+| **A guide for every metric**                                                                                                                        | **Connect your AI without pasting keys**                                                                                                                         |
+| ![LCP guide with an animated phone diagram and a good / needs work / poor bar showing your value](docs/images/guide.jpg)                            | ![AI connections: free local AI, your signed-in Claude Code / Codex / Gemini CLI, OpenRouter login and one-click assistant connect](docs/images/settings-ai.jpg) |
 
 ## Project structure
 
