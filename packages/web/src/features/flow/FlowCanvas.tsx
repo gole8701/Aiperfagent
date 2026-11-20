@@ -98,10 +98,14 @@ function FitOnLayout({ positions, graph }: { positions: Positions; graph: Visibl
   const { fitView } = useReactFlow()
   useEffect(() => {
     if (!positions.size) return
-    const top = graph.nodes.filter((n) => n.depth <= 1).map((n) => ({ id: n.node.id }))
+    // A search frames what it found; otherwise the top two levels, readable on any project size.
+    const matches = graph.nodes.filter((n) => n.match)
+    const focus = (matches.length ? matches : graph.nodes.filter((n) => n.depth <= 1)).map((n) => ({
+      id: n.node.id,
+    }))
     // Wait a frame so React Flow has the new node positions in its store.
     const frame = requestAnimationFrame(() => {
-      void fitView({ nodes: top, padding: 0.2, minZoom: 0.6, maxZoom: 1, duration: 250 })
+      void fitView({ nodes: focus, padding: 0.2, minZoom: 0.6, maxZoom: 1, duration: 250 })
     })
     return () => cancelAnimationFrame(frame)
   }, [positions, graph, fitView])
