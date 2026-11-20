@@ -101,9 +101,9 @@ const DEV_PORTS = [3000, 5173, 8080, 4200, 4321, 8000]
 
 /** Keeps the configured URLs that answer; otherwise picks the first local dev server found. */
 export async function reachableUrls(configured: string[]): Promise<string[]> {
-  const up = (await Promise.all(configured.map(async (u) => ((await answers(u)) ? u : undefined)))).filter(
-    (u): u is string => Boolean(u),
-  )
+  const up = (
+    await Promise.all(configured.map(async (u) => ((await answers(u)) ? u : undefined)))
+  ).filter((u): u is string => Boolean(u))
   if (up.length) return up
   for (const p of DEV_PORTS) {
     const url = `http://localhost:${p}`
@@ -129,7 +129,10 @@ async function startFirstScan(dashboardUrl: string, token: string): Promise<void
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: '{}',
     })
-    if (!res.ok) print(`  ${color.yellow('!')} First scan did not start (${res.status}). Press Scan in the dashboard.`)
+    if (!res.ok)
+      print(
+        `  ${color.yellow('!')} First scan did not start (${res.status}). Press Scan in the dashboard.`,
+      )
   } catch {
     print(`  ${color.yellow('!')} First scan did not start. Press Scan in the dashboard.`)
   }

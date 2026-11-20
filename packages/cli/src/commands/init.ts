@@ -1,7 +1,8 @@
-import { access, readFile, writeFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
 import { CONFIG_TEMPLATE, findConfigFile } from '@perfagent/config'
+import { isGitRepo } from '@perfagent/engine'
 
 import { flagString, type ParsedArgs } from '../args.js'
 import { color, print } from '../ui.js'
@@ -31,9 +32,7 @@ export async function init(args: ParsedArgs): Promise<void> {
     )
     print(`  ${color.green('✔')} Added .perfagent/ to .gitignore`)
   }
-  const hasGit = await access(path.join(cwd, '.git'))
-    .then(() => true)
-    .catch(() => false)
+  const hasGit = await isGitRepo(cwd)
   if (!hasGit)
     print(
       `  ${color.yellow('!')} This folder is not a git repository. AI fixes need git (they go to a new branch). Run "git init" first.`,
