@@ -41,7 +41,7 @@ jobs:
           pnpm --filter @perfagent/web build:static || echo "No static dashboard build yet; the site links to /app/ once it exists"
       - name: Build the site
         run: pnpm --filter perfagent-site build
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
         if: ${{ !github.event.repository.private }}
       - uses: actions/upload-pages-artifact@v3
         if: ${{ !github.event.repository.private }}
