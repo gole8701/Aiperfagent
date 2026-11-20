@@ -23,7 +23,7 @@ export function scanRoutes(router: Router, ctx: AppContext): void {
       mode: body.project === false || ctx.mode.mode !== 'local' ? 'deployed' : 'local',
       allowLoopback: ctx.mode.mode === 'local',
     }
-    if (!request.urls.length && !request.project)
+    if (!request.urls?.length && !request.project)
       throw new PerfAgentError(
         'CONFIG_INVALID',
         'Nothing to scan',
