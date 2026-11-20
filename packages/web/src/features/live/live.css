@@ -14,3 +14,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+.chart-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  pointer-events: none;
+}

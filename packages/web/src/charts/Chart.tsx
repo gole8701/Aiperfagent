@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { Button } from '../components/Button'
@@ -6,6 +6,7 @@ import { InfoLink } from '../components/Fields'
 import { useDisplay } from '../state/theme'
 
 import type { ChartContext, ChartDefinition } from './definitions/types'
+import { barList } from './bar-list'
 import { echarts } from './echarts'
 
 interface ChartProps {
@@ -165,6 +166,13 @@ function EChart({
     instance.current = chart
     const observer = new ResizeObserver(() => chart.resize())
     observer.observe(el)
+    // Long category labels are cut short; the full text shows as a native tooltip.
+    chart.on('mouseover', (params) => {
+      if (params.componentType === 'yAxis') el.title = String(params.value)
+    })
+    chart.on('mouseout', () => {
+      el.title = ''
+    })
     chart.on('click', (params) => {
       const click = definition.onClick?.(
         { name: params.name, dataIndex: params.dataIndex, seriesName: params.seriesName },
@@ -180,21 +188,27 @@ function EChart({
     // The chart instance lives as long as the element; options are pushed in the effect below.
   }, [])
 
-  useEffect(() => {
+  const built = useMemo(() => {
     try {
+      return { option: barList(definition.build(ctx)) }
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : 'This chart could not be drawn' }
+    }
+  }, [definition, ctx])
+
+  useEffect(() => {
+    if (built.error !== undefined) onError(built.error)
+    else
       instance.current?.setOption(
-        { animation: !reducedMotion, backgroundColor: 'transparent', ...definition.build(ctx) },
+        { animation: !reducedMotion, backgroundColor: 'transparent', ...built.option.option },
         true,
       )
-    } catch (error) {
-      onError(error instanceof Error ? error.message : 'This chart could not be drawn')
-    }
-  }, [definition, ctx, reducedMotion, instance, onError])
+  }, [built, reducedMotion, instance, onError])
 
   return (
     <div
       ref={ref}
-      style={{ height: definition.height ?? 280 }}
+      style={{ height: built.option?.height ?? definition.height ?? 280 }}
       role="img"
       aria-label={`${definition.question} ${definition.takeaway(ctx)}`}
     />

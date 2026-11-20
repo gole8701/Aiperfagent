@@ -343,12 +343,17 @@ function LiveChart({ title, subtitle, series, marks = [], markColour, palette }:
       <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>
         {subtitle}
       </div>
-      <div
-        ref={ref}
-        style={{ height: 180 }}
-        role="img"
-        aria-label={`${title}: ${series.map((s) => `${s.name} now ${Math.round(s.values[s.values.length - 1] ?? 0)}`).join(', ')}`}
-      />
+      <div style={{ position: 'relative' }}>
+        <div
+          ref={ref}
+          style={{ height: 180 }}
+          role="img"
+          aria-label={`${title}: ${series.map((s) => `${s.name} now ${Math.round(s.values[s.values.length - 1] ?? 0)}`).join(', ')}`}
+        />
+        {series.every((s) => s.values.length === 0) ? (
+          <div className="muted chart-empty">Press Start to record</div>
+        ) : null}
+      </div>
     </Card>
   )
 }
