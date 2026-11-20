@@ -1,0 +1,16 @@
+.live-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: var(--space);
+  margin-top: 12px;
+}
+
+.live-span {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .live-grid {
+    grid-template-columns: 1fr;
+  }
+}

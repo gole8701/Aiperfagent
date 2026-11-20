@@ -1,0 +1,44 @@
+.sources-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space);
+  align-items: start;
+}
+
+.source-card .tab {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.verdict {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.verdict-score {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.verdict-score strong {
+  font-family: var(--font-display);
+  font-size: 40px;
+}
+
+.impact-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.page-pickers {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}

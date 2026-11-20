@@ -1,0 +1,105 @@
+:root {
+  --bg: #05070d;
+  --panel: #0b1020;
+  --panel-2: #0f1628;
+  --border: #161d2b;
+  --border-strong: #26324a;
+  --text: #e6ecf5;
+  --text-2: #c9d4e3;
+  --muted: #8a97ab;
+  --accent: #4fa3ff;
+  --accent-soft: #8cc4ff;
+  --accent-ink: #05070d;
+  --purple: #6d5bd0;
+  --critical: #ff6b4a;
+  --warning: #f5b83d;
+  --info: #4fa3ff;
+  --good: #14b8a6;
+  --focus: #ffd166;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', Inter, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --space: 14px;
+  --font-size: 14px;
+  --chart-1: #4fa3ff;
+  --chart-2: #f5b83d;
+  --chart-3: #14b8a6;
+  --chart-4: #b9a6ff;
+  --chart-5: #ff6b4a;
+  --chart-6: #7fd4c1;
+  --chart-7: #f8cf73;
+  --chart-8: #8a97ab;
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --bg: #f4f6fb;
+  --panel: #ffffff;
+  --panel-2: #eef2f9;
+  --border: #dde3ee;
+  --border-strong: #b9c3d6;
+  --text: #0f1628;
+  --text-2: #273349;
+  --muted: #5b6678;
+  --accent: #1f6fd0;
+  --accent-soft: #1f6fd0;
+  --accent-ink: #ffffff;
+  --purple: #5a48c4;
+  --critical: #c2410c;
+  --warning: #a16207;
+  --info: #1f6fd0;
+  --good: #0f766e;
+  --focus: #1f6fd0;
+  --shadow: 0 10px 30px rgba(15, 22, 40, 0.12);
+  --chart-1: #1f6fd0;
+  --chart-2: #b8860b;
+  --chart-3: #0f766e;
+  --chart-4: #6d5bd0;
+  --chart-5: #c2410c;
+  --chart-6: #2a9d8f;
+  --chart-7: #d4a017;
+  --chart-8: #5b6678;
+  color-scheme: light;
+}
+
+:root[data-theme='high-contrast'] {
+  --bg: #000000;
+  --panel: #000000;
+  --panel-2: #0a0a0a;
+  --border: #ffffff;
+  --border-strong: #ffffff;
+  --text: #ffffff;
+  --text-2: #ffffff;
+  --muted: #d0d0d0;
+  --accent: #66ccff;
+  --accent-soft: #66ccff;
+  --accent-ink: #000000;
+  --purple: #d0b0ff;
+  --critical: #ff8866;
+  --warning: #ffd34d;
+  --info: #66ccff;
+  --good: #4de0c4;
+  --focus: #ffff00;
+  --shadow: none;
+  --chart-1: #66ccff;
+  --chart-2: #ffd34d;
+  --chart-3: #4de0c4;
+  --chart-4: #d0b0ff;
+  --chart-5: #ff8866;
+  --chart-6: #a0f0e0;
+  --chart-7: #fff0a0;
+  --chart-8: #d0d0d0;
+  color-scheme: dark;
+}
+
+:root[data-density='compact'] {
+  --space: 8px;
+  --font-size: 13px;
+}
+
+:root[data-presentation='on'] {
+  --font-size: 18px;
+}

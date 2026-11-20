@@ -1,0 +1,113 @@
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, var(--accent), var(--panel-2) 70%);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.topbar-spacer {
+  flex: 1 1 20px;
+}
+
+.topbar .input {
+  flex: 0 1 260px;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.nav-menu a {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+  color: var(--text);
+  background: var(--panel-2);
+}
+
+.banner {
+  padding: 8px 20px;
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  text-align: center;
+}
+
+.guide-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 45;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow);
+}
+
+.scan-progress {
+  flex: 1 1 100%;
+}
+
+@media (max-width: 700px) {
+  .topbar {
+    padding: 10px 12px;
+  }
+
+  .topbar .input {
+    flex: 1 1 100%;
+  }
+
+  .nav-menu {
+    flex: 1 1 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+}
+
+@media print {
+  .topbar,
+  .guide-fab,
+  .banner {
+    display: none;
+  }
+}
