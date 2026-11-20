@@ -114,4 +114,6 @@ export interface FixService {
   accept(id: string, changeIds: string[], edits?: Record<string, string>): Promise<FixRun>
   skip(id: string, changeIds: string[]): Promise<FixRun>
   undo(id: string): Promise<FixRun>
+  /** Resolves when the run stops running (done, failed, waiting for review or undone). */
+  wait?(id: string): Promise<FixRun>
 }

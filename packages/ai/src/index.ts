@@ -1,26 +1,12 @@
-import type { PerfAgentConfig } from '@perfagent/config'
-import { PerfAgentError } from '@perfagent/core'
-import type { AiService, ReportStore } from '@perfagent/engine'
-
-export interface AiServiceOptions {
-  config: PerfAgentConfig
-  store: ReportStore
-}
-
-/** Contract stub: the real implementation lives in ./service.ts and replaces this export. */
-export function createAiService(_options: AiServiceOptions): AiService {
-  const notReady = (): never => {
-    throw new PerfAgentError('AI_NOT_CONFIGURED', 'AI service is not built yet')
-  }
-  return {
-    providers: () => Promise.resolve([]),
-    testConnection: notReady,
-    storeKey: notReady,
-    removeKey: notReady,
-    explain: notReady,
-    proposeFix: notReady,
-    summarise: notReady,
-    usage: () => Promise.resolve({ monthUsd: 0, calls: 0 }),
-    activeProvider: () => Promise.resolve('rules'),
-  }
-}
+export { createAiService } from './service.js'
+export type { AiServiceOptions } from './service.js'
+export { createKeyStore, maskKey } from './keys.js'
+export type { KeyStore, KeyStoreOptions } from './keys.js'
+export { createAiProxy } from './proxy.js'
+export type { AiProxyOptions, RunningAiProxy } from './proxy.js'
+export { buildAiReport } from './report.js'
+export { estimateCostUsd, priceFor } from './prices.js'
+export { parseProposedChanges } from './prompts.js'
+export { ollamaModels, pullModel, OLLAMA_INSTALL_HINT } from './providers/index.js'
+export { watchAI, watchFetch, wrapAI, withRoute } from './watch/index.js'
+export type { WatchOptions } from './watch/index.js'

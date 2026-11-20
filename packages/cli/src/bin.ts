@@ -14,7 +14,8 @@ const HELP = `
   ${color.bold('perfagent import')} <file>   import Lighthouse / HAR / PDF / Excel / Word / CSV / PerfAgent JSON
   ${color.bold('perfagent export')} [id]     export a report (--format json|csv|md|html --out file)
   ${color.bold('perfagent compare')} <a> <b> compare two reports (ids or files)
-  ${color.bold('perfagent mcp')}             run as an MCP server for Claude Code, Cursor, Copilot… (--http for remote)
+  ${color.bold('perfagent mcp')}             run as an MCP server for Claude Code, Cursor, Copilot… (--http --port 4546 --host 127.0.0.1 for remote)
+  ${color.bold('perfagent ai-proxy')}        measure your app's AI calls with no code change (--target https://api.openai.com --port 4547)
 
   Options: --port 4545  --root .  --device mobile|desktop  --runs 3  --no-project  --json  --no-open
   Docs: https://github.com/gole8701/perfagent
@@ -40,6 +41,7 @@ async function main(): Promise<void> {
     case 'export': return (await import('./commands/tools.js')).exportCommand(args)
     case 'compare': return (await import('./commands/tools.js')).compareCommand(args)
     case 'mcp': return (await import('./commands/tools.js')).mcpCommand(args)
+    case 'ai-proxy': return (await import('./commands/tools.js')).aiProxyCommand(args)
     default:
       printError(`Unknown command "${args.command}"`, 'Run "perfagent --help" to see the commands.')
       process.exitCode = 1

@@ -63,6 +63,15 @@ export function aiRoutes(router: Router, ctx: AppContext): void {
     return { changes: await ai().proposeFix(issues, files) }
   })
 
+  /** Aggregates of AI calls measured by watchAI / the proxy / the browser agent. */
+  router.get('/api/ai/report', () => ai().report())
+  router.post('/api/ai/compare-models', async ({ json }) => {
+    const { questions, models } = await json<{ questions: string[]; models: { provider: ProviderStatus['id']; model: string }[] }>()
+    if (!Array.isArray(questions) || !questions.length || !Array.isArray(models) || models.length < 2) throw new PerfAgentError('IMPORT_INVALID', 'Give at least one question and two models')
+    await ctx.store.appendLog('audit.log', `compare-models ${models.map((m) => `${m.provider}/${m.model}`).join(',')} questions=${questions.length}`)
+    return { rows: await ai().compareModels(questions.slice(0, 5), models.slice(0, 6)) }
+  })
+
   router.get('/api/ai/mcp-config', ({ query }) => {
     const client = query.get('client')
     if (client) {

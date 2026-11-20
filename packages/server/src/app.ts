@@ -1,5 +1,5 @@
 import { createReadStream } from 'node:fs'
-import { stat } from 'node:fs/promises'
+import { rm, stat } from 'node:fs/promises'
 import { createServer as createHttpServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http'
 import path from 'node:path'
 
@@ -9,6 +9,7 @@ import { PerfAgentError } from '@perfagent/core'
 import { ReportStore, type AiService, type FixService } from '@perfagent/engine'
 import { createSessionToken, detectMode, extractToken, requestRejection, securityHeaders, tokenMatches, type ModeCheck } from '@perfagent/security'
 
+import { AGENT_PATHS, handleAgentRequest } from './agent.js'
 import { JobQueue } from './jobs.js'
 import { Router, sendError, sendJson } from './router.js'
 import { registerRoutes } from './routes/index.js'
@@ -66,6 +67,12 @@ export async function createServer(options: ServerOptions): Promise<RunningServe
 
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     for (const [k, v] of Object.entries(securityHeaders({ dev: Boolean(options.devOrigins?.length) }))) res.setHeader(k, v)
+    const pathname = new URL(req.url ?? '/', 'http://127.0.0.1').pathname
+    // The only exception to the Host/Origin rejection: the public snippet and its collector, which are called from the user's own site (see agent.ts).
+    if (AGENT_PATHS.includes(pathname)) {
+      await handleAgentRequest(req, res, pathname, ctx)
+      return
+    }
     const rejection = requestRejection(req.headers as Record<string, string | undefined>, policy)
     if (rejection) {
       sendError(res, new PerfAgentError('ORIGIN_REJECTED', rejection))
@@ -89,12 +96,17 @@ export async function createServer(options: ServerOptions): Promise<RunningServe
     http.listen(port, HOST, resolve)
   })
 
+  const url = `http://${HOST}:${port}/?token=${token}`
+  // Lets `perfagent mcp` (open_dashboard) find the running dashboard.
+  await store.writeJson('server.json', { url, port, pid: process.pid, startedAt: new Date().toISOString() }).catch(() => undefined)
+
   return {
-    url: `http://${HOST}:${port}/?token=${token}`,
+    url,
     token,
     port,
     mode,
     close: async () => {
+      await rm(path.join(store.dir, 'server.json'), { force: true }).catch(() => undefined)
       await ctx.live.session?.stop().catch(() => undefined)
       hub.close()
       await new Promise<void>((resolve) => http.close(() => resolve()))

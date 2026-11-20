@@ -36,14 +36,6 @@ export function liveRoutes(router: Router, ctx: AppContext): void {
   })
 
   router.get('/api/live/status', () => ({ running: Boolean(ctx.live.session), url: ctx.live.url }))
-
-  /** Live mode A: the browser agent snippet posts batches here (sendBeacon). No cookies, no auth needed, size-limited. */
-  router.post('/api/agent/collect', async ({ json }) => {
-    const batch = await json<{ events?: unknown[] }>()
-    const events = Array.isArray(batch.events) ? batch.events.slice(0, 500) : []
-    for (const event of events) ctx.hub.broadcast({ type: 'live:tick', tick: { source: 'agent', ...(typeof event === 'object' && event ? event : {}) } })
-    return { received: events.length }
-  })
 }
 
 function emptyLiveReport(): import('@perfagent/core').Report {

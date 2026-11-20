@@ -1,0 +1,16 @@
+{
+  "name": "@perfagent/agent",
+  "version": "0.1.0",
+  "description": "Real-user snippet: Web Vitals, fetch/XHR, WebSocket, long tasks, errors, memory and browser AI calls, sent to the local PerfAgent dashboard. No cookies, no PII, fail-silent, under 8 KB.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "esbuild src/agent.ts --bundle --minify --format=iife --target=es2019 --outfile=dist/perfagent.js && esbuild src/index.ts --bundle --format=esm --target=es2019 --outfile=dist/index.js && tsc -p tsconfig.json --emitDeclarationOnly && node -e \"console.log('perfagent.js ' + require('fs').statSync('dist/perfagent.js').size + ' bytes')\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": { "esbuild": "0.28.2" }
+}

@@ -6,13 +6,25 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-  "files": ["dist"],
-  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
   "dependencies": {
     "@perfagent/config": "workspace:*",
     "@perfagent/core": "workspace:*",
     "@perfagent/engine": "workspace:*",
-    "@perfagent/security": "workspace:*"
+    "@perfagent/security": "workspace:*",
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "zod": "3.25.76"
   }
 }

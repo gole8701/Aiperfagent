@@ -6,6 +6,7 @@ import { PerfAgentError, compareReports } from '@perfagent/core'
 import { PERFAGENT_VERSION, ReportStore } from '@perfagent/engine'
 
 import { flagNumber, flagString, type ParsedArgs } from '../args.js'
+import { guidesDir } from '../paths.js'
 import { color, print } from '../ui.js'
 
 /** `perfagent import <file>`: converts any supported report into the local store. */
@@ -60,5 +61,25 @@ export async function mcpCommand(args: ParsedArgs): Promise<void> {
   const [{ startMcpServer }, { createAiService }, { createFixService }] = await Promise.all([import('@perfagent/mcp'), import('@perfagent/ai'), import('@perfagent/fixer')])
   const ai = createAiService({ config, store })
   const fix = createFixService({ config, store, ai })
-  await startMcpServer({ config, store, ai, fix, transport: args.flags.http === true ? 'http' : 'stdio', port: flagNumber(args.flags, 'port'), allowWrites: args.flags['allow-writes'] === true, version: PERFAGENT_VERSION })
+  await startMcpServer({ config, store, ai, fix, transport: args.flags.http === true ? 'http' : 'stdio', port: flagNumber(args.flags, 'port'), host: flagString(args.flags, 'host'), allowWrites: args.flags['allow-writes'] === true, guidesDir: await guidesDir(), version: PERFAGENT_VERSION })
+}
+
+/** `perfagent ai-proxy --target https://api.openai.com --port 4547`: measure an app's AI calls with zero code change. */
+export async function aiProxyCommand(args: ParsedArgs): Promise<void> {
+  const target = flagString(args.flags, 'target')
+  if (!target) throw new PerfAgentError('CONFIG_INVALID', 'Give the provider base URL', 'perfagent ai-proxy --target https://api.openai.com --port 4547')
+  const { config } = await loadConfig({ overrides: { root: flagString(args.flags, 'root') } })
+  const { createAiProxy } = await import('@perfagent/ai')
+  const proxy = await createAiProxy({ targetBaseUrl: target, port: flagNumber(args.flags, 'port') ?? 4547, file: path.join(config.root, '.perfagent', 'ai-samples.jsonl'), logPrompts: config.ai.logPrompts })
+  print()
+  print(`  ${color.bold('AI proxy:')} ${color.cyan(proxy.url)} → ${target}`)
+  print(`  ${color.dim('Point OPENAI_BASE_URL / ANTHROPIC_BASE_URL at it; samples go to .perfagent/ai-samples.jsonl. Stop with Ctrl+C')}`)
+  print()
+  const stop = async (): Promise<void> => {
+    await proxy.close()
+    process.exit(0)
+  }
+  process.on('SIGINT', () => { void stop() })
+  process.on('SIGTERM', () => { void stop() })
+  await new Promise(() => undefined)
 }
