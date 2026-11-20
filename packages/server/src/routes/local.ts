@@ -6,10 +6,18 @@ import { guardPath, redactText } from '@perfagent/security'
 
 import type { AppContext } from '../app.js'
 import { EDITOR_LABELS, editorUrl, openInEditor } from '../editor.js'
+import { currentLaunch, installMcpClient } from '../mcp-clients.js'
 import type { Router } from '../router.js'
 
 /** Local-mode-only routes. Not registered in deployed or static builds. */
 export function localRoutes(router: Router, ctx: AppContext): void {
+  router.post('/api/ai/mcp-connect', async ({ json }) => {
+    const { client } = await json<{ client?: string }>()
+    const message = await installMcpClient(client ?? '', currentLaunch(ctx.config.root))
+    await ctx.store.appendLog('audit.log', `mcp connect ${client}`)
+    return { message }
+  })
+
   router.post('/api/editor/open', async ({ json }) => {
     const body = await json<{
       file: string

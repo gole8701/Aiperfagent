@@ -81,14 +81,19 @@ describe('keys', () => {
     }
   })
 
-  it('lists all six providers with the browser one handled in the dashboard', async () => {
+  it('lists every provider with the browser one handled in the dashboard', async () => {
     const providers = await service().ai.providers()
     expect(providers.map((p) => p.id)).toEqual([
       'ollama',
+      'lmstudio',
+      'claude-code',
+      'codex',
+      'gemini-cli',
       'anthropic',
       'openai',
       'openai-compatible',
       'gemini',
+      'openrouter',
       'browser',
     ])
     expect(providers.find((p) => p.id === 'browser')?.detail).toBe('handled in the dashboard')
@@ -295,4 +300,19 @@ describe('report and model comparison', () => {
 
 afterAll(async () => {
   await rm(root, { recursive: true, force: true })
+})
+
+describe('signed-in AI tools', () => {
+  it('reports a missing CLI as not installed with how to get it, never as configured', async () => {
+    const oldPath = process.env.PATH
+    process.env.PATH = '/nonexistent'
+    try {
+      const providers = await service().ai.providers()
+      const codex = providers.find((p) => p.id === 'codex')
+      expect(codex?.configured).toBe(false)
+      expect(codex?.installHint).toContain('@openai/codex')
+    } finally {
+      process.env.PATH = oldPath
+    }
+  })
 })

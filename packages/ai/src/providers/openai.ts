@@ -29,11 +29,13 @@ interface ChatCompletion {
 
 function headers(auth: ProviderAuth, id: ProviderId): Record<string, string> {
   // Local OpenAI-compatible servers (LM Studio, vLLM) often need no key; cloud ones always do.
-  if (!auth.apiKey && id === 'openai')
+  if (!auth.apiKey && (id === 'openai' || id === 'openrouter'))
     throw new PerfAgentError(
       'AI_NOT_CONFIGURED',
-      'No OpenAI key',
-      'Add it in Profile → AI connections or set OPENAI_API_KEY.',
+      id === 'openai' ? 'No OpenAI key' : 'OpenRouter is not connected',
+      id === 'openai'
+        ? 'Add it in Settings → AI connections or set OPENAI_API_KEY.'
+        : 'Click "Connect with OpenRouter" in Settings → AI connections.',
     )
   const out: Record<string, string> = { 'content-type': 'application/json' }
   if (auth.apiKey) {
@@ -44,10 +46,15 @@ function headers(auth: ProviderAuth, id: ProviderId): Record<string, string> {
 }
 
 /** Chat Completions is the one API every OpenAI-compatible server speaks (Azure, Groq, OpenRouter, DeepSeek, Mistral, LM Studio…). */
-function compatible(id: ProviderId, label: string, defaultModel: string): Provider {
+function compatible(
+  id: ProviderId,
+  label: string,
+  defaultModel: string,
+  defaultUrl = DEFAULT_URL,
+): Provider {
   async function chat(request: ChatRequest, auth: ProviderAuth): Promise<ChatResult> {
     const started = Date.now()
-    const base = (auth.baseUrl ?? DEFAULT_URL).replace(/\/$/, '')
+    const base = (auth.baseUrl ?? defaultUrl).replace(/\/$/, '')
     const payload = {
       model: request.model,
       max_tokens: request.maxTokens,
@@ -92,7 +99,7 @@ function compatible(id: ProviderId, label: string, defaultModel: string): Provid
   }
 
   async function listModels(auth: ProviderAuth): Promise<string[]> {
-    const base = (auth.baseUrl ?? DEFAULT_URL).replace(/\/$/, '')
+    const base = (auth.baseUrl ?? defaultUrl).replace(/\/$/, '')
     const response = await fetchWithRetry(
       `${base}/models`,
       { headers: headers(auth, id) },
@@ -126,3 +133,10 @@ function tokens(
 
 export const openai = compatible('openai', 'OpenAI', 'gpt-4.1-mini')
 export const openaiCompatible = compatible('openai-compatible', 'OpenAI-compatible endpoint', '')
+export const LMSTUDIO_URL = 'http://127.0.0.1:1234/v1'
+export const lmstudio: Provider = {
+  ...compatible('lmstudio', 'Local AI (LM Studio)', '', LMSTUDIO_URL),
+  free: true,
+}
+export const OPENROUTER_URL = 'https://openrouter.ai/api/v1'
+export const openrouter = compatible('openrouter', 'OpenRouter', 'openrouter/auto', OPENROUTER_URL)

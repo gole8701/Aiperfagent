@@ -1,17 +1,30 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 
 import { api, describeError } from '../../api/client'
 import type { McpConfig, ProviderStatus, ProvidersResponse } from '../../api/types'
+import { onWsMessage } from '../../api/ws'
 import { Button, CopyButton } from '../../components/Button'
-import { Card, ErrorBox } from '../../components/Card'
+import { Card, ErrorBox, Progress } from '../../components/Card'
 import { Select, TextField, Toggle } from '../../components/Fields'
 import { configValue, useSettings } from '../../state/settings'
 
 import { SchemaRows } from './SchemaRows'
 import { SettingsShell } from './SettingsShell'
 
-const KEY_PROVIDERS: ProviderStatus['id'][] = ['anthropic', 'openai', 'openai-compatible', 'gemini']
+const KEY_PROVIDERS: ProviderStatus['id'][] = [
+  'anthropic',
+  'openai',
+  'gemini',
+  'openrouter',
+  'openai-compatible',
+]
+const SIGNED_IN: ProviderStatus['id'][] = ['claude-code', 'codex', 'gemini-cli']
+const FREE_MODELS = [
+  { value: 'qwen2.5-coder:1.5b', label: 'qwen2.5-coder 1.5B · 1 GB · fast on any laptop' },
+  { value: 'qwen2.5-coder:7b', label: 'qwen2.5-coder 7B · 4.7 GB · better fixes, needs 16 GB RAM' },
+]
+const OPENROUTER_VERIFIER = 'perfagent.openrouter.verifier'
 const ROLE_KEY = 'perfagent.ai.roles'
 const BROWSER_AI_KEY = 'perfagent.ai.browser'
 
@@ -28,6 +41,7 @@ function AiBody() {
   const [data, setData] = useState<ProvidersResponse>()
   const [error, setError] = useState<{ message: string; hint?: string }>()
   const [tests, setTests] = useState<Record<string, string>>({})
+  const [notice, setNotice] = useState<string>()
 
   const refresh = (): Promise<void> =>
     api
@@ -55,95 +69,133 @@ function AiBody() {
     }
   }
 
+  // Back from OpenRouter's login page with a one-time code: swap it for a key on the server.
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get('code')
+    const verifier = sessionStorage.getItem(OPENROUTER_VERIFIER)
+    if (!code || !verifier) return
+    sessionStorage.removeItem(OPENROUTER_VERIFIER)
+    const clean = new URL(window.location.href)
+    clean.searchParams.delete('code')
+    window.history.replaceState(null, '', clean.toString())
+    void api
+      .post('/api/ai/openrouter', { code, verifier })
+      .then(() => save({ ai: { provider: 'openrouter' } }))
+      .then(refresh)
+      .then(() => setNotice('OpenRouter is connected and in use.'))
+      .catch((err: unknown) => setNotice(`OpenRouter: ${describeError(err).message}`))
+  }, [])
+
   if (error) return <ErrorBox error={error} />
   const providers = data?.providers ?? []
-  const ollama = providers.find((p) => p.id === 'ollama')
+  const byId = (id: ProviderStatus['id']) => providers.find((p) => p.id === id)
+  const ollama = byId('ollama')
+  const lmstudio = byId('lmstudio')
+  const openrouter = byId('openrouter')
   const provider = configValue(config, 'ai.provider')
   const active = typeof provider === 'string' ? provider : 'none'
+  const use = (id: ProviderStatus['id']) => void save({ ai: { provider: id } })
+  const rowProps = {
+    active,
+    tests,
+    onUse: use,
+    onTest: (id: ProviderStatus['id']) => void test(id),
+  }
 
   return (
     <div className="settings-grid">
-      <Card title="Default (free)" data-tour="defaults">
+      <Card title="Free · no key" data-tour="defaults">
         <div className="provider-row" style={{ borderTop: 'none' }}>
           <span>Built-in rules</span>
           <span className="badge badge-good">ON · always</span>
         </div>
-        <div className="provider-row">
-          <span>
-            Local AI (Ollama{ollama?.models[0] ? `: ${ollama.models[0]}` : ''})
-            <div className="muted" style={{ fontSize: 12 }}>
-              {ollama?.detail ?? (ollama?.configured ? 'running' : 'not installed')}
-            </div>
-          </span>
-          <span className="row">
-            {ollama?.configured ? (
-              <Button
-                small
-                variant={active === 'ollama' ? 'default' : 'primary'}
-                onClick={() => void save({ ai: { provider: 'ollama' } })}
-              >
-                {active === 'ollama' ? 'In use' : 'Use it'}
-              </Button>
+        <ProviderRow
+          {...rowProps}
+          p={ollama}
+          label={`Local AI (Ollama${ollama?.models[0] ? `: ${ollama.models[0]}` : ''})`}
+          fallback={
+            ollama?.detail?.startsWith('running') ? (
+              <DownloadModel onDone={refresh} />
             ) : (
               <InstallOllama hint={ollama?.installHint} />
-            )}
-            <Button small onClick={() => void test('ollama')}>
-              Test
-            </Button>
-            {tests.ollama ? <span className="muted">{tests.ollama}</span> : null}
-          </span>
-        </div>
+            )
+          }
+        />
+        <ProviderRow
+          {...rowProps}
+          p={lmstudio}
+          fallback={
+            <a className="btn btn-sm" href="https://lmstudio.ai" target="_blank" rel="noreferrer">
+              Get LM Studio
+            </a>
+          }
+        />
         <BrowserAi />
       </Card>
 
-      <Card title="Your AI providers (API key)" data-tour="providers">
-        {providers
-          .filter((p) => KEY_PROVIDERS.includes(p.id))
-          .map((p) => (
-            <div key={p.id} className="provider-row">
-              <span>
-                {p.label}
-                <div className="muted" style={{ fontSize: 12 }}>
-                  {p.configured
-                    ? `key ${p.detail ?? '••••'} · stored in your OS keychain`
-                    : 'no key'}
-                </div>
-              </span>
-              <span className="row">
-                {p.configured ? (
-                  <>
-                    <Button
-                      small
-                      variant={active === p.id ? 'default' : 'primary'}
-                      onClick={() => void save({ ai: { provider: p.id } })}
-                    >
-                      {active === p.id ? 'In use' : 'Use it'}
-                    </Button>
-                    <Button small onClick={() => void test(p.id)}>
-                      Test
-                    </Button>
-                    <Button
-                      small
-                      variant="danger"
-                      onClick={() =>
-                        void api
-                          .delete(`/api/ai/keys/${p.id}`)
-                          .then(refresh)
-                          .catch((err: unknown) => setError(describeError(err)))
-                      }
-                    >
-                      Remove
-                    </Button>
-                  </>
-                ) : null}
-                {tests[p.id] ? <span className="muted">{tests[p.id]}</span> : null}
-              </span>
-            </div>
-          ))}
-        <AddProvider
-          providers={providers.filter((p) => KEY_PROVIDERS.includes(p.id))}
-          onAdded={refresh}
+      <Card title="Use the AI you already pay for · no key" data-tour="providers">
+        {SIGNED_IN.map((id) => (
+          <ProviderRow
+            key={id}
+            {...rowProps}
+            p={byId(id)}
+            fallback={
+              byId(id)?.installHint ? <InstallHint command={byId(id)?.installHint ?? ''} /> : null
+            }
+          />
+        ))}
+        <p className="muted" style={{ fontSize: 12, marginBottom: 0 }}>
+          PerfAgent asks the tool you are signed in to, so it uses your own plan. It runs with its
+          file and command tools switched off, in an empty folder: it only sees the text PerfAgent
+          sends.
+        </p>
+      </Card>
+
+      <Card title="Cloud AI">
+        <ProviderRow
+          {...rowProps}
+          p={openrouter}
+          label="OpenRouter (hundreds of models, one login)"
+          fallback={
+            <Button small variant="primary" onClick={() => void startOpenRouterLogin()}>
+              Connect with OpenRouter
+            </Button>
+          }
+          onRemove={() =>
+            void api
+              .delete('/api/ai/keys/openrouter')
+              .then(refresh)
+              .catch((err: unknown) => setError(describeError(err)))
+          }
         />
+        {notice ? (
+          <div className="muted" role="status" style={{ fontSize: 13, marginTop: 6 }}>
+            {notice}
+          </div>
+        ) : null}
+        <details style={{ marginTop: 10 }}>
+          <summary>Advanced: paste an API key</summary>
+          {providers
+            .filter((p) => KEY_PROVIDERS.includes(p.id) && p.id !== 'openrouter')
+            .map((p) => (
+              <ProviderRow
+                key={p.id}
+                {...rowProps}
+                p={p}
+                fallback={<span className="muted">no key</span>}
+                onRemove={() =>
+                  void api
+                    .delete(`/api/ai/keys/${p.id}`)
+                    .then(refresh)
+                    .catch((err: unknown) => setError(describeError(err)))
+                }
+              />
+            ))}
+          <AddProvider
+            providers={providers.filter((p) => KEY_PROVIDERS.includes(p.id))}
+            onAdded={refresh}
+          />
+        </details>
       </Card>
 
       <McpSection />
@@ -192,6 +244,139 @@ function AiBody() {
       </Card>
     </div>
   )
+}
+
+function ProviderRow({
+  p,
+  label,
+  active,
+  tests,
+  fallback,
+  onUse,
+  onTest,
+  onRemove,
+}: {
+  p?: ProviderStatus
+  label?: string
+  active: string
+  tests: Record<string, string>
+  fallback: ReactNode
+  onUse: (id: ProviderStatus['id']) => void
+  onTest: (id: ProviderStatus['id']) => void
+  onRemove?: () => void
+}) {
+  if (!p) return null
+  return (
+    <div className="provider-row">
+      <span>
+        {label ?? p.label}
+        <div className="muted" style={{ fontSize: 12 }}>
+          {p.detail ?? (p.configured ? 'ready' : 'not set up')}
+        </div>
+      </span>
+      <span className="row">
+        {p.configured ? (
+          <>
+            <Button
+              small
+              variant={active === p.id ? 'default' : 'primary'}
+              onClick={() => onUse(p.id)}
+            >
+              {active === p.id ? 'In use' : 'Use it'}
+            </Button>
+            <Button small onClick={() => onTest(p.id)}>
+              Test
+            </Button>
+            {onRemove ? (
+              <Button small variant="danger" onClick={onRemove}>
+                Remove
+              </Button>
+            ) : null}
+          </>
+        ) : (
+          fallback
+        )}
+        {tests[p.id] ? <span className="muted">{tests[p.id]}</span> : null}
+      </span>
+    </div>
+  )
+}
+
+function InstallHint({ command }: { command: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <span className="row">
+      <Button small onClick={() => setOpen((v) => !v)}>
+        How to get it
+      </Button>
+      {open ? (
+        <span className="row" style={{ flex: '1 1 100%' }}>
+          <pre style={{ flex: 1 }}>{command}</pre>
+          <CopyButton text={command} />
+        </span>
+      ) : null}
+    </span>
+  )
+}
+
+/** Ollama is running but has no model: download one from here, progress arrives over the WebSocket. */
+function DownloadModel({ onDone }: { onDone: () => Promise<void> }) {
+  const [model, setModel] = useState(FREE_MODELS[0]?.value ?? '')
+  const [progress, setProgress] = useState<{ fraction: number; status: string; error?: boolean }>()
+  useEffect(
+    () =>
+      onWsMessage((m) => {
+        if (m.type !== 'ai:pull' || m.model !== model) return
+        setProgress({ fraction: m.fraction, status: m.status, error: m.error })
+        if (m.done && !m.error) void onDone()
+      }),
+    [model, onDone],
+  )
+  const running = progress && !progress.error && progress.status !== 'done'
+  return (
+    <span className="stack" style={{ gap: 6, flex: '1 1 100%' }}>
+      <Select label="Free model" value={model} options={FREE_MODELS} onChange={setModel} />
+      {running ? (
+        <Progress fraction={progress.fraction} label={`Downloading ${model}: ${progress.status}`} />
+      ) : (
+        <span className="row">
+          <Button
+            small
+            variant="primary"
+            onClick={() => {
+              setProgress({ fraction: 0, status: 'starting' })
+              void api
+                .post('/api/ai/pull', { model })
+                .catch((err: unknown) =>
+                  setProgress({ fraction: 0, status: describeError(err).message, error: true }),
+                )
+            }}
+          >
+            Download free model
+          </Button>
+          {progress?.error ? <span className="sev-critical">{progress.status}</span> : null}
+        </span>
+      )}
+    </span>
+  )
+}
+
+/** OpenRouter's PKCE login: no key to copy; the user signs in there and comes back connected. */
+async function startOpenRouterLogin(): Promise<void> {
+  const verifier = base64Url(crypto.getRandomValues(new Uint8Array(32)))
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))
+  sessionStorage.setItem(OPENROUTER_VERIFIER, verifier)
+  const back = `${window.location.origin}/settings/ai`
+  window.location.assign(
+    `https://openrouter.ai/auth?callback_url=${encodeURIComponent(back)}&code_challenge=${base64Url(new Uint8Array(digest))}&code_challenge_method=S256`,
+  )
+}
+
+function base64Url(bytes: Uint8Array): string {
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '')
 }
 
 function InstallOllama({ hint }: { hint?: string }) {
@@ -336,31 +521,78 @@ function McpSection() {
             variant={client === id ? 'primary' : 'default'}
             onClick={() => setClient(id)}
           >
-            {c.label}
+            {c.oneClick ? `⚡ ${c.label}` : c.label}
           </Button>
         ))}
       </div>
-      {chosen ? (
-        <div className="stack" style={{ marginTop: 10, gap: 6 }}>
-          <div className="muted" style={{ fontSize: 12 }}>
-            {chosen.file === 'terminal'
-              ? 'Run in your terminal:'
-              : chosen.file === 'remote'
-                ? 'Remote mode:'
-                : `Add to ${chosen.file}:`}
-          </div>
-          <pre>{chosen.snippet}</pre>
-          <div className="row">
-            <CopyButton text={chosen.snippet} label="Copy MCP config" />
-            <Link to="/guide/connect-mcp">Show setup steps</Link>
-          </div>
+      {chosen && client ? (
+        <div className="stack" style={{ marginTop: 10, gap: 8 }}>
+          <OneClick id={client} client={chosen} />
+          <details open={!chosen.oneClick}>
+            <summary className="muted" style={{ fontSize: 12 }}>
+              {chosen.oneClick ? 'Or set it up by hand' : 'Set it up by hand'}
+            </summary>
+            <div className="stack" style={{ marginTop: 6, gap: 6 }}>
+              <div className="muted" style={{ fontSize: 12 }}>
+                {chosen.file === 'terminal'
+                  ? 'Run in your terminal:'
+                  : chosen.file === 'remote'
+                    ? 'Remote mode:'
+                    : `Add to ${chosen.file}:`}
+              </div>
+              <pre>{chosen.snippet}</pre>
+              <div className="row">
+                <CopyButton text={chosen.snippet} label="Copy MCP config" />
+                <Link to="/guide/connect-mcp">Show setup steps</Link>
+              </div>
+            </div>
+          </details>
         </div>
       ) : (
         <div className="muted" style={{ marginTop: 8, fontSize: 13 }}>
-          Pick your assistant to get the exact config to paste.
+          Pick your assistant. Those marked ⚡ connect in one click; your assistant then uses
+          PerfAgent with your own account.
         </div>
       )}
     </Card>
+  )
+}
+
+function OneClick({ id, client }: { id: string; client: McpConfig }) {
+  const [state, setState] = useState<{ busy?: boolean; message?: string; error?: string }>({})
+  if (client.oneClick === 'link' && client.link)
+    return (
+      <div className="row">
+        <a className="btn btn-primary" href={client.link}>
+          Connect to {client.label}
+        </a>
+        <span className="muted" style={{ fontSize: 12 }}>
+          {client.label} opens and asks you to approve PerfAgent.
+        </span>
+      </div>
+    )
+  if (client.oneClick !== 'install') return null
+  return (
+    <div className="row">
+      <Button
+        variant="primary"
+        busy={state.busy}
+        onClick={() => {
+          setState({ busy: true })
+          api
+            .post<{ message: string }>('/api/ai/mcp-connect', { client: id })
+            .then((r) => setState({ message: r.message }))
+            .catch((err: unknown) => {
+              const e = describeError(err)
+              setState({ error: e.hint ? `${e.message}. ${e.hint}` : e.message })
+            })
+        }}
+      >
+        Connect to {client.label}
+      </Button>
+      {state.message ? <span style={{ color: 'var(--good)' }}>✔ {state.message}</span> : null}
+      {state.error ? <span className="sev-critical">{state.error}</span> : null}
+    </div>
   )
 }
 

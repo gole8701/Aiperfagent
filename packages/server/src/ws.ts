@@ -17,6 +17,14 @@ export type WsMessage =
   | { type: 'live:stopped'; reportId?: string }
   | { type: 'fix:event'; runId: string; event: unknown }
   | { type: 'hello'; mode: string }
+  | {
+      type: 'ai:pull'
+      model: string
+      fraction: number
+      status: string
+      done?: boolean
+      error?: boolean
+    }
 
 /** One hub, every connected dashboard tab gets every message. Auth happens at upgrade time. */
 export class WsHub {

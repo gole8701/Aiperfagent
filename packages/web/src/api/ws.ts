@@ -11,6 +11,14 @@ export type WsMessage =
   | { type: 'live:stopped'; reportId?: string }
   | { type: 'fix:event'; runId: string; event: FixEvent }
   | { type: 'hello'; mode: string }
+  | {
+      type: 'ai:pull'
+      model: string
+      fraction: number
+      status: string
+      done?: boolean
+      error?: boolean
+    }
 
 type Listener = (message: WsMessage) => void
 

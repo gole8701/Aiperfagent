@@ -87,7 +87,18 @@ export interface CompareResponse {
 }
 
 export interface ProviderStatus {
-  id: 'ollama' | 'anthropic' | 'openai' | 'openai-compatible' | 'gemini' | 'browser'
+  id:
+    | 'ollama'
+    | 'anthropic'
+    | 'openai'
+    | 'openai-compatible'
+    | 'gemini'
+    | 'lmstudio'
+    | 'openrouter'
+    | 'claude-code'
+    | 'codex'
+    | 'gemini-cli'
+    | 'browser'
   label: string
   free: boolean
   configured: boolean
@@ -107,6 +118,10 @@ export interface McpConfig {
   label: string
   file: string
   snippet: string
+  /** `link`: a deep link the assistant asks to approve; `install`: PerfAgent adds itself after a click. */
+  oneClick?: 'link' | 'install'
+  link?: string
+  after?: string
 }
 
 export interface ProposedChange {

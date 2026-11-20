@@ -47,6 +47,11 @@ export const aiProviders = [
   'openai',
   'openai-compatible',
   'gemini',
+  'lmstudio',
+  'openrouter',
+  'claude-code',
+  'codex',
+  'gemini-cli',
   'browser',
 ] as const
 export const themes = ['system', 'dark', 'light', 'high-contrast'] as const

@@ -6,7 +6,18 @@ import type { AiReport, CodeChange, Issue, Report } from '@perfagent/core'
  * dependency direction one-way and lets tests use stand-ins.
  */
 export interface ProviderStatus {
-  id: 'ollama' | 'anthropic' | 'openai' | 'openai-compatible' | 'gemini' | 'browser'
+  id:
+    | 'ollama'
+    | 'anthropic'
+    | 'openai'
+    | 'openai-compatible'
+    | 'gemini'
+    | 'lmstudio'
+    | 'openrouter'
+    | 'claude-code'
+    | 'codex'
+    | 'gemini-cli'
+    | 'browser'
   label: string
   free: boolean
   configured: boolean
@@ -53,6 +64,10 @@ export interface AiService {
   ): Promise<{ ok: boolean; message: string; latencyMs: number }>
   storeKey(provider: ProviderStatus['id'], key: string): Promise<void>
   removeKey(provider: ProviderStatus['id']): Promise<void>
+  /** Downloads a free local model through Ollama; progress is 0–1. */
+  pullModel(model: string, onProgress: (fraction: number, status: string) => void): Promise<void>
+  /** Finishes "Connect with OpenRouter": swaps the one-time login code for a key and stores it. */
+  connectOpenRouter(code: string, verifier: string): Promise<void>
   /** Plain-language explanation of one problem using the configured AI. */
   explain(issue: Issue, files: AiContextFile[]): Promise<string>
   /** Proposed code changes for one or more problems. The AI only ever returns text; nothing is applied here. */

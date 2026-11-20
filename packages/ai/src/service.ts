@@ -18,10 +18,14 @@ import {
   SYSTEM_PROMPT,
 } from './prompts.js'
 import {
+  CLI_BINS,
+  cliInstalled,
+  LMSTUDIO_URL,
   OLLAMA_INSTALL_HINT,
   OLLAMA_URL,
   ollamaModels,
   PROVIDERS,
+  pullModel,
   providerById,
   type ChatMessage,
   type ChatResult,
@@ -126,8 +130,20 @@ export function createAiService(options: AiServiceOptions): AiService {
 
   return {
     async providers(): Promise<ProviderStatus[]> {
-      const out: ProviderStatus[] = [await ollamaStatus(config.ai.baseUrl)]
-      for (const id of ['anthropic', 'openai', 'openai-compatible', 'gemini'] as const) {
+      const out: ProviderStatus[] = [
+        await ollamaStatus(config.ai.baseUrl),
+        await lmStudioStatus(),
+        ...(await Promise.all(
+          (['claude-code', 'codex', 'gemini-cli'] as const).map((id) => cliStatus(id)),
+        )),
+      ]
+      for (const id of [
+        'anthropic',
+        'openai',
+        'openai-compatible',
+        'gemini',
+        'openrouter',
+      ] as const) {
         const provider = PROVIDERS[id]
         const stored = await keys.read(id)
         const endpoint = id === config.ai.provider ? config.ai.baseUrl : undefined
@@ -176,6 +192,12 @@ export function createAiService(options: AiServiceOptions): AiService {
     },
 
     removeKey: (id) => keys.remove(id),
+
+    pullModel: (model, onProgress) => pullModel(model, onProgress, config.ai.baseUrl ?? OLLAMA_URL),
+
+    async connectOpenRouter(code, verifier) {
+      await keys.store('openrouter', await exchangeOpenRouterCode(code, verifier))
+    },
 
     async explain(issue, files) {
       const target = await requireAi()
@@ -296,6 +318,66 @@ function lengthSanity(text: string): number {
   if (n < 20) return 0.3
   if (n > 6000) return 0.5
   return 1
+}
+
+const CLI_INSTALL: Record<string, string> = {
+  'claude-code':
+    'curl -fsSL https://claude.ai/install.sh | bash  # then run "claude" once to sign in',
+  codex: 'npm install -g @openai/codex  # then run "codex" once to sign in',
+  'gemini-cli': 'npm install -g @google/gemini-cli  # then run "gemini" once to sign in',
+}
+
+async function cliStatus(id: 'claude-code' | 'codex' | 'gemini-cli'): Promise<ProviderStatus> {
+  const installed = await cliInstalled(CLI_BINS[id] ?? id)
+  return {
+    id,
+    label: PROVIDERS[id].label,
+    free: false,
+    configured: installed,
+    detail: installed
+      ? 'found on this machine · uses your own subscription, no key'
+      : 'not installed',
+    models: [],
+    installHint: installed ? undefined : CLI_INSTALL[id],
+  }
+}
+
+async function lmStudioStatus(): Promise<ProviderStatus> {
+  const base = { id: 'lmstudio' as const, label: PROVIDERS.lmstudio.label, free: true }
+  try {
+    const response = await fetch(`${LMSTUDIO_URL}/models`, { signal: AbortSignal.timeout(1500) })
+    const models = response.ok
+      ? (((await response.json()) as { data?: { id: string }[] }).data?.map((m) => m.id) ?? [])
+      : []
+    return {
+      ...base,
+      configured: models.length > 0,
+      detail: models.length
+        ? `running · ${models.length} model${models.length === 1 ? '' : 's'}`
+        : 'running · load a model in LM Studio',
+      models,
+    }
+  } catch {
+    return { ...base, configured: false, detail: 'not running', models: [] }
+  }
+}
+
+/** Last step of OpenRouter's PKCE login: the one-time code becomes a key that belongs to the user's own OpenRouter account. */
+async function exchangeOpenRouterCode(code: string, verifier: string): Promise<string> {
+  const response = await fetch('https://openrouter.ai/api/v1/auth/keys', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ code, code_verifier: verifier, code_challenge_method: 'S256' }),
+    signal: AbortSignal.timeout(15_000),
+  })
+  const data = (await response.json().catch(() => ({}))) as { key?: string }
+  if (!response.ok || !data.key)
+    throw new PerfAgentError(
+      'AI_NOT_CONFIGURED',
+      'OpenRouter did not accept the login',
+      'Click "Connect with OpenRouter" again; the code is single-use and expires quickly.',
+    )
+  return data.key
 }
 
 async function ollamaStatus(baseUrl: string | undefined): Promise<ProviderStatus> {

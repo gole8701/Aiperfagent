@@ -13,6 +13,7 @@ const ENV_NAMES: Partial<Record<ProviderId, string>> = {
   anthropic: 'ANTHROPIC_API_KEY',
   openai: 'OPENAI_API_KEY',
   gemini: 'GEMINI_API_KEY',
+  openrouter: 'OPENROUTER_API_KEY',
 }
 
 export type KeySource = 'keychain' | 'file' | 'env'

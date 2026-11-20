@@ -28,9 +28,9 @@ The assistant sees the same chain, gain and fix as the dashboard, and PerfAgent 
 
 ## How to do it in PerfAgent, step by step
 
-1. **Settings:** open **Settings → AI → AI assistants (MCP)** and pick your tool.
-2. **Settings:** press **Copy config**. The snippet below is what is copied, in the right format for that tool.
-3. **Terminal:** paste it where the tool expects it (file name shown next to the snippet), then restart the tool.
+1. **Settings:** open **Settings → AI connections → AI assistants (MCP)** and pick your tool. Tools marked ⚡ connect in one click.
+2. **Settings:** press **Connect to …**. Cursor and VS Code open and ask you to approve PerfAgent. For Claude Code, Claude Desktop and Windsurf, PerfAgent adds itself to that tool's own config (an existing file is backed up as `….perfagent-backup`, and a file with comments is left alone).
+3. **Settings:** for Cline, Zed and ChatGPT, open **Set it up by hand**, press **Copy config** and paste it where the tool expects it (the file name is shown), then restart the tool.
 4. **Assistant:** ask: _"Use PerfAgent to scan this project and fix the LCP problems."_ The assistant calls `scan_project`, `list_issues` and `explain_issue`.
 5. **Globe:** review the branch it created, re-test, and commit yourself.
 
@@ -140,7 +140,7 @@ npx perfagent mcp --allow-writes
 
 - Transports: `stdio` (default, for editors and desktop apps) and Streamable HTTP (`--http --port 4546`, for ChatGPT connectors and teams). The HTTP transport serves `/mcp`, binds to `127.0.0.1` unless you pass `--host`, and needs `Authorization: Bearer <token>` on every request (set `PERFAGENT_MCP_TOKEN`, or copy the random token printed at start). The bearer token is the only authentication; OAuth is not implemented, so if your client requires OAuth, put a reverse proxy that does OAuth in front and have it forward the bearer token.
 - Tools: `scan_url`, `scan_project`, `list_issues` (with chip and route filters), `explain_issue`, `get_file_context`, `suggest_fix`, `compare_runs`, `ai_report`, `open_dashboard`; `apply_fix_to_branch` only with `--allow-writes`. Resources: `perfagent://report/latest` and `perfagent://guide/<topic>`. All tools return JSON text.
-- The snippets above are `MCP_CONFIGS` in `packages/server/src/routes/ai.ts`, served by `GET /api/ai/mcp-config?client=<id>`; "Copy config" copies exactly these. Config formats change, so each tool's own MCP documentation is linked below.
+- The snippets above are `MCP_CONFIGS` in `packages/server/src/mcp-clients.ts`, served by `GET /api/ai/mcp-config?client=<id>`. In local mode the dashboard serves the same snippets with the exact command of the running install (so they work before an npm publish) plus one-click data: a `cursor://` or `vscode:mcp/install` link, or `POST /api/ai/mcp-connect { client }` (local mode only; fixed client ids and paths, nothing from the request reaches a path or command). Config formats change, so each tool's own MCP documentation is linked below.
 - `npx -y perfagent mcp` runs in the current project folder and reads `perfagent.config.ts` from there; add `--root path` to point elsewhere.
 - The MCP server has no way to push, merge or deploy; writes, when enabled, go through the same fixer, path guard and `protected` globs as the dashboard.
 

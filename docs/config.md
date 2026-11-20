@@ -63,18 +63,18 @@ Generated from the schema (the same rows the Settings UI shows through `describe
 
 ### AI
 
-| Path                  | Type                                                                                          | Default    | Description                                                            |
-| --------------------- | --------------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
-| `ai.provider`         | `none` \| `ollama` \| `anthropic` \| `openai` \| `openai-compatible` \| `gemini` \| `browser` | `none`     | Which AI generates deep fixes                                          |
-| `ai.model`            | string                                                                                        | `''`       | Model name; empty picks the provider default                           |
-| `ai.baseUrl`          | URL                                                                                           | —          | Custom endpoint (OpenAI-compatible, Azure, company proxy)              |
-| `ai.sendCode`         | `snippets` \| `files` \| `none`                                                               | `snippets` | How much code may be sent to the AI                                    |
-| `ai.monthlyBudgetUsd` | number ≥ 0                                                                                    | `20`       | Stop using AI past this monthly spend                                  |
-| `ai.maxPerFixUsd`     | number ≥ 0                                                                                    | `0.2`      | Stop a single fix past this cost                                       |
-| `ai.redact`           | boolean                                                                                       | `true`     | Remove secrets before anything is sent                                 |
-| `ai.auditLog`         | boolean                                                                                       | `true`     | Keep a local log of what was sent to which AI (`.perfagent/audit.log`) |
-| `ai.logPrompts`       | boolean                                                                                       | `false`    | Store prompts and answers of measured AI calls (`watchAI`)             |
-| `ai.budgetUsdPerDay`  | number ≥ 0                                                                                    | —          | Budget line on the AI cost chart                                       |
+| Path                  | Type                                                                                                                                                                    | Default    | Description                                                            |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
+| `ai.provider`         | `none` \| `ollama` \| `lmstudio` \| `claude-code` \| `codex` \| `gemini-cli` \| `openrouter` \| `anthropic` \| `openai` \| `openai-compatible` \| `gemini` \| `browser` | `none`     | Which AI generates deep fixes                                          |
+| `ai.model`            | string                                                                                                                                                                  | `''`       | Model name; empty picks the provider default                           |
+| `ai.baseUrl`          | URL                                                                                                                                                                     | —          | Custom endpoint (OpenAI-compatible, Azure, company proxy)              |
+| `ai.sendCode`         | `snippets` \| `files` \| `none`                                                                                                                                         | `snippets` | How much code may be sent to the AI                                    |
+| `ai.monthlyBudgetUsd` | number ≥ 0                                                                                                                                                              | `20`       | Stop using AI past this monthly spend                                  |
+| `ai.maxPerFixUsd`     | number ≥ 0                                                                                                                                                              | `0.2`      | Stop a single fix past this cost                                       |
+| `ai.redact`           | boolean                                                                                                                                                                 | `true`     | Remove secrets before anything is sent                                 |
+| `ai.auditLog`         | boolean                                                                                                                                                                 | `true`     | Keep a local log of what was sent to which AI (`.perfagent/audit.log`) |
+| `ai.logPrompts`       | boolean                                                                                                                                                                 | `false`    | Store prompts and answers of measured AI calls (`watchAI`)             |
+| `ai.budgetUsdPerDay`  | number ≥ 0                                                                                                                                                              | —          | Budget line on the AI cost chart                                       |
 
 API keys are never in this file; the dashboard stores them in the OS keychain.
 

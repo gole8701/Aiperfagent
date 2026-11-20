@@ -2,82 +2,8 @@ import { PerfAgentError } from '@perfagent/core'
 import { gatherContext, type ProviderStatus } from '@perfagent/engine'
 
 import type { AppContext } from '../app.js'
+import { currentLaunch, mcpClients, MCP_CONFIGS } from '../mcp-clients.js'
 import type { Router } from '../router.js'
-
-/** MCP client configs. Formats change; these match the tools' docs at the time of release. */
-export const MCP_CONFIGS: Record<string, { label: string; file: string; snippet: string }> = {
-  'claude-code': {
-    label: 'Claude Code',
-    file: 'terminal',
-    snippet: 'claude mcp add perfagent -- npx -y perfagent mcp',
-  },
-  'claude-desktop': {
-    label: 'Claude Desktop',
-    file: 'claude_desktop_config.json',
-    snippet: JSON.stringify(
-      { mcpServers: { perfagent: { command: 'npx', args: ['-y', 'perfagent', 'mcp'] } } },
-      null,
-      2,
-    ),
-  },
-  cursor: {
-    label: 'Cursor',
-    file: '.cursor/mcp.json',
-    snippet: JSON.stringify(
-      { mcpServers: { perfagent: { command: 'npx', args: ['-y', 'perfagent', 'mcp'] } } },
-      null,
-      2,
-    ),
-  },
-  windsurf: {
-    label: 'Windsurf',
-    file: '~/.codeium/windsurf/mcp_config.json',
-    snippet: JSON.stringify(
-      { mcpServers: { perfagent: { command: 'npx', args: ['-y', 'perfagent', 'mcp'] } } },
-      null,
-      2,
-    ),
-  },
-  copilot: {
-    label: 'VS Code + GitHub Copilot',
-    file: '.vscode/mcp.json',
-    snippet: JSON.stringify(
-      { servers: { perfagent: { command: 'npx', args: ['-y', 'perfagent', 'mcp'] } } },
-      null,
-      2,
-    ),
-  },
-  cline: {
-    label: 'Cline',
-    file: 'cline_mcp_settings.json',
-    snippet: JSON.stringify(
-      { mcpServers: { perfagent: { command: 'npx', args: ['-y', 'perfagent', 'mcp'] } } },
-      null,
-      2,
-    ),
-  },
-  zed: {
-    label: 'Zed',
-    file: 'settings.json',
-    snippet: JSON.stringify(
-      {
-        context_servers: {
-          perfagent: { command: { path: 'npx', args: ['-y', 'perfagent', 'mcp'] } },
-        },
-      },
-      null,
-      2,
-    ),
-  },
-  chatgpt: {
-    label: 'ChatGPT (connectors)',
-    file: 'remote',
-    snippet:
-      'PERFAGENT_MCP_TOKEN=<long-random-token> npx perfagent mcp --http --port 4546\n' +
-      '# ChatGPT needs a remote HTTPS endpoint: put this behind an HTTPS tunnel or proxy\n' +
-      '# that sends "Authorization: Bearer $PERFAGENT_MCP_TOKEN", then add https://<tunnel>/mcp',
-  },
-}
 
 export function aiRoutes(router: Router, ctx: AppContext): void {
   const ai = (): NonNullable<AppContext['ai']> => {
@@ -167,13 +93,60 @@ export function aiRoutes(router: Router, ctx: AppContext): void {
     return { rows: await ai().compareModels(questions.slice(0, 5), models.slice(0, 6)) }
   })
 
+  /** Local mode offers one-click connect with this exact install; a deployed server only hands out the npx snippets. */
+  const clients = (): ReturnType<typeof mcpClients> =>
+    ctx.mode.mode === 'local' && !ctx.staticBuild
+      ? mcpClients(currentLaunch(ctx.config.root))
+      : MCP_CONFIGS
+
   router.get('/api/ai/mcp-config', ({ query }) => {
     const client = query.get('client')
     if (client) {
-      const cfg = MCP_CONFIGS[client]
+      const cfg = clients()[client]
       if (!cfg) throw new PerfAgentError('NOT_FOUND', 'Unknown MCP client')
       return cfg
     }
-    return MCP_CONFIGS
+    return clients()
+  })
+
+  /** "Download free model": progress goes out over the WebSocket as `ai:pull`. */
+  router.post('/api/ai/pull', async ({ json }) => {
+    const { model } = await json<{ model?: string }>()
+    // Ollama model names are short tokens like qwen2.5-coder:1.5b; anything else is refused.
+    if (!model || !/^[\w./-]+(:[\w.-]+)?$/.test(model) || model.length > 100)
+      throw new PerfAgentError('IMPORT_INVALID', 'Pick a model from the list')
+    // Ollama reports every chunk; one message per whole percent is plenty for a progress bar.
+    let last = { percent: -1, status: '' }
+    void ai()
+      .pullModel(model, (fraction, status) => {
+        const percent = Math.floor(fraction * 100)
+        if (percent === last.percent && status === last.status) return
+        last = { percent, status }
+        ctx.hub.broadcast({ type: 'ai:pull', model, fraction, status })
+      })
+      .then(() =>
+        ctx.hub.broadcast({ type: 'ai:pull', model, fraction: 1, status: 'done', done: true }),
+      )
+      .catch((error: unknown) =>
+        ctx.hub.broadcast({
+          type: 'ai:pull',
+          model,
+          fraction: 0,
+          status: error instanceof Error ? error.message : String(error),
+          done: true,
+          error: true,
+        }),
+      )
+    await ctx.store.appendLog('audit.log', `pull model ${model}`)
+    return { started: true }
+  })
+
+  router.post('/api/ai/openrouter', async ({ json }) => {
+    const { code, verifier } = await json<{ code?: string; verifier?: string }>()
+    if (!code || !verifier || code.length > 500 || verifier.length > 200)
+      throw new PerfAgentError('IMPORT_INVALID', 'The OpenRouter login did not finish')
+    await ai().connectOpenRouter(code, verifier)
+    await ctx.store.appendLog('audit.log', 'key stored for openrouter (login)')
+    return { connected: true }
   })
 }
