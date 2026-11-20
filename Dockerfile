@@ -8,7 +8,7 @@
 # suggest-only instance.
 
 # ---- build ---------------------------------------------------------------------------------------
-FROM node:20-slim AS build
+FROM node:26-slim AS build
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 CI=1
 RUN corepack enable && corepack prepare pnpm@10.34.9 --activate
 WORKDIR /src
@@ -25,7 +25,7 @@ RUN pnpm --filter perfagent --prod deploy /out && cp -r packages/web/dist /out/d
 RUN mkdir -p /out/guides && cp docs/guides/*.md /out/guides/
 
 # ---- runtime -------------------------------------------------------------------------------------
-FROM node:20-slim
+FROM node:26-slim
 ENV NODE_ENV=production \
     PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 \
     PERFAGENT_SERVER_PORT=4545 \
