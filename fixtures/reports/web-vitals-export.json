@@ -1,0 +1,21 @@
+[
+  { "name": "LCP", "value": 2890.4, "rating": "needs-improvement", "delta": 2890.4, "id": "v4-1763460000001-1", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "LCP", "value": 3412.5, "rating": "needs-improvement", "delta": 3412.5, "id": "v4-1763460000002-1", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "LCP", "value": 2210.0, "rating": "good", "delta": 2210.0, "id": "v4-1763460000003-1", "navigationType": "back-forward", "url": "https://demo-shop.example/checkout" },
+  { "name": "LCP", "value": 4120.8, "rating": "poor", "delta": 4120.8, "id": "v4-1763460000004-1", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "INP", "value": 210, "rating": "needs-improvement", "delta": 210, "id": "v4-1763460000001-2", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "INP", "value": 96, "rating": "good", "delta": 96, "id": "v4-1763460000002-2", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "INP", "value": 184, "rating": "good", "delta": 184, "id": "v4-1763460000003-2", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "INP", "value": 312, "rating": "needs-improvement", "delta": 312, "id": "v4-1763460000004-2", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "CLS", "value": 0.121, "rating": "needs-improvement", "delta": 0.121, "id": "v4-1763460000001-3", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "CLS", "value": 0.04, "rating": "good", "delta": 0.04, "id": "v4-1763460000002-3", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "CLS", "value": 0.09, "rating": "good", "delta": 0.09, "id": "v4-1763460000003-3", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "CLS", "value": 0.2, "rating": "needs-improvement", "delta": 0.2, "id": "v4-1763460000004-3", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "TTFB", "value": 820, "rating": "needs-improvement", "delta": 820, "id": "v4-1763460000001-4", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "TTFB", "value": 610, "rating": "good", "delta": 610, "id": "v4-1763460000002-4", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "FCP", "value": 1805.2, "rating": "needs-improvement", "delta": 1805.2, "id": "v4-1763460000001-5", "navigationType": "navigate", "url": "https://demo-shop.example/checkout" },
+  { "name": "LCP", "value": 1912.0, "rating": "good", "delta": 1912.0, "id": "v4-1763460000005-1", "navigationType": "navigate", "url": "https://demo-shop.example/" },
+  { "name": "LCP", "value": 2104.2, "rating": "good", "delta": 2104.2, "id": "v4-1763460000006-1", "navigationType": "navigate", "url": "https://demo-shop.example/" },
+  { "name": "CLS", "value": 0.052, "rating": "good", "delta": 0.052, "id": "v4-1763460000005-3", "navigationType": "navigate", "url": "https://demo-shop.example/" },
+  { "name": "INP", "value": 140, "rating": "good", "delta": 140, "id": "v4-1763460000005-2", "navigationType": "navigate", "url": "https://demo-shop.example/" }
+]

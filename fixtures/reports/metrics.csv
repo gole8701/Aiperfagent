@@ -1,0 +1,4 @@
+Date,Page,LCP (s),INP (ms),CLS,TTFB (ms),Performance score,Mobile JS (KB),Requests
+2026-11-18,/checkout,3.4,210,0.12,820,72,"1,412",48
+2026-11-18,/,1.9,140,0.05,410,88,980,36
+2026-11-18,"/product/blue-chair, large",2.6,"190",0.08,520,80,"1,020",41

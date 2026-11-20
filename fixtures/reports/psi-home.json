@@ -1,0 +1,47 @@
+{
+  "captchaResult": "CAPTCHA_NOT_NEEDED",
+  "kind": "pagespeedonline#result",
+  "id": "https://demo-shop.example/",
+  "loadingExperience": {
+    "id": "https://demo-shop.example/",
+    "metrics": {
+      "CUMULATIVE_LAYOUT_SHIFT_SCORE": { "percentile": 8, "distributions": [{ "min": 0, "max": 10, "proportion": 0.81 }, { "min": 10, "max": 25, "proportion": 0.12 }, { "min": 25, "proportion": 0.07 }], "category": "FAST" },
+      "EXPERIMENTAL_TIME_TO_FIRST_BYTE": { "percentile": 912, "distributions": [{ "min": 0, "max": 800, "proportion": 0.62 }, { "min": 800, "max": 1800, "proportion": 0.3 }, { "min": 1800, "proportion": 0.08 }], "category": "AVERAGE" },
+      "FIRST_CONTENTFUL_PAINT_MS": { "percentile": 2104, "distributions": [{ "min": 0, "max": 1800, "proportion": 0.58 }, { "min": 1800, "max": 3000, "proportion": 0.3 }, { "min": 3000, "proportion": 0.12 }], "category": "AVERAGE" },
+      "INTERACTION_TO_NEXT_PAINT": { "percentile": 231, "distributions": [{ "min": 0, "max": 200, "proportion": 0.7 }, { "min": 200, "max": 500, "proportion": 0.24 }, { "min": 500, "proportion": 0.06 }], "category": "AVERAGE" },
+      "LARGEST_CONTENTFUL_PAINT_MS": { "percentile": 2890, "distributions": [{ "min": 0, "max": 2500, "proportion": 0.64 }, { "min": 2500, "max": 4000, "proportion": 0.25 }, { "min": 4000, "proportion": 0.11 }], "category": "AVERAGE" }
+    },
+    "overall_category": "AVERAGE",
+    "initial_url": "https://demo-shop.example/"
+  },
+  "lighthouseResult": {
+    "requestedUrl": "https://demo-shop.example/",
+    "finalUrl": "https://demo-shop.example/",
+    "mainDocumentUrl": "https://demo-shop.example/",
+    "finalDisplayedUrl": "https://demo-shop.example/",
+    "lighthouseVersion": "12.2.1",
+    "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36",
+    "fetchTime": "2026-11-18T10:03:11.000Z",
+    "environment": { "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) Chrome/131.0.0.0 Mobile Safari/537.36", "hostUserAgent": "Mozilla/5.0 Chrome/131.0.0.0", "benchmarkIndex": 1280 },
+    "runWarnings": [],
+    "configSettings": { "emulatedFormFactor": "mobile", "formFactor": "mobile", "locale": "en-US", "onlyCategories": ["performance"], "channel": "lr" },
+    "audits": {
+      "largest-contentful-paint": { "id": "largest-contentful-paint", "title": "Largest Contentful Paint", "score": 0.61, "scoreDisplayMode": "numeric", "displayValue": "2.6 s", "numericValue": 2610.3, "numericUnit": "millisecond" },
+      "first-contentful-paint": { "id": "first-contentful-paint", "title": "First Contentful Paint", "score": 0.78, "scoreDisplayMode": "numeric", "displayValue": "1.6 s", "numericValue": 1622.1, "numericUnit": "millisecond" },
+      "cumulative-layout-shift": { "id": "cumulative-layout-shift", "title": "Cumulative Layout Shift", "score": 0.94, "scoreDisplayMode": "numeric", "displayValue": "0.05", "numericValue": 0.052, "numericUnit": "unitless" },
+      "total-blocking-time": { "id": "total-blocking-time", "title": "Total Blocking Time", "score": 0.7, "scoreDisplayMode": "numeric", "displayValue": "290 ms", "numericValue": 291, "numericUnit": "millisecond" },
+      "speed-index": { "id": "speed-index", "title": "Speed Index", "score": 0.74, "scoreDisplayMode": "numeric", "displayValue": "3.1 s", "numericValue": 3120, "numericUnit": "millisecond" },
+      "server-response-time": { "id": "server-response-time", "title": "Initial server response time was short", "score": 1, "scoreDisplayMode": "metricSavings", "displayValue": "Root document took 410 ms", "numericValue": 410.2, "numericUnit": "millisecond", "details": { "type": "opportunity", "items": [{ "url": "https://demo-shop.example/", "responseTime": 410.2 }], "overallSavingsMs": 310.2 } },
+      "largest-contentful-paint-element": { "id": "largest-contentful-paint-element", "title": "Largest Contentful Paint element", "score": 0, "scoreDisplayMode": "metricSavings", "displayValue": "2,610 ms", "details": { "type": "list", "items": [{ "type": "table", "items": [{ "node": { "type": "node", "selector": "header > div.hero > h1", "snippet": "<h1 class=\"hero-title\">", "nodeLabel": "Everything for your home", "boundingRect": { "top": 120, "bottom": 210, "left": 16, "right": 396, "width": 380, "height": 90 } } }] }] } },
+      "network-requests": { "id": "network-requests", "title": "Network Requests", "score": 1, "scoreDisplayMode": "informative", "details": { "type": "table", "items": [
+        { "url": "https://demo-shop.example/", "protocol": "h2", "networkRequestTime": 0.8, "networkEndTime": 431.2, "transferSize": 14210, "resourceSize": 48100, "statusCode": 200, "mimeType": "text/html", "resourceType": "Document", "entity": "demo-shop.example" },
+        { "url": "https://demo-shop.example/assets/index-Bd3k2.js", "protocol": "h2", "networkRequestTime": 440.1, "networkEndTime": 1402.6, "transferSize": 412880, "resourceSize": 1480200, "statusCode": 200, "mimeType": "application/javascript", "resourceType": "Script", "entity": "demo-shop.example" },
+        { "url": "https://demo-shop.example/assets/index-C2x.css", "protocol": "h2", "networkRequestTime": 441.0, "networkEndTime": 690.3, "transferSize": 24210, "resourceSize": 118300, "statusCode": 200, "mimeType": "text/css", "resourceType": "Stylesheet", "entity": "demo-shop.example" },
+        { "url": "https://www.googletagmanager.com/gtm.js?id=GTM-ABC123", "protocol": "h2", "networkRequestTime": 1410.0, "networkEndTime": 1902.2, "transferSize": 98540, "resourceSize": 312400, "statusCode": 200, "mimeType": "application/javascript", "resourceType": "Script", "entity": "Google Tag Manager" }
+      ] } }
+    },
+    "categories": { "performance": { "id": "performance", "title": "Performance", "score": 0.71 } },
+    "timing": { "total": 12210.4 }
+  },
+  "analysisUTCTimestamp": "2026-11-18T10:03:11.000Z"
+}

@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "tree": {
+    "name": "root",
+    "children": [
+      {
+        "name": "assets/index-Bd3k2.js",
+        "children": [
+          { "name": "src", "children": [{ "uid": "m1", "name": "main.tsx" }, { "name": "components", "children": [{ "uid": "m2", "name": "App.tsx" }, { "uid": "m3", "name": "ProductCard.tsx" }] }] },
+          { "name": "node_modules", "children": [
+            { "name": "react-dom", "children": [{ "uid": "m4", "name": "react-dom.production.js" }] },
+            { "name": "react", "children": [{ "uid": "m5", "name": "react.production.js" }] },
+            { "name": "lodash", "children": [{ "uid": "m6", "name": "lodash.js" }] },
+            { "name": "date-fns", "children": [{ "uid": "m7", "name": "index.js" }] },
+            { "name": "chart-kit", "children": [{ "name": "node_modules", "children": [{ "name": "date-fns", "children": [{ "uid": "m8", "name": "index.js" }] }] }] }
+          ] }
+        ]
+      },
+      { "name": "assets/checkout-9fA1.js", "children": [{ "name": "src", "children": [{ "uid": "m9", "name": "pages/Checkout.tsx" }] }] },
+      { "name": "assets/index-C2x.css", "children": [{ "uid": "m10", "name": "src/styles.css" }] }
+    ]
+  },
+  "nodeParts": {
+    "m1": { "renderedLength": 2410, "gzipLength": 980, "brotliLength": 850, "metaUid": "m1" },
+    "m2": { "renderedLength": 8120, "gzipLength": 2410, "brotliLength": 2100, "metaUid": "m2" },
+    "m3": { "renderedLength": 4230, "gzipLength": 1400, "brotliLength": 1200, "metaUid": "m3" },
+    "m4": { "renderedLength": 132040, "gzipLength": 42100, "brotliLength": 37200, "metaUid": "m4" },
+    "m5": { "renderedLength": 7220, "gzipLength": 2900, "brotliLength": 2600, "metaUid": "m5" },
+    "m6": { "renderedLength": 544098, "gzipLength": 96500, "brotliLength": 84100, "metaUid": "m6" },
+    "m7": { "renderedLength": 61200, "gzipLength": 15200, "brotliLength": 13100, "metaUid": "m7" },
+    "m8": { "renderedLength": 58900, "gzipLength": 14900, "brotliLength": 12800, "metaUid": "m8" },
+    "m9": { "renderedLength": 18220, "gzipLength": 5200, "brotliLength": 4600, "metaUid": "m9" },
+    "m10": { "renderedLength": 41210, "gzipLength": 7100, "brotliLength": 6200, "metaUid": "m10" }
+  },
+  "nodeMetas": {
+    "m1": { "id": "/app/src/main.tsx", "moduleParts": { "assets/index-Bd3k2.js": "m1" }, "imported": [], "importedBy": [] },
+    "m2": { "id": "/app/src/components/App.tsx", "moduleParts": {}, "imported": [], "importedBy": [] },
+    "m3": { "id": "/app/src/components/ProductCard.tsx", "moduleParts": {}, "imported": [], "importedBy": [] },
+    "m4": { "id": "/app/node_modules/react-dom/cjs/react-dom.production.js", "moduleParts": {}, "imported": [], "importedBy": [] },
+    "m5": { "id": "/app/node_modules/react/cjs/react.production.js", "moduleParts": {}, "imported": [], "importedBy": [] },
+    "m6": { "id": "/app/node_modules/lodash/lodash.js", "moduleParts": {}, "imported": [], "importedBy": [] },
+    "m7": { "id": "/app/node_modules/date-fns/index.js", "moduleParts": {}, "imported": [], "importedBy": [] },
+    "m8": { "id": "/app/node_modules/chart-kit/node_modules/date-fns/index.js", "moduleParts": {}, "imported": [], "importedBy": [] },
+    "m9": { "id": "/app/src/pages/Checkout.tsx", "moduleParts": {}, "imported": [], "importedBy": [] },
+    "m10": { "id": "/app/src/styles.css", "moduleParts": {}, "imported": [], "importedBy": [] }
+  },
+  "env": { "rollup": "4.28.0" },
+  "options": { "gzip": true, "brotli": true, "sourcemap": false }
+}

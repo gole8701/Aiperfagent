@@ -1,0 +1,20 @@
+Performance report — demo shop, mobile, 2026-11-18
+
+Page: https://demo-shop.example/checkout
+Largest Contentful Paint 3.4 s
+Interaction to Next Paint: 210 ms
+Cumulative Layout Shift 0.12
+Time to first byte — 820 ms
+Score 72/100
+First token 1.2 s
+Cost $0.011
+
+Page: /home
+LCP: 1.9s
+CLS 0.05
+TTFB 410 ms
+
+| Page | LCP | CLS | Requests |
+|------|-----|-----|----------|
+| /product/blue-chair | 2600 | 0.08 | 41 |
+| /cart | 2100 | 0.03 | 29 |

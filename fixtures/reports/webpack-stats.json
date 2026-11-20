@@ -1,0 +1,35 @@
+{
+  "version": "5.97.1",
+  "hash": "9c1d4a7e2b3f5a6d8e9f",
+  "time": 18420,
+  "builtAt": 1763460000000,
+  "publicPath": "/static/",
+  "outputPath": "/app/dist",
+  "assetsByChunkName": { "main": ["main.3f2a1c.js", "main.9b1e.css"], "vendors": ["vendors.7d2e4b.js"], "checkout": ["checkout.a81c.js"] },
+  "assets": [
+    { "type": "asset", "name": "main.3f2a1c.js", "size": 318902, "emitted": true, "chunkNames": ["main"], "chunks": ["main"], "info": { "javascriptModule": false, "minimized": true } },
+    { "type": "asset", "name": "vendors.7d2e4b.js", "size": 612344, "emitted": true, "chunkNames": ["vendors"], "chunks": ["vendors"], "info": { "minimized": true } },
+    { "type": "asset", "name": "checkout.a81c.js", "size": 88120, "emitted": true, "chunkNames": ["checkout"], "chunks": ["checkout"], "info": { "minimized": true } },
+    { "type": "asset", "name": "main.9b1e.css", "size": 41210, "emitted": true, "chunkNames": ["main"], "chunks": ["main"], "info": { "minimized": true } },
+    { "type": "asset", "name": "logo.4e1f.svg", "size": 3120, "emitted": true, "chunkNames": [], "chunks": [], "info": {} }
+  ],
+  "chunks": [
+    { "id": "main", "names": ["main"], "files": ["main.3f2a1c.js", "main.9b1e.css"], "size": 318902, "initial": true, "entry": true },
+    { "id": "vendors", "names": ["vendors"], "files": ["vendors.7d2e4b.js"], "size": 612344, "initial": true, "entry": false },
+    { "id": "checkout", "names": ["checkout"], "files": ["checkout.a81c.js"], "size": 88120, "initial": false, "entry": false }
+  ],
+  "modules": [
+    { "type": "module", "name": "./src/main.tsx", "identifier": "/app/src/main.tsx", "size": 2410, "chunks": ["main"] },
+    { "type": "module", "name": "./src/pages/Checkout.tsx", "identifier": "/app/src/pages/Checkout.tsx", "size": 18220, "chunks": ["checkout"] },
+    { "type": "module", "name": "./node_modules/react-dom/cjs/react-dom.production.min.js", "identifier": "/app/node_modules/react-dom/cjs/react-dom.production.min.js", "size": 132040, "chunks": ["vendors"] },
+    { "type": "module", "name": "./node_modules/react/cjs/react.production.min.js", "identifier": "/app/node_modules/react/cjs/react.production.min.js", "size": 7220, "chunks": ["vendors"] },
+    { "type": "module", "name": "./node_modules/lodash/lodash.js", "identifier": "/app/node_modules/lodash/lodash.js", "size": 544098, "chunks": ["vendors"] },
+    { "type": "module", "name": "./node_modules/date-fns/index.js", "identifier": "/app/node_modules/date-fns/index.js", "size": 61200, "chunks": ["vendors"] },
+    { "type": "module", "name": "./node_modules/some-chart-lib/node_modules/date-fns/index.js", "identifier": "/app/node_modules/some-chart-lib/node_modules/date-fns/index.js", "size": 58900, "chunks": ["vendors"] },
+    { "type": "module", "name": "./node_modules/@scope/ui/dist/index.js", "identifier": "/app/node_modules/@scope/ui/dist/index.js", "size": 24100, "chunks": ["main"] },
+    { "type": "module", "name": "./node_modules/legacy-widget/node_modules/@scope/ui/dist/index.js", "identifier": "/app/node_modules/legacy-widget/node_modules/@scope/ui/dist/index.js", "size": 22800, "chunks": ["main"] }
+  ],
+  "entrypoints": { "main": { "name": "main", "chunks": ["vendors", "main"], "assets": [{ "name": "vendors.7d2e4b.js" }, { "name": "main.3f2a1c.js" }, { "name": "main.9b1e.css" }] } },
+  "errors": [],
+  "warnings": []
+}

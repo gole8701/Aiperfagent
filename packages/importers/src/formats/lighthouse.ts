@@ -16,7 +16,7 @@ interface LighthouseReport {
   fetchTime?: string
   configSettings?: { formFactor?: 'mobile' | 'desktop' }
   audits?: Record<string, LighthouseAudit>
-  categories?: { performance?: { score?: number } }
+  categories?: { performance?: { score?: number | null } }
 }
 
 const isLighthouse = (json: unknown): json is LighthouseReport => typeof json === 'object' && json !== null && 'lighthouseVersion' in json && 'audits' in json
@@ -26,13 +26,13 @@ export function fromLighthouse(lh: LighthouseReport, label = 'Lighthouse report'
   const num = (id: string): number | undefined => a[id]?.numericValue
   const url = lh.finalDisplayedUrl ?? lh.finalUrl ?? lh.requestedUrl ?? 'http://imported/'
   const requests: RequestInfo[] = ((a['network-requests']?.details?.items ?? []) as { url?: string; resourceType?: string; transferSize?: number; networkRequestTime?: number; networkEndTime?: number; statusCode?: number; isLinkPreload?: boolean; entity?: string; protocol?: string }[]).slice(0, 2000).map((r) => ({
-    url: String(r.url ?? ''),
+    url: r.url ?? '',
     type: mapType(r.resourceType),
     transferBytes: r.transferSize ?? 0,
     startMs: Math.round(r.networkRequestTime ?? 0),
     durationMs: Math.round((r.networkEndTime ?? 0) - (r.networkRequestTime ?? 0)),
     status: r.statusCode ?? 0,
-    thirdParty: Boolean(r.entity) && !sameHost(String(r.url ?? ''), url),
+    thirdParty: Boolean(r.entity) && !sameHost(r.url ?? '', url),
     cached: false,
     protocol: r.protocol,
   }))
@@ -49,8 +49,8 @@ export function fromLighthouse(lh: LighthouseReport, label = 'Lighthouse report'
     jsKb: jsBytes ? jsBytes / 1024 : undefined,
     requests: requests.length || undefined,
   }, lh.configSettings?.formFactor ?? 'mobile', requests)
-  const lcpItem = (a['largest-contentful-paint-element']?.details?.items ?? [])[0] as { node?: { selector?: string } } | undefined
-  page.lcpElement = lcpItem?.node?.selector
+  const lcpItem = (a['largest-contentful-paint-element']?.details?.items ?? [])[0] as { node?: { selector?: string }; items?: { node?: { selector?: string } }[] } | undefined
+  page.lcpElement = lcpItem?.node?.selector ?? lcpItem?.items?.[0]?.node?.selector
   return emptyReport(label, { createdAt: lh.fetchTime ?? new Date().toISOString(), environment: { name: 'lighthouse', url, device: page.device, browser: 'chromium', mode: 'imported' }, pages: [page] })
 }
 

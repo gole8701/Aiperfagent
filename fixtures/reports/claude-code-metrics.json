@@ -1,0 +1,49 @@
+{
+  "resourceMetrics": [
+    {
+      "resource": { "attributes": [{ "key": "service.name", "value": { "stringValue": "claude-code" } }, { "key": "service.version", "value": { "stringValue": "2.1.0" } }] },
+      "scopeMetrics": [
+        {
+          "scope": { "name": "com.anthropic.claude_code", "version": "2.1.0" },
+          "metrics": [
+            {
+              "name": "claude_code.token.usage",
+              "description": "Number of tokens used",
+              "unit": "tokens",
+              "sum": {
+                "aggregationTemporality": 2,
+                "isMonotonic": true,
+                "dataPoints": [
+                  { "attributes": [{ "key": "type", "value": { "stringValue": "input" } }, { "key": "model", "value": { "stringValue": "claude-sonnet-5-5" } }, { "key": "user.id", "value": { "stringValue": "u_1" } }], "startTimeUnixNano": "1763460000000000000", "timeUnixNano": "1763463600000000000", "asInt": "48210" },
+                  { "attributes": [{ "key": "type", "value": { "stringValue": "output" } }, { "key": "model", "value": { "stringValue": "claude-sonnet-5-5" } }, { "key": "user.id", "value": { "stringValue": "u_1" } }], "startTimeUnixNano": "1763460000000000000", "timeUnixNano": "1763463600000000000", "asInt": "9120" },
+                  { "attributes": [{ "key": "type", "value": { "stringValue": "cacheRead" } }, { "key": "model", "value": { "stringValue": "claude-sonnet-5-5" } }, { "key": "user.id", "value": { "stringValue": "u_1" } }], "startTimeUnixNano": "1763460000000000000", "timeUnixNano": "1763463600000000000", "asInt": "312000" },
+                  { "attributes": [{ "key": "type", "value": { "stringValue": "cacheCreation" } }, { "key": "model", "value": { "stringValue": "claude-sonnet-5-5" } }, { "key": "user.id", "value": { "stringValue": "u_1" } }], "startTimeUnixNano": "1763460000000000000", "timeUnixNano": "1763463600000000000", "asInt": "42000" },
+                  { "attributes": [{ "key": "type", "value": { "stringValue": "input" } }, { "key": "model", "value": { "stringValue": "claude-haiku-5-5" } }, { "key": "user.id", "value": { "stringValue": "u_1" } }], "startTimeUnixNano": "1763460000000000000", "timeUnixNano": "1763463600000000000", "asInt": "6100" },
+                  { "attributes": [{ "key": "type", "value": { "stringValue": "output" } }, { "key": "model", "value": { "stringValue": "claude-haiku-5-5" } }, { "key": "user.id", "value": { "stringValue": "u_1" } }], "startTimeUnixNano": "1763460000000000000", "timeUnixNano": "1763463600000000000", "asInt": "820" }
+                ]
+              }
+            },
+            {
+              "name": "claude_code.cost.usage",
+              "description": "Cost of the session in USD",
+              "unit": "USD",
+              "sum": {
+                "aggregationTemporality": 2,
+                "isMonotonic": true,
+                "dataPoints": [
+                  { "attributes": [{ "key": "model", "value": { "stringValue": "claude-sonnet-5-5" } }, { "key": "user.id", "value": { "stringValue": "u_1" } }], "startTimeUnixNano": "1763460000000000000", "timeUnixNano": "1763463600000000000", "asDouble": 0.2184 },
+                  { "attributes": [{ "key": "model", "value": { "stringValue": "claude-haiku-5-5" } }, { "key": "user.id", "value": { "stringValue": "u_1" } }], "startTimeUnixNano": "1763460000000000000", "timeUnixNano": "1763463600000000000", "asDouble": 0.00102 }
+                ]
+              }
+            },
+            {
+              "name": "claude_code.lines_of_code.count",
+              "unit": "lines",
+              "sum": { "aggregationTemporality": 2, "isMonotonic": true, "dataPoints": [{ "attributes": [{ "key": "type", "value": { "stringValue": "added" } }], "timeUnixNano": "1763463600000000000", "asInt": "412" }] }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
