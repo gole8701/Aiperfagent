@@ -70,6 +70,6 @@ Formats change between tool releases; the links in the **Connect an AI assistant
 ## Safety
 
 - The server runs in the project folder and reads `perfagent.config.ts` there; the same path guard, redaction and `fix.protected` globs apply as in the dashboard.
-- Without `--allow-writes` there is no tool that can change a file. With it, changes go to a new branch only; there is no tool to commit to `main`, push, merge or deploy.
+- Without `--allow-writes` there is no tool that can change a file. `--allow-writes` is ignored outside local mode (bound to a non-loopback `--host`, `NODE_ENV=production`, or no git repository), the same rule as the dashboard's write routes. With it, changes go to a new branch only; there is no tool to commit to `main`, push, merge or deploy.
 - Content the tools return (page text, file snippets) is data; prompt injection in a scanned page can only produce text for the assistant to read, not actions in PerfAgent.
 - The HTTP transport binds to `127.0.0.1` unless you pass `--host`, and every request needs `Authorization: Bearer <token>`. Set the token with `PERFAGENT_MCP_TOKEN`; otherwise a random one is printed to stderr at start. Full OAuth is not implemented: put a reverse proxy in front if a client needs it. `scan_url` refuses private network addresses, and also loopback addresses when the server listens on another interface.

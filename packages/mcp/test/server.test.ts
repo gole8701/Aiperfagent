@@ -9,7 +9,7 @@ import { configSchema } from '@perfagent/config'
 import { ReportStore } from '@perfagent/engine'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { buildMcpServer, type McpServerOptions } from '../src/index.js'
+import { buildMcpServer, writesAllowed, type McpServerOptions } from '../src/index.js'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const fixture = path.resolve(here, '../../../fixtures/reports/demo-shop-before.json')
@@ -53,6 +53,13 @@ describe('PerfAgent MCP server', () => {
     const fix = { start: () => Promise.reject(new Error('x')), get: () => undefined, list: () => [], accept: () => Promise.reject(new Error('x')), skip: () => Promise.reject(new Error('x')), undo: () => Promise.reject(new Error('x')) }
     const client = await connect({ allowWrites: true, fix })
     expect((await client.listTools()).tools.map((t) => t.name)).toContain('apply_fix_to_branch')
+  })
+
+  it('allows the write tool only in local mode', async () => {
+    const repo = configSchema.parse({ root: here })
+    expect(await writesAllowed({ config: repo, transport: 'stdio' })).toBe(true)
+    expect(await writesAllowed({ config: repo, transport: 'http', host: '0.0.0.0' })).toBe(false)
+    expect(await writesAllowed({ config: configSchema.parse({ root }), transport: 'stdio' })).toBe(false) // not a git repo
   })
 
   it('lists issues from the saved report with a chip filter', async () => {
