@@ -1,7 +1,8 @@
-import { Group, PerspectiveCamera, Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from 'three'
+import { Group, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three'
 
 import { GlobeDecor } from './decor'
 import type { GlobeLayout } from './layout'
+import { nearestPoint } from './pick'
 import { GlobePoints, type GlobeColors } from './points'
 
 export interface SceneOptions {
@@ -24,7 +25,6 @@ export class GlobeScene {
   private readonly globe = new Group()
   private readonly points: GlobePoints
   private readonly decor: GlobeDecor
-  private readonly raycaster = new Raycaster()
   private frame = 0
   private last = 0
   private hidden = document.hidden
@@ -50,7 +50,6 @@ export class GlobeScene {
     this.scene.add(this.globe, this.decor.stars)
     this.globe.rotation.x = this.target.rx
     this.camera.position.z = this.target.distance
-    this.raycaster.params.Points = { threshold: 0.07 }
     this.bind()
     this.resize()
     this.last = performance.now()
@@ -115,11 +114,15 @@ export class GlobeScene {
   project(id: string): { x: number; y: number; visible: boolean } | undefined {
     const index = id === 'core' ? -1 : this.options.layout.points.findIndex((p) => p.id === id)
     if (id !== 'core' && index < 0) return undefined
+    return this.screenOf(index, this.options.canvas.getBoundingClientRect())
+  }
+
+  /** index -1 is the core. */
+  private screenOf(index: number, rect: DOMRect): { x: number; y: number; visible: boolean } {
     const local = index < 0 ? new Vector3(0, 0, 0) : this.points.positionOf(index)
     const world = local.applyMatrix4(this.globe.matrixWorld)
     const facing = world.clone().normalize().dot(this.camera.position.clone().normalize())
     const ndc = world.project(this.camera)
-    const rect = this.options.canvas.getBoundingClientRect()
     return {
       x: ((ndc.x + 1) / 2) * rect.width,
       y: ((1 - ndc.y) / 2) * rect.height,
@@ -189,18 +192,14 @@ export class GlobeScene {
     this.renderer.render(this.scene, this.camera)
   }
 
+  /** Screen-space picking: tiny points are hard to hit with a ray, so take the nearest within 14 px. */
   private pick(event: PointerEvent): string | undefined {
     const rect = this.options.canvas.getBoundingClientRect()
-    const ndc = new Vector2(
-      ((event.clientX - rect.left) / rect.width) * 2 - 1,
-      -(((event.clientY - rect.top) / rect.height) * 2 - 1),
-    )
-    this.raycaster.setFromCamera(ndc, this.camera)
-    const hits = this.raycaster.intersectObject(this.points.mesh)
-    // Prefer problem points when several overlap; otherwise the nearest.
-    const sorted = hits.sort((a, b) => (a.distanceToRay ?? 0) - (b.distanceToRay ?? 0))
-    const hit = sorted.find((h) => this.options.layout.points[h.index ?? -1]?.severity) ?? sorted[0]
-    return hit?.index === undefined ? undefined : this.options.layout.points[hit.index]?.id
+    const screen = this.options.layout.points.flatMap((p, i) => {
+      const at = this.screenOf(i, rect)
+      return at.visible ? [{ id: p.id, x: at.x, y: at.y, problem: Boolean(p.severity) }] : []
+    })
+    return nearestPoint(screen, event.clientX - rect.left, event.clientY - rect.top)
   }
 
   private bind(): void {

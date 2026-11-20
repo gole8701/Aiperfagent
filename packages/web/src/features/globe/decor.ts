@@ -233,7 +233,10 @@ function glowTexture(colour: string): CanvasTexture {
     ctx.fillStyle = gradient
     ctx.fillRect(0, 0, size, size)
   }
-  return new CanvasTexture(canvas)
+  const texture = new CanvasTexture(canvas)
+  // The gradient is symmetric; skipping the flip avoids WebGL's texImage3D FLIP_Y warning.
+  texture.flipY = false
+  return texture
 }
 
 function starfield(colour: string): Points {
