@@ -14,6 +14,7 @@ import {
 import { redactUrl } from '@perfagent/security'
 import type { Browser, CDPSession, Page } from 'playwright-core'
 
+import { attributeTasks } from './attribution.js'
 import { INJECTED_SCRIPT, type InjectedState } from './inject.js'
 import { PROFILES, type DeviceProfile } from './profiles.js'
 import { collectReadiness } from './readiness.js'
@@ -240,11 +241,14 @@ async function measureOnce(
   if (firstRun && options.readiness !== false)
     Object.assign(features, await collectReadiness(page, options.url))
   // Source maps are fetched through the page's own session, so this runs before the context closes.
-  const longTasks: LongTask[] = (state?.longTasks ?? []).map((t) => ({
-    startMs: t.startMs,
-    durationMs: t.durationMs,
-    script: t.script,
-  }))
+  const longTasks: LongTask[] = []
+  for (const t of attributeTasks(state?.longTasks ?? [], state?.loaf ?? [], [...requests.values()]))
+    longTasks.push({
+      startMs: t.startMs,
+      durationMs: t.durationMs,
+      script: t.script && `${t.script}${t.fn ? ` ${t.fn}()` : ''}`,
+      location: t.script ? await mapScript(mapper, t.script, t.line) : undefined,
+    })
   for (const f of state?.loaf ?? [])
     if (f.script)
       longTasks.push({
@@ -317,6 +321,7 @@ function wireNetwork(
   cdp.on('Network.requestWillBeSent', (e) => {
     starts.set(e.requestId, e.timestamp * 1000)
     const url = redactUrl(e.request.url)
+    const initiatorUrl = e.initiator.url || e.initiator.stack?.callFrames[0]?.url
     requests.set(e.requestId, {
       url,
       type: typeOf(e.type, url),
@@ -326,7 +331,7 @@ function wireNetwork(
       status: 0,
       thirdParty: !sameSite(url, origin),
       cached: false,
-      initiator: e.initiator.url ? redactUrl(e.initiator.url) : e.initiator.type,
+      initiator: initiatorUrl ? redactUrl(initiatorUrl) : e.initiator.type,
     })
   })
   cdp.on('Network.responseReceived', (e) => {

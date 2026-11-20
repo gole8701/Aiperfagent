@@ -1,4 +1,4 @@
-import type { PageResult, RequestInfo } from '@perfagent/core'
+import type { LongTask, PageResult, RequestInfo } from '@perfagent/core'
 
 import { lineText, loc, pageMetric, replaceLine, type Finding, type Rule } from '../engine.js'
 
@@ -480,12 +480,17 @@ export const heavyMainThread: Rule = {
       const tbt = pageMetric([page], 'tbt')
       if (tbt === undefined || tbt <= 600) continue
       const worst = [...page.longTasks].sort((a, b) => b.durationMs - a.durationMs)[0]
+      const scripts = busiestScripts(page.longTasks)
       out.push({
         route: page.route,
         location: worst?.location,
+        why: scripts
+          ? undefined
+          : 'Tasks over 50 ms stop the browser from responding to input. The browser did not say which scripts ran them; record a trace in DevTools to see.',
         chain: {
           metric: 'tbt',
           value: tbt,
+          cost: scripts ? { label: 'Busiest scripts', detail: scripts } : undefined,
           code: worst?.location
             ? { snippet: worst.script ?? '', location: worst.location }
             : undefined,
@@ -496,6 +501,23 @@ export const heavyMainThread: Rule = {
     }
     return out
   },
+}
+
+/** "app.js 420 ms, vendor.js 180 ms" for the three scripts with the most long-task time. */
+function busiestScripts(tasks: LongTask[]): string | undefined {
+  const total = new Map<string, number>()
+  for (const t of tasks)
+    if (t.script) total.set(t.script, (total.get(t.script) ?? 0) + t.durationMs)
+  const top = [...total].sort((a, b) => b[1] - a[1]).slice(0, 3)
+  return top.length
+    ? top.map(([script, ms]) => `${shortScript(script)} ${Math.round(ms)} ms`).join(', ')
+    : undefined
+}
+
+function shortScript(script: string): string {
+  const [url = script, fn] = script.split(' ')
+  const name = url.split(/[?#]/)[0]?.split('/').filter(Boolean).pop() ?? url
+  return fn ? `${name} ${fn}` : name
 }
 
 export const tooManyRequests: Rule = {

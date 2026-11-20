@@ -25,12 +25,13 @@ export const INJECTED_SCRIPT = `(() => {
   })
   observe('paint', (e) => { if (e.name === 'first-contentful-paint') state.fcp = e.startTime })
   observe('longtask', (e) => {
+    // attribution.name is only 'unknown'/'self'; containerSrc is the one real URL it can give.
     const attr = e.attribution && e.attribution[0]
-    state.longTasks.push({ startMs: e.startTime, durationMs: e.duration, script: attr ? (attr.containerSrc || attr.containerName || attr.name) : undefined })
+    state.longTasks.push({ startMs: e.startTime, durationMs: e.duration, script: (attr && attr.containerSrc) || undefined })
   })
   observe('long-animation-frame', (e) => {
     const worst = (e.scripts || []).sort((a, b) => b.duration - a.duration)[0]
-    state.loaf.push({ startMs: e.startTime, durationMs: e.duration, blockingMs: e.blockingDuration, script: worst ? worst.sourceURL : undefined, fn: worst ? worst.sourceFunctionName : undefined, line: worst ? worst.sourceCharPosition : undefined })
+    state.loaf.push({ startMs: e.startTime, durationMs: e.duration, blockingMs: e.blockingDuration, script: worst ? (worst.sourceURL || worst.invoker || undefined) : undefined, fn: worst ? worst.sourceFunctionName : undefined, line: worst ? worst.sourceCharPosition : undefined })
   })
   observe('event', (e) => { if (e.interactionId) state.interactions.push({ name: e.name, durationMs: e.duration, target: describe(e.target), at: e.startTime }) }, { durationThreshold: 16 })
   observe('mark', (e) => state.marks.push({ name: e.name, at: e.startTime }))
