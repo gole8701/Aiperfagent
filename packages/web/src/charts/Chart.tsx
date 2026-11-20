@@ -5,8 +5,8 @@ import { Button } from '../components/Button'
 import { InfoLink } from '../components/Fields'
 import { useDisplay } from '../state/theme'
 
-import type { ChartContext, ChartDefinition } from './definitions/types'
 import { barList } from './bar-list'
+import type { ChartContext, ChartDefinition } from './definitions/types'
 import { echarts } from './echarts'
 
 interface ChartProps {
@@ -168,7 +168,8 @@ function EChart({
     observer.observe(el)
     // Long category labels are cut short; the full text shows as a native tooltip.
     chart.on('mouseover', (params) => {
-      if (params.componentType === 'yAxis') el.title = String(params.value)
+      if (params.componentType === 'yAxis' && typeof params.value === 'string')
+        el.title = params.value
     })
     chart.on('mouseout', () => {
       el.title = ''
