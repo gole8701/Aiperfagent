@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-Please report security problems privately through GitHub security advisories: open the repository's **Security** tab → **Report a vulnerability** (https://github.com/gole8701/perfagent/security/advisories/new). Do not open a public issue or pull request for a vulnerability.
+Please report security problems privately through GitHub security advisories: open the repository's **Security** tab → **Report a vulnerability** (https://github.com/gole8701/Aiperfagent/security/advisories/new). Do not open a public issue or pull request for a vulnerability.
 
 Include what you found, how to reproduce it, which version, and what an attacker could do. You will get an acknowledgement within 3 working days and a fix or a plan within 14 days for anything that lets an attacker read files outside the project, run commands, reach the server from another origin, or make PerfAgent write code outside local mode. Credit is given in the release notes unless you prefer not to be named.
 

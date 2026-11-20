@@ -39,10 +39,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/gole8701/perfagent"
+    "url": "https://github.com/gole8701/Aiperfagent"
   },
-  "homepage": "https://github.com/gole8701/perfagent#readme",
-  "bugs": "https://github.com/gole8701/perfagent/issues",
+  "homepage": "https://github.com/gole8701/Aiperfagent#readme",
+  "bugs": "https://github.com/gole8701/Aiperfagent/issues",
   "engines": {
     "node": ">=22"
   },

@@ -18,7 +18,7 @@ const HELP = `
   ${color.bold('perfagent ai-proxy')}        measure your app's AI calls with no code change (--target https://api.openai.com --port 4547)
 
   Options: --port 4545  --root .  --device mobile|desktop  --runs 3  --no-project  --json  --no-open
-  Docs: https://github.com/gole8701/perfagent
+  Docs: https://github.com/gole8701/Aiperfagent
 `
 
 async function main(): Promise<void> {

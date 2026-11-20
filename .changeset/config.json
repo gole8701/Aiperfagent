@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.0.5/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "gole8701/perfagent" }],
+  "changelog": ["@changesets/changelog-github", { "repo": "gole8701/Aiperfagent" }],
   "commit": false,
   "fixed": [["perfagent", "@perfagent/*"]],
   "linked": [],

@@ -142,11 +142,11 @@ function rewriteLinks(md) {
   return md
     .replace(
       /\]\(\.\.\/security\/([A-Z_]+)\.md\)/g,
-      '](https://github.com/gole8701/perfagent/blob/main/security/$1.md)',
+      '](https://github.com/gole8701/Aiperfagent/blob/main/security/$1.md)',
     )
     .replace(
       /\]\(\.\.\/SECURITY\.md\)/g,
-      '](https://github.com/gole8701/perfagent/blob/main/SECURITY.md)',
+      '](https://github.com/gole8701/Aiperfagent/blob/main/SECURITY.md)',
     )
     .replace(/\]\(docs\/([a-z-]+)\.md\)/g, ']($1.html)')
     .replace(/\]\(([a-z-]+)\.md\)/g, ']($1.html)')
@@ -170,9 +170,9 @@ function layout(title, content, base) {
 <link rel="stylesheet" href="${base}site.css">
 </head>
 <body class="doc">
-<header class="top"><a class="brand" href="${base}">PerfAgent</a><nav><a href="${base}docs/">Docs</a><a href="${base}app/">Demo</a><a href="https://github.com/gole8701/perfagent">GitHub</a></nav></header>
+<header class="top"><a class="brand" href="${base}">PerfAgent</a><nav><a href="${base}docs/">Docs</a><a href="${base}app/">Demo</a><a href="https://github.com/gole8701/Aiperfagent">GitHub</a></nav></header>
 <main class="prose">${content}</main>
-<footer class="foot">MIT licence · <a href="https://github.com/gole8701/perfagent">Source</a> · <a href="https://github.com/gole8701/perfagent/blob/main/SECURITY.md">Security</a> · Local only, no telemetry, your own AI.</footer>
+<footer class="foot">MIT licence · <a href="https://github.com/gole8701/Aiperfagent">Source</a> · <a href="https://github.com/gole8701/Aiperfagent/blob/main/SECURITY.md">Security</a> · Local only, no telemetry, your own AI.</footer>
 </body>
 </html>
 `
