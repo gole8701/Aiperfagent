@@ -45,7 +45,7 @@ export class GlobeScene {
     this.scene.add(this.globe, this.decor.stars)
     this.globe.rotation.x = this.target.rx
     this.camera.position.z = this.target.distance
-    this.raycaster.params.Points = { threshold: 0.045 }
+    this.raycaster.params.Points = { threshold: 0.07 }
     this.bind()
     this.resize()
     this.last = performance.now()
@@ -102,7 +102,7 @@ export class GlobeScene {
   }
 
   /** Screen position (CSS px) of a point or the core, for HTML overlays. */
-  project(id: string | 'core'): { x: number; y: number; visible: boolean } | undefined {
+  project(id: string): { x: number; y: number; visible: boolean } | undefined {
     const index = id === 'core' ? -1 : this.options.layout.points.findIndex((p) => p.id === id)
     if (id !== 'core' && index < 0) return undefined
     const local = index < 0 ? new Vector3(0, 0, 0) : this.points.positionOf(index)

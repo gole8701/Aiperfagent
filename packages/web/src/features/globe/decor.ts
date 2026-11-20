@@ -1,31 +1,38 @@
 import {
   AdditiveBlending,
+  BackSide,
   BufferAttribute,
   BufferGeometry,
   CanvasTexture,
   Color,
   Group,
   Line,
+  LineBasicMaterial,
   LineDashedMaterial,
+  LineSegments,
   Mesh,
   MeshBasicMaterial,
   Points,
   PointsMaterial,
   QuadraticBezierCurve3,
   RingGeometry,
+  ShaderMaterial,
   SphereGeometry,
   Sprite,
   SpriteMaterial,
   Vector3,
 } from 'three'
 
-/** Core sphere + glow, two orbit rings, a starfield and the flowing link to the selected point. */
+/** Glass globe (shell, grid, atmosphere), core + glow, two orbit rings, a starfield and the flowing link to the selected point. */
 export class GlobeDecor {
   readonly group = new Group()
   readonly stars: Points
   private readonly core: Mesh
   private readonly glow: Sprite
-  private readonly rings: Mesh[]
+  private readonly rings: [Mesh, Mesh]
+  private readonly shell: Mesh
+  private readonly grid: LineSegments
+  private readonly atmosphere: Mesh
   private link?: Line
   private readonly disposables: { dispose: () => void }[] = []
 
@@ -34,15 +41,21 @@ export class GlobeDecor {
     this.glow = new Sprite(new SpriteMaterial({ map: glowTexture(accent), transparent: true, blending: AdditiveBlending, depthWrite: false }))
     this.glow.scale.set(1.1, 1.1, 1)
     this.rings = [this.ring(1.35, 0.42, 0.1), this.ring(1.55, -0.35, 0.5)]
-    this.group.add(this.core, this.glow, ...this.rings)
+    // Depth is not written, so the shell tints what is behind it instead of hiding it; the points shader fades the far side.
+    this.shell = new Mesh(new SphereGeometry(0.995, 64, 48), new MeshBasicMaterial({ color: accent, transparent: true, opacity: 0.07, depthWrite: false }))
+    this.grid = new LineSegments(graticule(1, 12, 6), new LineBasicMaterial({ color: accent, transparent: true, opacity: 0.16, depthWrite: false }))
+    this.atmosphere = new Mesh(new SphereGeometry(1.08, 64, 48), atmosphereMaterial(accent))
+    this.shell.renderOrder = -2
+    this.grid.renderOrder = -1
+    this.group.add(this.atmosphere, this.shell, this.grid, this.core, this.glow, ...this.rings)
     this.stars = starfield(starColour)
-    this.disposables.push(this.core.geometry, this.core.material as MeshBasicMaterial, this.glow.material, this.stars.geometry, this.stars.material as PointsMaterial)
+    this.disposables.push(this.core.geometry, this.core.material as MeshBasicMaterial, this.glow.material, this.stars.geometry, this.stars.material as PointsMaterial, this.shell.geometry, this.shell.material as MeshBasicMaterial, this.grid.geometry, this.grid.material as LineBasicMaterial, this.atmosphere.geometry, this.atmosphere.material as ShaderMaterial)
   }
 
   private ring(radius: number, tiltX: number, tiltZ: number): Mesh {
     const mesh = new Mesh(new RingGeometry(radius, radius + 0.006, 128), new MeshBasicMaterial({ color: this.accent, transparent: true, opacity: 0.35, side: 2 }))
     mesh.rotation.set(Math.PI / 2 + tiltX, 0, tiltZ)
-    this.disposables.push(mesh.geometry, mesh.material as MeshBasicMaterial)
+    this.disposables.push(mesh.geometry, mesh.material)
     return mesh
   }
 
@@ -52,8 +65,11 @@ export class GlobeDecor {
     this.glow.material.map?.dispose()
     this.glow.material.map = glowTexture(accent)
     for (const r of this.rings) (r.material as MeshBasicMaterial).color.set(accent)
+    ;(this.shell.material as MeshBasicMaterial).color.set(accent)
+    ;(this.grid.material as LineBasicMaterial).color.set(accent)
+    ;((this.atmosphere.material as ShaderMaterial).uniforms.uColor!.value as Color).set(accent)
     ;(this.stars.material as PointsMaterial).color.set(starColour)
-    this.link?.material && ((this.link.material as LineDashedMaterial).color = new Color(accent))
+    if (this.link) (this.link.material as LineDashedMaterial).color = new Color(accent)
   }
 
   /** Curved, dashed line from the core to a point; the dash offset animates in `tick`. */
@@ -86,14 +102,58 @@ export class GlobeDecor {
       for (let i = 0; i < this.linkDistances.length; i++) attr.setX(i, (this.linkDistances[i] ?? 0) + time * 0.3)
       attr.needsUpdate = true
     }
-    this.rings[0]!.rotation.z += dt * 0.05
-    this.rings[1]!.rotation.z -= dt * 0.03
+    this.rings[0].rotation.z += dt * 0.05
+    this.rings[1].rotation.z -= dt * 0.03
   }
 
   dispose(): void {
     this.linkTo(undefined, this.accent)
     for (const d of this.disposables) d.dispose()
   }
+}
+
+/** Latitude and longitude lines as one LineSegments geometry. */
+function graticule(radius: number, meridians: number, parallels: number): BufferGeometry {
+  const segments = 96
+  const vertices: number[] = []
+  const at = (lat: number, lon: number): number[] => [radius * Math.cos(lat) * Math.sin(lon), radius * Math.sin(lat), radius * Math.cos(lat) * Math.cos(lon)]
+  for (let m = 0; m < meridians; m++) {
+    const lon = (m / meridians) * Math.PI * 2
+    for (let i = 0; i < segments; i++) vertices.push(...at(-Math.PI / 2 + (i / segments) * Math.PI, lon), ...at(-Math.PI / 2 + ((i + 1) / segments) * Math.PI, lon))
+  }
+  for (let p = 1; p < parallels; p++) {
+    const lat = -Math.PI / 2 + (p / parallels) * Math.PI
+    for (let i = 0; i < segments; i++) vertices.push(...at(lat, (i / segments) * Math.PI * 2), ...at(lat, ((i + 1) / segments) * Math.PI * 2))
+  }
+  return new BufferGeometry().setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3))
+}
+
+/** Fresnel rim on the back faces of a slightly larger sphere: the soft atmosphere around the globe. */
+function atmosphereMaterial(colour: string): ShaderMaterial {
+  return new ShaderMaterial({
+    uniforms: { uColor: { value: new Color(colour) } },
+    vertexShader: `
+varying vec3 vNormal;
+varying vec3 vView;
+void main() {
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vNormal = normalize(normalMatrix * normal);
+  vView = normalize(-mv.xyz);
+  gl_Position = projectionMatrix * mv;
+}`,
+    fragmentShader: `
+uniform vec3 uColor;
+varying vec3 vNormal;
+varying vec3 vView;
+void main() {
+  float rim = pow(1.0 - abs(dot(vNormal, vView)), 3.0);
+  gl_FragColor = vec4(uColor, rim * 0.4);
+}`,
+    side: BackSide,
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+  })
 }
 
 function glowTexture(colour: string): CanvasTexture {

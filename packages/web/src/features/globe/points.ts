@@ -11,7 +11,7 @@ export interface GlobeColors {
   dim: string
 }
 
-/** At the default camera distance a dot of size 4 is about 7 CSS px: small marks, not glowing blobs. */
+/** At the default camera distance a disc of size 5 is about 8 CSS px: small marks, not glowing blobs. */
 const POINT_SCALE = 6
 
 const VERTEX = `
@@ -40,8 +40,9 @@ varying float vAlpha;
 void main() {
   float d = length(gl_PointCoord - 0.5) * 2.0;
   if (d > 1.0) discard;
-  float core = smoothstep(0.55, 0.0, d);
-  float halo = smoothstep(1.0, 0.3, d) * 0.25;
+  // Crisp disc with a thin soft halo: readable markers, no blobs.
+  float core = 1.0 - smoothstep(0.4, 0.5, d);
+  float halo = (1.0 - smoothstep(0.5, 1.0, d)) * 0.3;
   gl_FragColor = vec4(vTint, (core + halo) * vAlpha);
 }`
 
@@ -59,6 +60,7 @@ export class GlobePoints {
   private readonly tints: Float32Array
   private readonly pulses: Float32Array
   private readonly orbitSpeed: Float32Array
+  private readonly uniforms = { uTime: { value: 0 }, uCameraDir: { value: new Vector3(0, 0, 1) }, uScale: { value: POINT_SCALE } }
 
   constructor(
     readonly layout: GlobeLayout,
@@ -85,7 +87,7 @@ export class GlobePoints {
       transparent: true,
       depthWrite: false,
       blending: AdditiveBlending,
-      uniforms: { uTime: { value: 0 }, uCameraDir: { value: new Vector3(0, 0, 1) }, uScale: { value: POINT_SCALE } },
+      uniforms: this.uniforms,
     })
     this.mesh = new Points(this.geometry, this.material)
     this.mesh.frustumCulled = true
@@ -106,31 +108,30 @@ export class GlobePoints {
       const colour = hasProblem ? severityColour(c, p.severity) : filtering ? c.dim : p.kind === 'folder' ? c.folder : c.file
       tint.set(colour)
       this.tints.set([tint.r, tint.g, tint.b], i * 3)
-      const base = p.kind === 'folder' ? 9 : 4
-      const problemBoost = hasProblem ? (p.severity === 'critical' ? 8 : 5) : 0
-      this.sizes[i] = (p.id === selectedId ? 20 : base + problemBoost) * (filtering && !inFilter ? 0.6 : 1)
+      const base = p.kind === 'folder' ? 8 : 5
+      const problemBoost = hasProblem ? (p.severity === 'critical' ? 9 : 6) : 0
+      this.sizes[i] = (p.id === selectedId ? 22 : base + problemBoost) * (filtering && !inFilter ? 0.6 : 1)
       this.pulses[i] = p.severity === 'critical' && inFilter ? 1 : p.id === selectedId ? 0.5 : 0
     })
-    this.geometry.attributes.size!.needsUpdate = true
-    this.geometry.attributes.tint!.needsUpdate = true
-    this.geometry.attributes.pulse!.needsUpdate = true
+    this.geometry.getAttribute('size').needsUpdate = true
+    this.geometry.getAttribute('tint').needsUpdate = true
+    this.geometry.getAttribute('pulse').needsUpdate = true
   }
 
   /** Advances orbits; with reduced motion `dt` is 0 and positions stay put. */
   tick(time: number, dt: number, cameraDir: Vector3, pixelRatio: number): void {
-    this.material.uniforms.uTime!.value = time
-    ;(this.material.uniforms.uCameraDir!.value as Vector3).copy(cameraDir)
-    this.material.uniforms.uScale!.value = POINT_SCALE * pixelRatio
+    this.uniforms.uTime.value = time
+    this.uniforms.uCameraDir.value.copy(cameraDir)
+    this.uniforms.uScale.value = POINT_SCALE * pixelRatio
     if (dt === 0) return
     const points = this.layout.points
-    for (let i = 0; i < points.length; i++) {
-      const p = points[i] as GlobePoint
+    for (const [i, p] of points.entries()) {
       if (!p.orbit) continue
       p.orbit.angle += dt * (this.orbitSpeed[i] ?? 0.05)
       const center = points[p.folder]?.position ?? p.position
       this.positions.set(orbitPosition(center, p.orbit.u, p.orbit.v, p.orbit.radius, p.orbit.angle), i * 3)
     }
-    this.geometry.attributes.position!.needsUpdate = true
+    this.geometry.getAttribute('position').needsUpdate = true
   }
 
   positionOf(index: number): Vector3 {
