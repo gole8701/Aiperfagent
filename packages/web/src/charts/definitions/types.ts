@@ -23,7 +23,10 @@ export interface ChartContext {
   palette: Palette
 }
 
-export interface ChartClick { issueId?: string; filter?: string }
+export interface ChartClick {
+  issueId?: string
+  filter?: string
+}
 
 interface BaseDefinition {
   id: string
@@ -37,18 +40,40 @@ interface BaseDefinition {
   takeaway: (ctx: ChartContext) => string
   /** True when the real data is missing and sample numbers are shown; the text says what to connect. */
   sample?: (ctx: ChartContext) => string | undefined
-  onClick?: (params: { name?: string; dataIndex?: number; seriesName?: string }, ctx: ChartContext) => ChartClick | undefined
+  onClick?: (
+    params: { name?: string; dataIndex?: number; seriesName?: string },
+    ctx: ChartContext,
+  ) => ChartClick | undefined
 }
 
 export type ChartDefinition = BaseDefinition &
   (
     | { kind: 'echarts'; build: (ctx: ChartContext) => EChartsOption; height?: number }
     | { kind: 'summary'; build: (ctx: ChartContext) => { headline: string; sentences: string[] } }
-    | { kind: 'filmstrip'; build: (ctx: ChartContext) => { frames: { timeMs: number; image: string }[] } }
-    | { kind: 'tiles'; build: (ctx: ChartContext) => { label: string; value: string; note: string; rating?: 'good' | 'needs-work' | 'poor' }[] }
+    | {
+        kind: 'filmstrip'
+        build: (ctx: ChartContext) => { frames: { timeMs: number; image: string }[] }
+      }
+    | {
+        kind: 'tiles'
+        build: (ctx: ChartContext) => {
+          label: string
+          value: string
+          note: string
+          rating?: 'good' | 'needs-work' | 'poor'
+        }[]
+      }
   )
 
-export type ChartTab = 'overview' | 'speed' | 'code' | 'network' | 'live' | 'ai' | 'users' | 'business'
+export type ChartTab =
+  | 'overview'
+  | 'speed'
+  | 'code'
+  | 'network'
+  | 'live'
+  | 'ai'
+  | 'users'
+  | 'business'
 
 export const CHART_TABS: { id: ChartTab; label: string }[] = [
   { id: 'overview', label: 'Overview' },

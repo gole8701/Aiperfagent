@@ -8,7 +8,12 @@ import { generateTree } from '../../test/generate-tree'
 
 import { layoutGlobe, orbitPosition } from './layout'
 
-const sample = JSON.parse(readFileSync(path.resolve(__dirname, '../../../../../fixtures/reports/demo-shop-before.json'), 'utf8')) as Report
+const sample = JSON.parse(
+  readFileSync(
+    path.resolve(__dirname, '../../../../../fixtures/reports/demo-shop-before.json'),
+    'utf8',
+  ),
+) as Report
 // The store recounts the tree the same way, because saved trees can predate some rules.
 if (sample.tree) attachIssues(sample.tree, sample.issues)
 
@@ -19,7 +24,8 @@ describe('layoutGlobe', () => {
     const folders = layout.points.filter((p) => p.kind === 'folder')
     expect(folders.length).toBeGreaterThan(2)
     expect(files.length).toBeGreaterThan(10)
-    for (const p of layout.points) expect(Math.hypot(...p.position)).toBeCloseTo(p.kind === 'folder' ? 1 : 1.02, 2)
+    for (const p of layout.points)
+      expect(Math.hypot(...p.position)).toBeCloseTo(p.kind === 'folder' ? 1 : 1.02, 2)
     const hero = files.find((p) => p.path === 'src/components/HeroBanner.tsx')
     expect(hero?.severity).toBe('critical')
     expect(hero?.issueIds.length).toBe(1)
@@ -28,7 +34,9 @@ describe('layoutGlobe', () => {
   it('uses domains and requests when there is no project tree', () => {
     const layout = layoutGlobe({ page: sample.pages[0], issues: sample.issues })
     expect(layout.points.filter((p) => p.kind === 'folder').length).toBeGreaterThan(0)
-    expect(layout.points.filter((p) => p.kind === 'file').length).toBe(sample.pages[0]?.requests.length)
+    expect(layout.points.filter((p) => p.kind === 'file').length).toBe(
+      sample.pages[0]?.requests.length,
+    )
   })
 
   it('lays out 5,000 nodes in under 50 ms', () => {

@@ -10,7 +10,14 @@ export type BrowserName = 'chromium' | 'firefox' | 'webkit'
  */
 export async function launchBrowser(name: BrowserName = 'chromium'): Promise<Browser> {
   const type: BrowserType = name === 'firefox' ? firefox : name === 'webkit' ? webkit : chromium
-  const attempts: Parameters<BrowserType['launch']>[0][] = name === 'chromium' ? [{ channel: 'chrome', headless: true }, { channel: 'msedge', headless: true }, { headless: true }] : [{ headless: true }]
+  const attempts: Parameters<BrowserType['launch']>[0][] =
+    name === 'chromium'
+      ? [
+          { channel: 'chrome', headless: true },
+          { channel: 'msedge', headless: true },
+          { headless: true },
+        ]
+      : [{ headless: true }]
   let lastError: unknown
   for (const options of attempts) {
     try {
@@ -19,8 +26,13 @@ export async function launchBrowser(name: BrowserName = 'chromium'): Promise<Bro
       lastError = error
     }
   }
-  throw new PerfAgentError('BROWSER_MISSING', `No ${name} browser found to run the scan.`, name === 'chromium' ? 'Install Google Chrome, or run "npx playwright install chromium".' : `Run "npx playwright install ${name}".`, )
-    .withCause(lastError)
+  throw new PerfAgentError(
+    'BROWSER_MISSING',
+    `No ${name} browser found to run the scan.`,
+    name === 'chromium'
+      ? 'Install Google Chrome, or run "npx playwright install chromium".'
+      : `Run "npx playwright install ${name}".`,
+  ).withCause(lastError)
 }
 
 declare module '@perfagent/core' {
@@ -28,7 +40,10 @@ declare module '@perfagent/core' {
     withCause(cause: unknown): PerfAgentError
   }
 }
-PerfAgentError.prototype.withCause = function withCause(this: PerfAgentError, cause: unknown): PerfAgentError {
+PerfAgentError.prototype.withCause = function withCause(
+  this: PerfAgentError,
+  cause: unknown,
+): PerfAgentError {
   ;(this as { cause?: unknown }).cause = cause
   return this
 }

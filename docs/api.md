@@ -73,29 +73,29 @@ Paths that are not `/api/*` serve the built dashboard; unknown paths fall back t
 
 ## AI
 
-| Method and route                | Purpose                                   | Request                          | Response                                                                              |
-| ------------------------------- | ----------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------- | ------ | -------- | ------- | ----- | --- | ----------------------- | -------------------------- |
-| `GET /api/ai/providers`         | Provider statuses                         | —                                | `{ providers: ProviderStatus[], active, usage { monthUsd, calls, lastAt? }, config }` |
-| `POST /api/ai/test`             | Test a connection                         | `{ provider, model?, baseUrl? }` | `{ ok, message, latencyMs }`                                                          |
-| `POST /api/ai/keys`             | Store a key in the OS keychain            | `{ provider, key }` (≥ 8 chars)  | `{ ok: true }`; audit line written                                                    |
-| `DELETE /api/ai/keys/:provider` | Remove a key                              | —                                | `{ ok: true }`                                                                        |
-| `POST /api/ai/explain`          | Explain one issue                         | `{ reportId?, issueId }`         | `{ text }`                                                                            |
-| `POST /api/ai/summary`          | Summarise a report                        | `{ reportId? }`                  | `{ text }`                                                                            |
-| `POST /api/ai/suggest`          | Proposed changes as text, applies nothing | `{ reportId?, issueIds[] }`      | `{ changes: ProposedChange[] }`                                                       |
-| `GET /api/ai/report`           | AI calls measured by `watchAI`, the proxy or the agent | — | Per-model first-token p50/p95, cost and error rate |
-| `POST /api/ai/compare-models`  | Ask the same questions to several models  | `{ questions[] (1–5 used), models: [{ provider, model }] (2–6 used) }` | `{ rows: ModelComparison[] }` |
-| `GET /api/ai/mcp-config`        | MCP client snippets                       | `?client=claude-code             | claude-desktop                                                                        | cursor | windsurf | copilot | cline | zed | chatgpt` (omit for all) | `{ label, file, snippet }` |
+| Method and route                | Purpose                                                | Request                                                                | Response                                                                              |
+| ------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------ | -------- | ------- | ----- | --- | ----------------------- | -------------------------- |
+| `GET /api/ai/providers`         | Provider statuses                                      | —                                                                      | `{ providers: ProviderStatus[], active, usage { monthUsd, calls, lastAt? }, config }` |
+| `POST /api/ai/test`             | Test a connection                                      | `{ provider, model?, baseUrl? }`                                       | `{ ok, message, latencyMs }`                                                          |
+| `POST /api/ai/keys`             | Store a key in the OS keychain                         | `{ provider, key }` (≥ 8 chars)                                        | `{ ok: true }`; audit line written                                                    |
+| `DELETE /api/ai/keys/:provider` | Remove a key                                           | —                                                                      | `{ ok: true }`                                                                        |
+| `POST /api/ai/explain`          | Explain one issue                                      | `{ reportId?, issueId }`                                               | `{ text }`                                                                            |
+| `POST /api/ai/summary`          | Summarise a report                                     | `{ reportId? }`                                                        | `{ text }`                                                                            |
+| `POST /api/ai/suggest`          | Proposed changes as text, applies nothing              | `{ reportId?, issueIds[] }`                                            | `{ changes: ProposedChange[] }`                                                       |
+| `GET /api/ai/report`            | AI calls measured by `watchAI`, the proxy or the agent | —                                                                      | Per-model first-token p50/p95, cost and error rate                                    |
+| `POST /api/ai/compare-models`   | Ask the same questions to several models               | `{ questions[] (1–5 used), models: [{ provider, model }] (2–6 used) }` | `{ rows: ModelComparison[] }`                                                         |
+| `GET /api/ai/mcp-config`        | MCP client snippets                                    | `?client=claude-code                                                   | claude-desktop                                                                        | cursor | windsurf | copilot | cline | zed | chatgpt` (omit for all) | `{ label, file, snippet }` |
 
 Code context is gathered only in local mode, following `ai.sendCode`, and redacted. Without an AI service the routes answer `409 AI_NOT_CONFIGURED`.
 
 ## Live
 
-| Method and route          | Purpose                                                | Request                            | Response                                   |
-| ------------------------- | ------------------------------------------------------ | ---------------------------------- | ------------------------------------------ |
-| `POST /api/live/start`    | Open the page in a controlled browser and stream ticks | `{ url }` (SSRF-checked)           | `{ started, url }`                         |
-| `POST /api/live/stop`     | Stop and save as a report                              | —                                  | `{ stopped, reportId?, stats: LiveStats }` |
-| `GET /api/live/status`    | Is a session running                                   | —                                  | `{ running, url? }`                        |
-| `POST /agent/collect`     | Real-user agent batches (`sendBeacon`)                 | `{ events: [] }` (≤ 500 per batch) | `{ received }`                             |
+| Method and route       | Purpose                                                | Request                            | Response                                   |
+| ---------------------- | ------------------------------------------------------ | ---------------------------------- | ------------------------------------------ |
+| `POST /api/live/start` | Open the page in a controlled browser and stream ticks | `{ url }` (SSRF-checked)           | `{ started, url }`                         |
+| `POST /api/live/stop`  | Stop and save as a report                              | —                                  | `{ stopped, reportId?, stats: LiveStats }` |
+| `GET /api/live/status` | Is a session running                                   | —                                  | `{ running, url? }`                        |
+| `POST /agent/collect`  | Real-user agent batches (`sendBeacon`)                 | `{ events: [] }` (≤ 500 per batch) | `{ received }`                             |
 
 Live start/stop are refused in the static build. `/agent/collect` is outside `/api/*`: it takes no token, accepts only `Origin`s from `config.urls` or `config.environments` (`403 ORIGIN_REJECTED` otherwise) and bodies up to 256 KB.
 

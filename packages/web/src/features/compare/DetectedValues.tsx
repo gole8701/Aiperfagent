@@ -24,7 +24,10 @@ export function DetectedValues({ result, onCorrected }: DetectedValuesProps) {
     setBusy(true)
     setError(undefined)
     try {
-      const report = await api.post<ImportResult['report']>(`/api/import/${result.reportId}/correct`, { values: values.map((v) => ({ metric: v.metric, value: v.value, route: v.route })) })
+      const report = await api.post<ImportResult['report']>(
+        `/api/import/${result.reportId}/correct`,
+        { values: values.map((v) => ({ metric: v.metric, value: v.value, route: v.route })) },
+      )
       onCorrected({ ...result, report, detected: values.map((v) => ({ ...v, confidence: 1 })) })
     } catch (err) {
       setError(describeError(err).message)
@@ -36,7 +39,9 @@ export function DetectedValues({ result, onCorrected }: DetectedValuesProps) {
   return (
     <Card title="Detected values · check before trusting the result">
       <div className="muted" style={{ fontSize: 13, marginBottom: 8 }}>
-        {low.length ? `${low.length} value${low.length > 1 ? 's' : ''} read with low confidence (${low.map((v) => METRICS[v.metric].short).join(', ')}). Check and correct them.` : 'Every value was read with good confidence.'}
+        {low.length
+          ? `${low.length} value${low.length > 1 ? 's' : ''} read with low confidence (${low.map((v) => METRICS[v.metric].short).join(', ')}). Check and correct them.`
+          : 'Every value was read with good confidence.'}
         {result.warnings.map((w) => (
           <div key={w}>{w}</div>
         ))}
@@ -54,17 +59,40 @@ export function DetectedValues({ result, onCorrected }: DetectedValuesProps) {
           </thead>
           <tbody>
             {values.map((v, index) => (
-              <tr key={`${v.metric}-${v.route ?? ''}`} style={v.confidence < LOW ? { background: 'color-mix(in srgb, var(--warning) 15%, transparent)' } : undefined}>
+              <tr
+                key={`${v.metric}-${v.route ?? ''}`}
+                style={
+                  v.confidence < LOW
+                    ? { background: 'color-mix(in srgb, var(--warning) 15%, transparent)' }
+                    : undefined
+                }
+              >
                 <td>{METRICS[v.metric].short}</td>
                 <td className="mono">{v.route ?? '—'}</td>
                 <td>
                   {v.confidence < LOW ? (
-                    <input className="input" type="number" step="any" style={{ height: 30, width: 120 }} aria-label={`Corrected ${METRICS[v.metric].short}`} value={v.value} onChange={(e) => setValues(values.map((x, i) => (i === index ? { ...x, value: Number(e.target.value) } : x)))} />
+                    <input
+                      className="input"
+                      type="number"
+                      step="any"
+                      style={{ height: 30, width: 120 }}
+                      aria-label={`Corrected ${METRICS[v.metric].short}`}
+                      value={v.value}
+                      onChange={(e) =>
+                        setValues(
+                          values.map((x, i) =>
+                            i === index ? { ...x, value: Number(e.target.value) } : x,
+                          ),
+                        )
+                      }
+                    />
                   ) : (
                     formatMetric(v.metric, v.value)
                   )}
                 </td>
-                <td className={v.confidence < LOW ? 'sev-warning' : 'rating-good'}>{Math.round(v.confidence * 100)}%</td>
+                <td className={v.confidence < LOW ? 'sev-warning' : 'rating-good'}>
+                  {Math.round(v.confidence * 100)}%
+                </td>
                 <td className="muted">{v.source}</td>
               </tr>
             ))}

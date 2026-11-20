@@ -48,8 +48,10 @@ export const useFix = create<FixState>((set, get) => {
         listen()
         return api.post<FixRun>('/api/fix/runs', { reportId, scope, review: options?.review })
       }),
-    accept: (changeIds, edits) => call(() => api.post<FixRun>(`/api/fix/runs/${get().run?.id}/accept`, { changeIds, edits })),
-    skip: (changeIds) => call(() => api.post<FixRun>(`/api/fix/runs/${get().run?.id}/skip`, { changeIds })),
+    accept: (changeIds, edits) =>
+      call(() => api.post<FixRun>(`/api/fix/runs/${get().run?.id}/accept`, { changeIds, edits })),
+    skip: (changeIds) =>
+      call(() => api.post<FixRun>(`/api/fix/runs/${get().run?.id}/skip`, { changeIds })),
     undo: () => call(() => api.post<FixRun>(`/api/fix/runs/${get().run?.id}/undo`)),
     clear: () => {
       unsubscribe?.()
@@ -61,8 +63,13 @@ export const useFix = create<FixState>((set, get) => {
 
 function applyEvent(run: FixRun, event: FixEvent): FixRun {
   const next: FixRun = { ...run, events: [...run.events, event] }
-  if (event.type === 'proposal') next.pending = [...run.pending, { changeId: event.changeId, issueId: event.issueId, change: event.change }]
-  if (event.type === 'applied' || event.type === 'rolled-back') next.pending = run.pending.filter((p) => p.changeId !== event.changeId)
+  if (event.type === 'proposal')
+    next.pending = [
+      ...run.pending,
+      { changeId: event.changeId, issueId: event.issueId, change: event.change },
+    ]
+  if (event.type === 'applied' || event.type === 'rolled-back')
+    next.pending = run.pending.filter((p) => p.changeId !== event.changeId)
   if (event.type === 'done') next.status = 'done'
   if (event.type === 'error') next.status = 'failed'
   if (event.type === 'proposal' && run.status === 'running') next.status = 'waiting-review'

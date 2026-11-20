@@ -42,15 +42,25 @@ const PRICES: [prefix: string, price: ModelPrice][] = [
 export function priceFor(model: string): ModelPrice | undefined {
   const name = model.toLowerCase().replace(/^.*\//, '')
   let best: [string, ModelPrice] | undefined
-  for (const entry of PRICES) if (name.startsWith(entry[0]) && (!best || entry[0].length > best[0].length)) best = entry
+  for (const entry of PRICES)
+    if (name.startsWith(entry[0]) && (!best || entry[0].length > best[0].length)) best = entry
   return best?.[1]
 }
 
 /** Local models (Ollama, LM Studio) cost nothing; unknown cloud models are reported as 0 rather than guessed. */
-export function estimateCostUsd(model: string, inputTokens: number, outputTokens: number, cachedTokens = 0, provider?: string): number {
+export function estimateCostUsd(
+  model: string,
+  inputTokens: number,
+  outputTokens: number,
+  cachedTokens = 0,
+  provider?: string,
+): number {
   if (provider === 'ollama') return 0
   const price = priceFor(model)
   if (!price) return 0
   const billedInput = Math.max(0, inputTokens - cachedTokens)
-  return (billedInput * price.input + cachedTokens * price.cachedInput + outputTokens * price.output) / 1_000_000
+  return (
+    (billedInput * price.input + cachedTokens * price.cachedInput + outputTokens * price.output) /
+    1_000_000
+  )
 }

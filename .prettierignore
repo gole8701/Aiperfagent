@@ -1,5 +1,6 @@
 dist
 node_modules
 pnpm-lock.yaml
-fixtures/reports
+# demo-shop line numbers are quoted in docs, reports and tests
+fixtures
 *.min.js

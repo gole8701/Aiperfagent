@@ -10,20 +10,34 @@ describe('visibleGraph', () => {
     const collapsed = visibleGraph(tree, { expanded: new Set(), problemsOnly: false, query: '' })
     expect(collapsed.nodes).toHaveLength(1)
     const src = tree.children[0]
-    const opened = visibleGraph(tree, { expanded: new Set([tree.id, src?.id ?? '']), problemsOnly: false, query: '' })
+    const opened = visibleGraph(tree, {
+      expanded: new Set([tree.id, src?.id ?? '']),
+      problemsOnly: false,
+      query: '',
+    })
     expect(opened.nodes.length).toBe(2 + (src?.children.length ?? 0))
     expect(opened.edges.length).toBe(opened.nodes.length - 1)
   })
 
   it('problems only keeps branches with issues', () => {
     const tree = generateTree(100)
-    const graph = visibleGraph(tree, { expanded: allBranchIds(tree), problemsOnly: true, query: '' })
-    expect(graph.nodes.every((n) => n.depth === 0 || n.node.counts.critical + n.node.counts.warning > 0)).toBe(true)
+    const graph = visibleGraph(tree, {
+      expanded: allBranchIds(tree),
+      problemsOnly: true,
+      query: '',
+    })
+    expect(
+      graph.nodes.every((n) => n.depth === 0 || n.node.counts.critical + n.node.counts.warning > 0),
+    ).toBe(true)
   })
 
   it('search opens the path to matches', () => {
     const tree = generateTree(200)
-    const graph = visibleGraph(tree, { expanded: new Set(), problemsOnly: false, query: 'File3.tsx' })
+    const graph = visibleGraph(tree, {
+      expanded: new Set(),
+      problemsOnly: false,
+      query: 'File3.tsx',
+    })
     const hits = graph.nodes.filter((n) => n.match)
     expect(hits.length).toBeGreaterThan(0)
     expect(hits.every((n) => n.node.name.includes('File3'))).toBe(true)

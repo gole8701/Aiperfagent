@@ -10,7 +10,11 @@ import { detectedFromRows, splitCells } from './tabular.js'
  */
 const NUMBER = /\$?\s*(-?\d[\d,]*(?:\.\d+)?)\s*(ms|s|sec|seconds|kb|mb|%|\/\s*100|points|pts)?/i
 
-interface Mention { id: MetricId; start: number; end: number }
+interface Mention {
+  id: MetricId
+  start: number
+  end: number
+}
 
 function mentionsIn(line: string): Mention[] {
   const lower = line.toLowerCase()
@@ -25,10 +29,14 @@ function mentionsIn(line: string): Mention[] {
   return found.sort((a, b) => a.start - b.start)
 }
 
-const DATE_OR_TIME = /\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2})?)?|\b\d{1,2}:\d{2}(?::\d{2})?\b|\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/g
+const DATE_OR_TIME =
+  /\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2})?)?|\b\d{1,2}:\d{2}(?::\d{2})?\b|\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/g
 
 /** A value within 40 chars after the name is read with confidence 0.85; further along the line 0.55. */
-function valueAfter(segment: string, id: MetricId): { value: number; confidence: number } | undefined {
+function valueAfter(
+  segment: string,
+  id: MetricId,
+): { value: number; confidence: number } | undefined {
   const m = NUMBER.exec(segment.replace(DATE_OR_TIME, (d) => ' '.repeat(d.length)))
   if (m?.[1] === undefined) return undefined
   const value = parseHumanNumber(`${m[1]} ${m[2] ?? ''}`.replace(/\/\s*100/, ''), id)
@@ -41,7 +49,11 @@ function isTableHeader(cells: string[]): boolean {
 }
 
 /** Rows below a header with the same cell count; separator rows like |---|---| are dropped. */
-function collectTable(lines: string[], start: number, header: string[]): { rows: string[][]; end: number } {
+function collectTable(
+  lines: string[],
+  start: number,
+  header: string[],
+): { rows: string[][]; end: number } {
   const rows: string[][] = [header]
   let end = start
   while (end + 1 < lines.length) {
@@ -78,7 +90,13 @@ export function detectMetricsInText(text: string, source: string): DetectedValue
       const hit = valueAfter(line.slice(m.end, mentions[idx + 1]?.start ?? line.length), m.id)
       if (!hit) return
       hits++
-      detected.push({ metric: m.id, value: hit.value, route: lineRoute ?? route, confidence: hit.confidence, source })
+      detected.push({
+        metric: m.id,
+        value: hit.value,
+        route: lineRoute ?? route,
+        confidence: hit.confidence,
+        source,
+      })
     })
     if (lineRoute && hits === 0) route = lineRoute
   }

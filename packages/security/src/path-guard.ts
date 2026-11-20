@@ -4,7 +4,14 @@ import path from 'node:path'
 import { PerfAgentError } from '@perfagent/core'
 
 /** Files nobody may read or open through the tool, even inside the root. */
-const BLOCKED_NAMES = [/^\.env(\..*)?$/, /\.(pem|key|p12|pfx|jks|keystore)$/i, /^id_(rsa|ed25519|ecdsa)(\.pub)?$/, /^\.npmrc$/, /^\.netrc$/, /credentials\.json$/i]
+const BLOCKED_NAMES = [
+  /^\.env(\..*)?$/,
+  /\.(pem|key|p12|pfx|jks|keystore)$/i,
+  /^id_(rsa|ed25519|ecdsa)(\.pub)?$/,
+  /^\.npmrc$/,
+  /^\.netrc$/,
+  /credentials\.json$/i,
+]
 const BLOCKED_DIRS = ['.git', 'node_modules', '.perfagent']
 
 export interface GuardedPath {
@@ -16,7 +23,11 @@ export interface GuardedPath {
  * Resolves `requested` inside `root` and proves (via realpath) that it stays
  * there. Symlinks that point outside, `..` tricks and blocked files all throw.
  */
-export async function guardPath(root: string, requested: string, options: { allowMissing?: boolean } = {}): Promise<GuardedPath> {
+export async function guardPath(
+  root: string,
+  requested: string,
+  options: { allowMissing?: boolean } = {},
+): Promise<GuardedPath> {
   if (requested.includes('\0')) throw outside(requested)
   const rootReal = await realpath(root)
   const candidate = path.resolve(rootReal, requested)
@@ -26,7 +37,8 @@ export async function guardPath(root: string, requested: string, options: { allo
   try {
     resolved = await realpath(candidate)
   } catch (error) {
-    if (!options.allowMissing || (error as NodeJS.ErrnoException).code !== 'ENOENT') throw outside(requested)
+    if (!options.allowMissing || (error as NodeJS.ErrnoException).code !== 'ENOENT')
+      throw outside(requested)
     // The file doesn't exist yet (a fix will create it): the parent must still be inside.
     const parentReal = await realpath(path.dirname(candidate)).catch(() => {
       throw outside(requested)
@@ -37,7 +49,11 @@ export async function guardPath(root: string, requested: string, options: { allo
 
   const relative = path.relative(rootReal, resolved).split(path.sep).join('/')
   if (isBlocked(relative)) {
-    throw new PerfAgentError('PATH_OUTSIDE_ROOT', `"${relative}" is a protected file and is never read.`, 'Secrets, keys and dependency internals stay private.')
+    throw new PerfAgentError(
+      'PATH_OUTSIDE_ROOT',
+      `"${relative}" is a protected file and is never read.`,
+      'Secrets, keys and dependency internals stay private.',
+    )
   }
   return { absolute: resolved, relative }
 }
@@ -55,7 +71,11 @@ function isInside(root: string, target: string): boolean {
 }
 
 function outside(requested: string): PerfAgentError {
-  return new PerfAgentError('PATH_OUTSIDE_ROOT', `"${requested}" is outside the project folder.`, 'Only files inside the project root can be opened or changed.')
+  return new PerfAgentError(
+    'PATH_OUTSIDE_ROOT',
+    `"${requested}" is outside the project folder.`,
+    'Only files inside the project root can be opened or changed.',
+  )
 }
 
 /** Simple glob → RegExp for `fix.protected` patterns (`src/payments/**`, `*.config.js`). */

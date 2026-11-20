@@ -10,19 +10,28 @@ export interface AiReportOptions {
 }
 
 /** Reads `ai-samples.jsonl` (written by watchAI / the proxy / the browser agent) into the dashboard's AiReport. */
-export async function buildAiReport(samplesFile: string, options: AiReportOptions = {}): Promise<AiReport> {
+export async function buildAiReport(
+  samplesFile: string,
+  options: AiReportOptions = {},
+): Promise<AiReport> {
   const text = await readFile(samplesFile, 'utf8').catch(() => '')
   const lines = text.split('\n').filter(Boolean).slice(-MAX_SAMPLES)
   const calls: AiCallSample[] = []
   for (const line of lines) {
     try {
       const sample = JSON.parse(line) as Partial<AiCallSample>
-      if (typeof sample.model === 'string' && typeof sample.totalMs === 'number') calls.push(normalise(sample))
+      if (typeof sample.model === 'string' && typeof sample.totalMs === 'number')
+        calls.push(normalise(sample))
     } catch {
       // A half-written line at the end of the file is expected; skip it.
     }
   }
-  return { calls, callSites: options.callSites ?? [], models: aggregate(calls), budgetUsdPerDay: options.budgetUsdPerDay }
+  return {
+    calls,
+    callSites: options.callSites ?? [],
+    models: aggregate(calls),
+    budgetUsdPerDay: options.budgetUsdPerDay,
+  }
 }
 
 function normalise(s: Partial<AiCallSample>): AiCallSample {
@@ -56,7 +65,8 @@ export function aggregate(calls: AiCallSample[]): AiReport['models'] {
         p50FirstTokenMs: Math.round(percentile(ttft, 50)),
         p95FirstTokenMs: Math.round(percentile(ttft, 95)),
         costUsd: Math.round(samples.reduce((sum, s) => sum + s.costUsd, 0) * 1_000_000) / 1_000_000,
-        errorRate: Math.round((samples.filter((s) => s.error).length / samples.length) * 1000) / 1000,
+        errorRate:
+          Math.round((samples.filter((s) => s.error).length / samples.length) * 1000) / 1000,
       }
     })
     .sort((a, b) => b.calls - a.calls)

@@ -1,4 +1,12 @@
-export type SceneId = 'globe' | 'flow' | 'charts' | 'compare' | 'terminal' | 'settings' | 'editor' | 'assistant'
+export type SceneId =
+  | 'globe'
+  | 'flow'
+  | 'charts'
+  | 'compare'
+  | 'terminal'
+  | 'settings'
+  | 'editor'
+  | 'assistant'
 
 interface Area {
   l: number
@@ -113,13 +121,29 @@ export function tourSelector(screen: SceneId, area: string): string | undefined 
 export function SceneView({ screen, highlight }: { screen: SceneId; highlight?: string }) {
   const scene = SCENES[screen]
   return (
-    <div className={`scene scene-${screen}`} role="img" aria-label={`${scene.name}, ${highlight ? `highlighting ${scene.areas[highlight]?.label ?? highlight}` : 'overview'}`}>
+    <div
+      className={`scene scene-${screen}`}
+      role="img"
+      aria-label={`${scene.name}, ${highlight ? `highlighting ${scene.areas[highlight]?.label ?? highlight}` : 'overview'}`}
+    >
       {Object.entries(scene.areas).map(([id, area]) => (
-        <div key={id} className={`scene-area ${highlight === id ? 'active' : ''}`} style={{ left: `${area.l}%`, top: `${area.t}%`, width: `${area.w}%`, height: `${area.h}%`, borderRadius: area.round ? '50%' : 6 }}>
+        <div
+          key={id}
+          className={`scene-area ${highlight === id ? 'active' : ''}`}
+          style={{
+            left: `${area.l}%`,
+            top: `${area.t}%`,
+            width: `${area.w}%`,
+            height: `${area.h}%`,
+            borderRadius: area.round ? '50%' : 6,
+          }}
+        >
           <span>{area.label}</span>
         </div>
       ))}
-      {screen === 'globe' ? <div className="scene-dot" style={{ left: '52%', top: '38%' }} /> : null}
+      {screen === 'globe' ? (
+        <div className="scene-dot" style={{ left: '52%', top: '38%' }} />
+      ) : null}
     </div>
   )
 }

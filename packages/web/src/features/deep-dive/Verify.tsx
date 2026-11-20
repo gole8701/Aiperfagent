@@ -22,7 +22,9 @@ export function Verify({ issue, enabled }: { issue: Issue; enabled: boolean }) {
       setJob(next)
       if (next.status === 'done' || next.status === 'failed') {
         if (next.status === 'failed') setError(next.error ?? 'Re-test failed')
-        const fresh = await api.get<Issue>(`/api/issues/${encodeURIComponent(issue.id)}?reportId=${report?.id}`).catch(() => undefined)
+        const fresh = await api
+          .get<Issue>(`/api/issues/${encodeURIComponent(issue.id)}?reportId=${report?.id}`)
+          .catch(() => undefined)
         if (fresh?.verified) patchIssue(issue.id, { verified: fresh.verified })
         return
       }
@@ -35,8 +37,15 @@ export function Verify({ issue, enabled }: { issue: Issue; enabled: boolean }) {
   async function retest(): Promise<void> {
     setError(undefined)
     try {
-      const { jobId } = await api.post<{ jobId: string }>(`/api/scans/${report?.id}/retest`, { issueId: issue.id })
-      setJob({ id: jobId, kind: 'retest', status: 'queued', progress: { phase: 'queued', message: 'Starting', fraction: 0 } })
+      const { jobId } = await api.post<{ jobId: string }>(`/api/scans/${report?.id}/retest`, {
+        issueId: issue.id,
+      })
+      setJob({
+        id: jobId,
+        kind: 'retest',
+        status: 'queued',
+        progress: { phase: 'queued', message: 'Starting', fraction: 0 },
+      })
       void poll(jobId)
     } catch (err) {
       setError(describeError(err).message)
@@ -49,17 +58,28 @@ export function Verify({ issue, enabled }: { issue: Issue; enabled: boolean }) {
     <div className="stack" style={{ gap: 6 }}>
       {v ? (
         <div role="status">
-          Predicted <strong>{formatMetric(v.metric, v.predicted)}</strong> · actual <strong className={v.actual <= v.predicted ? 'rating-good' : 'rating-needs-work'}>{formatMetric(v.metric, v.actual)}</strong> ({METRICS[v.metric].short}, {new Date(v.at).toLocaleString()})
+          Predicted <strong>{formatMetric(v.metric, v.predicted)}</strong> · actual{' '}
+          <strong className={v.actual <= v.predicted ? 'rating-good' : 'rating-needs-work'}>
+            {formatMetric(v.metric, v.actual)}
+          </strong>{' '}
+          ({METRICS[v.metric].short}, {new Date(v.at).toLocaleString()})
         </div>
       ) : (
-        <span className="muted">Re-runs only this page (median of your configured runs) and compares the result with the estimate.</span>
+        <span className="muted">
+          Re-runs only this page (median of your configured runs) and compares the result with the
+          estimate.
+        </span>
       )}
       {enabled ? (
         <div className="row">
           <Button onClick={() => void retest()} busy={Boolean(running)}>
             Re-test to verify
           </Button>
-          {running ? <span className="muted" aria-live="polite">{job.progress.message}</span> : null}
+          {running ? (
+            <span className="muted" aria-live="polite">
+              {job.progress.message}
+            </span>
+          ) : null}
         </div>
       ) : null}
       {error ? (

@@ -32,7 +32,12 @@ export const Memoed = memo(function Memoed() {
 `,
     )
     expect(file.hasJsx).toBe(true)
-    expect(file.imports.map((i) => i.source)).toEqual(['react', 'date-fns', './ChatWidget', '../context/CartContext'])
+    expect(file.imports.map((i) => i.source)).toEqual([
+      'react',
+      'date-fns',
+      './ChatWidget',
+      '../context/CartContext',
+    ])
     expect(file.imports[1]?.namespace).toBe(true)
     const header = file.components.find((c) => c.name === 'Header')
     expect(header?.hooks.map((h) => h.name)).toEqual(['useCart', 'useState', 'useEffect'])
@@ -58,7 +63,11 @@ export const Memoed = memo(function Memoed() {
     )
     const fn = file.functions[0]
     expect(fn?.async).toBe(true)
-    expect(fn?.awaits.map((a) => `${a.callee}:${a.inLoop ? 'loop' : 'seq'}`)).toEqual(['embed:seq', 'search:seq', 'embed:loop'])
+    expect(fn?.awaits.map((a) => `${a.callee}:${a.inLoop ? 'loop' : 'seq'}`)).toEqual([
+      'embed:seq',
+      'search:seq',
+      'embed:loop',
+    ])
   })
 
   it('detects dynamic imports', () => {

@@ -54,7 +54,11 @@ export function ImportDrop({ onImported, children, compact }: ImportDropProps) {
     >
       {children ?? (
         <div>
-          Drop your <strong>perfagent-report.json</strong>{IS_STATIC ? ' or Lighthouse JSON' : ', Lighthouse JSON, HAR, PDF, Excel or Word report'} here
+          Drop your <strong>perfagent-report.json</strong>
+          {IS_STATIC
+            ? ' or Lighthouse JSON'
+            : ', Lighthouse JSON, HAR, PDF, Excel or Word report'}{' '}
+          here
         </div>
       )}
       <div style={{ marginTop: 8 }}>

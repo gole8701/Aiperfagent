@@ -14,11 +14,18 @@ export function selectIssues(report: Report, scope: FixScope): Issue[] {
       break
     case 'chip': {
       const [kind, id] = scope.chip.split(':')
-      picked = kind === 'metric' && id ? open.filter((i) => matchesChip(i, { kind: 'metric', id: id as MetricId })) : kind === 'area' && id ? open.filter((i) => matchesChip(i, { kind: 'area', id: id as Area })) : []
+      picked =
+        kind === 'metric' && id
+          ? open.filter((i) => matchesChip(i, { kind: 'metric', id: id as MetricId }))
+          : kind === 'area' && id
+            ? open.filter((i) => matchesChip(i, { kind: 'area', id: id as Area }))
+            : []
       break
     }
     case 'route':
-      picked = open.filter((i) => i.route === scope.route || (!i.route && report.pages.length === 1))
+      picked = open.filter(
+        (i) => i.route === scope.route || (!i.route && report.pages.length === 1),
+      )
       break
     case 'site':
       picked = open

@@ -10,7 +10,12 @@ import type { AiContextFile } from './services.js'
  * location (or just a window around the line when `sendCode` is `snippets`)
  * plus its local imports. Always through the path guard and the redactor.
  */
-export async function gatherContext(root: string, issues: Issue[], sendCode: 'snippets' | 'files' | 'none', imports: (file: string) => string[] = () => []): Promise<AiContextFile[]> {
+export async function gatherContext(
+  root: string,
+  issues: Issue[],
+  sendCode: 'snippets' | 'files' | 'none',
+  imports: (file: string) => string[] = () => [],
+): Promise<AiContextFile[]> {
   if (sendCode === 'none') return []
   const files = new Map<string, AiContextFile>()
   for (const issue of issues) {
@@ -20,14 +25,21 @@ export async function gatherContext(root: string, issues: Issue[], sendCode: 'sn
     if (!guarded) continue
     const text = await readFile(guarded.absolute, 'utf8').catch(() => '')
     if (!text) continue
-    files.set(file, { path: file, text: sendCode === 'files' ? redactText(text) : redactText(window(text, issue.location?.line ?? 1)) })
+    files.set(file, {
+      path: file,
+      text:
+        sendCode === 'files'
+          ? redactText(text)
+          : redactText(window(text, issue.location?.line ?? 1)),
+    })
     if (sendCode === 'files') {
       for (const dep of imports(file).slice(0, 5)) {
         if (files.has(dep)) continue
         const g = await guardPath(root, dep).catch(() => undefined)
         if (!g) continue
         const depText = await readFile(g.absolute, 'utf8').catch(() => '')
-        if (depText && depText.length < 40_000) files.set(dep, { path: dep, text: redactText(depText) })
+        if (depText && depText.length < 40_000)
+          files.set(dep, { path: dep, text: redactText(depText) })
       }
     }
   }

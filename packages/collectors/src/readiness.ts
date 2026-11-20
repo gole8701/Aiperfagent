@@ -16,19 +16,54 @@ export interface ReadinessSignals {
 export async function collectReadiness(page: Page, url: string): Promise<ReadinessSignals> {
   const inPage = await page
     .evaluate(() => {
-      const name = (el: Element): string => (el.getAttribute('aria-label') ?? el.getAttribute('aria-labelledby') ?? el.getAttribute('title') ?? el.textContent).trim()
-      const controls = [...document.querySelectorAll('button, a[href], [role="button"], input:not([type="hidden"]), select, textarea')]
+      const name = (el: Element): string =>
+        (
+          el.getAttribute('aria-label') ??
+          el.getAttribute('aria-labelledby') ??
+          el.getAttribute('title') ??
+          el.textContent
+        ).trim()
+      const controls = [
+        ...document.querySelectorAll(
+          'button, a[href], [role="button"], input:not([type="hidden"]), select, textarea',
+        ),
+      ]
       const unnamed = controls.filter((el) => {
-        if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement) {
-          return !el.labels?.length && !el.getAttribute('aria-label') && !el.getAttribute('placeholder') && !el.getAttribute('title')
+        if (
+          el instanceof HTMLInputElement ||
+          el instanceof HTMLSelectElement ||
+          el instanceof HTMLTextAreaElement
+        ) {
+          return (
+            !el.labels?.length &&
+            !el.getAttribute('aria-label') &&
+            !el.getAttribute('placeholder') &&
+            !el.getAttribute('title')
+          )
         }
         return name(el).length === 0 && !el.querySelector('img[alt]')
       })
       const images = [...document.images].filter((img) => !img.alt).length
       const text = document.body.innerText || ''
-      return { controls: controls.length, unnamed: unnamed.length, images, hasJsonLd: Boolean(document.querySelector('script[type="application/ld+json"]')), headings: document.querySelectorAll('h1, h2').length, textLength: text.length, hasMain: Boolean(document.querySelector('main, [role="main"]')) }
+      return {
+        controls: controls.length,
+        unnamed: unnamed.length,
+        images,
+        hasJsonLd: Boolean(document.querySelector('script[type="application/ld+json"]')),
+        headings: document.querySelectorAll('h1, h2').length,
+        textLength: text.length,
+        hasMain: Boolean(document.querySelector('main, [role="main"]')),
+      }
     })
-    .catch(() => ({ controls: 0, unnamed: 0, images: 0, hasJsonLd: false, headings: 0, textLength: 0, hasMain: false }))
+    .catch(() => ({
+      controls: 0,
+      unnamed: 0,
+      images: 0,
+      hasJsonLd: false,
+      headings: 0,
+      textLength: 0,
+      hasMain: false,
+    }))
 
   const hasLlmsTxt = await page.request
     .get(new URL('/llms.txt', url).toString(), { timeout: 4000 })
@@ -45,5 +80,12 @@ export async function collectReadiness(page: Page, url: string): Promise<Readine
   if (inPage.headings === 0) score -= 10
   const pageTokens = Math.round(inPage.textLength / 4)
   if (pageTokens > 8000) score -= 10
-  return { agentReadiness: Math.max(0, Math.min(100, score)), missingLabels: inPage.images, interactiveWithoutName: inPage.unnamed, hasLlmsTxt, hasStructuredData: inPage.hasJsonLd, pageTokens }
+  return {
+    agentReadiness: Math.max(0, Math.min(100, score)),
+    missingLabels: inPage.images,
+    interactiveWithoutName: inPage.unnamed,
+    hasLlmsTxt,
+    hasStructuredData: inPage.hasJsonLd,
+    pageTokens,
+  }
 }

@@ -11,7 +11,10 @@ export async function git(root: string, args: string[]): Promise<string> {
 
 export async function gitInfo(root: string): Promise<{ commit?: string; branch?: string }> {
   try {
-    const [commit, branch] = await Promise.all([git(root, ['rev-parse', 'HEAD']), git(root, ['rev-parse', '--abbrev-ref', 'HEAD'])])
+    const [commit, branch] = await Promise.all([
+      git(root, ['rev-parse', 'HEAD']),
+      git(root, ['rev-parse', '--abbrev-ref', 'HEAD']),
+    ])
     return { commit, branch }
   } catch {
     return {}
@@ -19,9 +22,13 @@ export async function gitInfo(root: string): Promise<{ commit?: string; branch?:
 }
 
 export async function isGitRepo(root: string): Promise<boolean> {
-  return git(root, ['rev-parse', '--is-inside-work-tree']).then((o) => o === 'true').catch(() => false)
+  return git(root, ['rev-parse', '--is-inside-work-tree'])
+    .then((o) => o === 'true')
+    .catch(() => false)
 }
 
 export async function isWorkingTreeDirty(root: string): Promise<boolean> {
-  return git(root, ['status', '--porcelain']).then((o) => o.length > 0).catch(() => false)
+  return git(root, ['status', '--porcelain'])
+    .then((o) => o.length > 0)
+    .catch(() => false)
 }

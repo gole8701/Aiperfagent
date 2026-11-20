@@ -1,7 +1,12 @@
 import type { IncomingMessage, Server } from 'node:http'
 import type { Duplex } from 'node:stream'
 
-import { extractToken, requestRejection, tokenMatches, type OriginPolicy } from '@perfagent/security'
+import {
+  extractToken,
+  requestRejection,
+  tokenMatches,
+  type OriginPolicy,
+} from '@perfagent/security'
 import { WebSocketServer, type WebSocket } from 'ws'
 
 export type WsMessage =
@@ -18,7 +23,12 @@ export class WsHub {
   private readonly wss = new WebSocketServer({ noServer: true })
   private readonly clients = new Set<WebSocket>()
 
-  constructor(server: Server, private readonly token: string, private readonly policy: OriginPolicy, mode: string) {
+  constructor(
+    server: Server,
+    private readonly token: string,
+    private readonly policy: OriginPolicy,
+    mode: string,
+  ) {
     server.on('upgrade', (req: IncomingMessage, socket: Duplex, head: Buffer) => {
       const url = req.url ?? ''
       if (!url.startsWith('/ws')) return

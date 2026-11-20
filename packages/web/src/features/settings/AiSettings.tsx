@@ -38,10 +38,17 @@ function AiBody() {
     void refresh()
   }, [])
 
-  async function test(provider: ProviderStatus['id'], model?: string, baseUrl?: string): Promise<void> {
+  async function test(
+    provider: ProviderStatus['id'],
+    model?: string,
+    baseUrl?: string,
+  ): Promise<void> {
     setTests({ ...tests, [provider]: 'testing…' })
     try {
-      const r = await api.post<{ ok: boolean; message: string; latencyMs: number }>('/api/ai/test', { provider, model, baseUrl })
+      const r = await api.post<{ ok: boolean; message: string; latencyMs: number }>(
+        '/api/ai/test',
+        { provider, model, baseUrl },
+      )
       setTests({ ...tests, [provider]: r.ok ? `OK · ${r.latencyMs} ms` : `Failed: ${r.message}` })
     } catch (err) {
       setTests({ ...tests, [provider]: `Failed: ${describeError(err).message}` })
@@ -70,7 +77,11 @@ function AiBody() {
           </span>
           <span className="row">
             {ollama?.configured ? (
-              <Button small variant={active === 'ollama' ? 'default' : 'primary'} onClick={() => void save({ ai: { provider: 'ollama' } })}>
+              <Button
+                small
+                variant={active === 'ollama' ? 'default' : 'primary'}
+                onClick={() => void save({ ai: { provider: 'ollama' } })}
+              >
                 {active === 'ollama' ? 'In use' : 'Use it'}
               </Button>
             ) : (
@@ -93,13 +104,19 @@ function AiBody() {
               <span>
                 {p.label}
                 <div className="muted" style={{ fontSize: 12 }}>
-                  {p.configured ? `key ${p.detail ?? '••••'} · stored in your OS keychain` : 'no key'}
+                  {p.configured
+                    ? `key ${p.detail ?? '••••'} · stored in your OS keychain`
+                    : 'no key'}
                 </div>
               </span>
               <span className="row">
                 {p.configured ? (
                   <>
-                    <Button small variant={active === p.id ? 'default' : 'primary'} onClick={() => void save({ ai: { provider: p.id } })}>
+                    <Button
+                      small
+                      variant={active === p.id ? 'default' : 'primary'}
+                      onClick={() => void save({ ai: { provider: p.id } })}
+                    >
                       {active === p.id ? 'In use' : 'Use it'}
                     </Button>
                     <Button small onClick={() => void test(p.id)}>
@@ -123,20 +140,53 @@ function AiBody() {
               </span>
             </div>
           ))}
-        <AddProvider providers={providers.filter((p) => KEY_PROVIDERS.includes(p.id))} onAdded={refresh} />
+        <AddProvider
+          providers={providers.filter((p) => KEY_PROVIDERS.includes(p.id))}
+          onAdded={refresh}
+        />
       </Card>
 
       <McpSection />
 
       <Card title="Which AI does what">
-        <Roles providers={providers} active={active} onFixProvider={(id) => void save({ ai: { provider: id } })} />
+        <Roles
+          providers={providers}
+          active={active}
+          onFixProvider={(id) => void save({ ai: { provider: id } })}
+        />
       </Card>
 
       <Card title="Limits & privacy" data-tour="limits">
-        <SchemaRows include={(p) => ['ai.monthlyBudgetUsd', 'ai.maxPerFixUsd', 'ai.sendCode', 'ai.redact', 'ai.auditLog', 'ai.logPrompts', 'ai.budgetUsdPerDay', 'ai.model', 'ai.baseUrl'].includes(p)} labels={{ 'ai.monthlyBudgetUsd': 'Monthly budget ($)', 'ai.maxPerFixUsd': 'Max per fix ($)', 'ai.sendCode': 'Send to AI', 'ai.redact': 'Remove secrets before sending', 'ai.auditLog': 'Keep an audit log', 'ai.logPrompts': 'Store prompts of measured AI calls', 'ai.budgetUsdPerDay': 'Daily AI budget line ($)', 'ai.model': 'Model', 'ai.baseUrl': 'Base URL (company endpoint)' }} />
+        <SchemaRows
+          include={(p) =>
+            [
+              'ai.monthlyBudgetUsd',
+              'ai.maxPerFixUsd',
+              'ai.sendCode',
+              'ai.redact',
+              'ai.auditLog',
+              'ai.logPrompts',
+              'ai.budgetUsdPerDay',
+              'ai.model',
+              'ai.baseUrl',
+            ].includes(p)
+          }
+          labels={{
+            'ai.monthlyBudgetUsd': 'Monthly budget ($)',
+            'ai.maxPerFixUsd': 'Max per fix ($)',
+            'ai.sendCode': 'Send to AI',
+            'ai.redact': 'Remove secrets before sending',
+            'ai.auditLog': 'Keep an audit log',
+            'ai.logPrompts': 'Store prompts of measured AI calls',
+            'ai.budgetUsdPerDay': 'Daily AI budget line ($)',
+            'ai.model': 'Model',
+            'ai.baseUrl': 'Base URL (company endpoint)',
+          }}
+        />
         {data ? (
           <div className="muted" style={{ marginTop: 12, fontSize: 13 }}>
-            Usage this month: ${data.usage.monthUsd.toFixed(2)} · {data.usage.calls} calls · active: {data.active}
+            Usage this month: ${data.usage.monthUsd.toFixed(2)} · {data.usage.calls} calls · active:{' '}
+            {data.active}
           </div>
         ) : null}
       </Card>
@@ -146,7 +196,8 @@ function AiBody() {
 
 function InstallOllama({ hint }: { hint?: string }) {
   const [open, setOpen] = useState(false)
-  const command = hint ?? 'curl -fsSL https://ollama.com/install.sh | sh && ollama pull qwen2.5-coder'
+  const command =
+    hint ?? 'curl -fsSL https://ollama.com/install.sh | sh && ollama pull qwen2.5-coder'
   return (
     <span className="row">
       <Button small variant="primary" onClick={() => setOpen((v) => !v)}>
@@ -170,7 +221,9 @@ function BrowserAi() {
       <span>
         In-browser AI (WebGPU)
         <div className="muted" style={{ fontSize: 12 }}>
-          {available ? 'runs a small model in this browser, nothing leaves your machine' : 'not available: this browser has no WebGPU'}
+          {available
+            ? 'runs a small model in this browser, nothing leaves your machine'
+            : 'not available: this browser has no WebGPU'}
         </div>
       </span>
       <Toggle
@@ -186,7 +239,13 @@ function BrowserAi() {
   )
 }
 
-function AddProvider({ providers, onAdded }: { providers: ProviderStatus[]; onAdded: () => Promise<void> }) {
+function AddProvider({
+  providers,
+  onAdded,
+}: {
+  providers: ProviderStatus[]
+  onAdded: () => Promise<void>
+}) {
   const { save } = useSettings()
   const [open, setOpen] = useState(false)
   const [provider, setProvider] = useState<string>(providers[0]?.id ?? 'anthropic')
@@ -223,10 +282,29 @@ function AddProvider({ providers, onAdded }: { providers: ProviderStatus[]; onAd
   }
   return (
     <div className="stack" style={{ marginTop: 10, gap: 8 }}>
-      <Select label="Provider" value={provider} options={providers.map((p) => ({ value: p.id, label: p.label }))} onChange={setProvider} />
-      <TextField label="API key" type="password" value={key} onChange={setKey} description="Stored in your OS keychain, never in a file." />
+      <Select
+        label="Provider"
+        value={provider}
+        options={providers.map((p) => ({ value: p.id, label: p.label }))}
+        onChange={setProvider}
+      />
+      <TextField
+        label="API key"
+        type="password"
+        value={key}
+        onChange={setKey}
+        description="Stored in your OS keychain, never in a file."
+      />
       <TextField label="Model (optional)" value={model} onChange={setModel} />
-      {provider === 'openai-compatible' ? <TextField label="Base URL" type="url" value={baseUrl} onChange={setBaseUrl} description="Azure OpenAI, a company proxy or any OpenAI-compatible endpoint" /> : null}
+      {provider === 'openai-compatible' ? (
+        <TextField
+          label="Base URL"
+          type="url"
+          value={baseUrl}
+          onChange={setBaseUrl}
+          description="Azure OpenAI, a company proxy or any OpenAI-compatible endpoint"
+        />
+      ) : null}
       <div className="row">
         <Button variant="primary" busy={busy} disabled={key.length < 8} onClick={() => void add()}>
           Save key
@@ -252,7 +330,12 @@ function McpSection() {
     <Card title="AI assistants (MCP)" data-tour="mcp">
       <div className="mcp-buttons" role="group" aria-label="Pick your assistant">
         {Object.entries(configs).map(([id, c]) => (
-          <Button key={id} small variant={client === id ? 'primary' : 'default'} onClick={() => setClient(id)}>
+          <Button
+            key={id}
+            small
+            variant={client === id ? 'primary' : 'default'}
+            onClick={() => setClient(id)}
+          >
             {c.label}
           </Button>
         ))}
@@ -260,7 +343,11 @@ function McpSection() {
       {chosen ? (
         <div className="stack" style={{ marginTop: 10, gap: 6 }}>
           <div className="muted" style={{ fontSize: 12 }}>
-            {chosen.file === 'terminal' ? 'Run in your terminal:' : chosen.file === 'remote' ? 'Remote mode:' : `Add to ${chosen.file}:`}
+            {chosen.file === 'terminal'
+              ? 'Run in your terminal:'
+              : chosen.file === 'remote'
+                ? 'Remote mode:'
+                : `Add to ${chosen.file}:`}
           </div>
           <pre>{chosen.snippet}</pre>
           <div className="row">
@@ -277,7 +364,15 @@ function McpSection() {
   )
 }
 
-function Roles({ providers, active, onFixProvider }: { providers: ProviderStatus[]; active: string; onFixProvider: (id: string) => void }) {
+function Roles({
+  providers,
+  active,
+  onFixProvider,
+}: {
+  providers: ProviderStatus[]
+  active: string
+  onFixProvider: (id: string) => void
+}) {
   const [roles, setRoles] = useState<Record<string, string>>(() => {
     try {
       return JSON.parse(localStorage.getItem(ROLE_KEY) ?? '{}') as Record<string, string>
@@ -285,7 +380,12 @@ function Roles({ providers, active, onFixProvider }: { providers: ProviderStatus
       return {}
     }
   })
-  const options = [{ value: 'rules', label: 'Built-in rules (free)' }, ...providers.filter((p) => p.configured || p.free).map((p) => ({ value: p.id, label: `${p.label}${p.free ? ' (free)' : ''}` }))]
+  const options = [
+    { value: 'rules', label: 'Built-in rules (free)' },
+    ...providers
+      .filter((p) => p.configured || p.free)
+      .map((p) => ({ value: p.id, label: `${p.label}${p.free ? ' (free)' : ''}` })),
+  ]
   const set = (role: string, value: string): void => {
     const next = { ...roles, [role]: value }
     setRoles(next)
@@ -293,11 +393,27 @@ function Roles({ providers, active, onFixProvider }: { providers: ProviderStatus
   }
   return (
     <div className="stack" style={{ gap: 8 }}>
-      <Select label="Explain problems" value={roles.explain ?? active} options={options} onChange={(v) => set('explain', v)} />
-      <Select label="Generate fixes" value={active === 'none' ? 'rules' : active} options={options} onChange={onFixProvider} />
-      <Select label="Summaries / reports" value={roles.summary ?? 'rules'} options={options} onChange={(v) => set('summary', v)} />
+      <Select
+        label="Explain problems"
+        value={roles.explain ?? active}
+        options={options}
+        onChange={(v) => set('explain', v)}
+      />
+      <Select
+        label="Generate fixes"
+        value={active === 'none' ? 'rules' : active}
+        options={options}
+        onChange={onFixProvider}
+      />
+      <Select
+        label="Summaries / reports"
+        value={roles.summary ?? 'rules'}
+        options={options}
+        onChange={(v) => set('summary', v)}
+      />
       <span className="muted" style={{ fontSize: 12 }}>
-        “Generate fixes” is saved in the config (ai.provider). The other two are remembered in this browser until the config gains per-role providers.
+        “Generate fixes” is saved in the config (ai.provider). The other two are remembered in this
+        browser until the config gains per-role providers.
       </span>
     </div>
   )

@@ -5,11 +5,13 @@ A real-user snippet (5–6 KB minified, no dependencies) that reports Web Vitals
 ## Script tag
 
 ```html
-<script src="http://127.0.0.1:4545/agent/perfagent.js"
-        data-endpoint="http://127.0.0.1:4545/agent/collect"
-        data-sample="1"
-        data-route="/checkout"
-        defer></script>
+<script
+  src="http://127.0.0.1:4545/agent/perfagent.js"
+  data-endpoint="http://127.0.0.1:4545/agent/collect"
+  data-sample="1"
+  data-route="/checkout"
+  defer
+></script>
 ```
 
 - `data-endpoint`: where batches go (default `http://127.0.0.1:4545/agent/collect`). The dashboard accepts posts only from the origins in `config.urls` / `config.environments`.
@@ -43,16 +45,16 @@ init({ endpoint: 'http://127.0.0.1:4545/agent/collect', sample: 0.1, route: '/ch
 
 ## What it collects
 
-| Event | Fields |
-|---|---|
-| `vital` | `name` (lcp, inp, cls, fcp, ttfb), `value`, `target` (CSS selector of the element) |
-| `req` | `url` (no query string or hash), `method`, `status`, `ms`, `size` |
-| `ai` | fetches to known AI hosts: `firstTokenMs` from the first streamed chunk, `ms`, `model`, token counts when the response carries usage |
-| `ws` | per connection: open latency, messages and bytes in/out, reconnect count by URL |
-| `task` | long task duration |
-| `err` | error message and the top stack frame |
-| `mem` | `performance.memory` heap in MB, once per batch |
-| `nav` | soft navigation target path |
+| Event   | Fields                                                                                                                               |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `vital` | `name` (lcp, inp, cls, fcp, ttfb), `value`, `target` (CSS selector of the element)                                                   |
+| `req`   | `url` (no query string or hash), `method`, `status`, `ms`, `size`                                                                    |
+| `ai`    | fetches to known AI hosts: `firstTokenMs` from the first streamed chunk, `ms`, `model`, token counts when the response carries usage |
+| `ws`    | per connection: open latency, messages and bytes in/out, reconnect count by URL                                                      |
+| `task`  | long task duration                                                                                                                   |
+| `err`   | error message and the top stack frame                                                                                                |
+| `mem`   | `performance.memory` heap in MB, once per batch                                                                                      |
+| `nav`   | soft navigation target path                                                                                                          |
 
 ## Privacy and safety
 

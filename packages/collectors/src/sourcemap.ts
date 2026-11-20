@@ -40,7 +40,13 @@ export class SourceMapper {
     if (!original.source) return undefined
     const file = this.projectPath(original.source)
     if (!file) return undefined
-    return { file, line: original.line, column: original.column + 1, symbol: original.name === '' ? undefined : original.name, bundled: { file: position.url, line, column } }
+    return {
+      file,
+      line: original.line,
+      column: original.column + 1,
+      symbol: original.name === '' ? undefined : original.name,
+      bundled: { file: position.url, line, column },
+    }
   }
 
   /** `http://localhost:3000/src/components/LiveStock.tsx?t=123` → `src/components/LiveStock.tsx`. */
@@ -53,15 +59,22 @@ export class SourceMapper {
 
   /** `webpack:///./src/a.tsx`, `../../src/a.tsx`, `/src/a.tsx` → `src/a.tsx` when the file exists. */
   projectPath(source: string): string | undefined {
-    const cleaned = source.replace(/^webpack:\/\/\/?/, '').replace(/^(\.\.\/)+/, '').replace(/^\.\//, '').replace(/^\/+/, '').replace(/\?.*$/, '')
+    const cleaned = source
+      .replace(/^webpack:\/\/\/?/, '')
+      .replace(/^(\.\.\/)+/, '')
+      .replace(/^\.\//, '')
+      .replace(/^\/+/, '')
+      .replace(/\?.*$/, '')
     if (this.options.projectFiles.has(cleaned)) return cleaned
     // Source maps often keep only the tail of the path; match on the longest suffix.
-    for (const file of this.options.projectFiles) if (cleaned.endsWith(file) || file.endsWith(cleaned)) return file
+    for (const file of this.options.projectFiles)
+      if (cleaned.endsWith(file) || file.endsWith(cleaned)) return file
     return undefined
   }
 
   private async lineColumn(position: BundledPosition): Promise<{ line: number; column: number }> {
-    if (position.charOffset === undefined) return { line: position.line ?? 1, column: position.column ?? 1 }
+    if (position.charOffset === undefined)
+      return { line: position.line ?? 1, column: position.column ?? 1 }
     const text = await this.script(position.url)
     if (!text) return { line: 1, column: position.charOffset + 1 }
     let line = 1

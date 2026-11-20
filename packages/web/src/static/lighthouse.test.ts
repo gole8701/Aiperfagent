@@ -10,25 +10,93 @@ const lhr: Lighthouse = {
   configSettings: { formFactor: 'mobile' },
   categories: { performance: { score: 0.61 } },
   audits: {
-    'largest-contentful-paint': { id: 'largest-contentful-paint', title: 'LCP', score: 0.3, numericValue: 4200 },
-    'first-contentful-paint': { id: 'first-contentful-paint', title: 'FCP', score: 0.7, numericValue: 1900 },
-    'server-response-time': { id: 'server-response-time', title: 'TTFB', score: 0.9, numericValue: 600 },
-    'total-blocking-time': { id: 'total-blocking-time', title: 'TBT', score: 0.5, numericValue: 450 },
-    'cumulative-layout-shift': { id: 'cumulative-layout-shift', title: 'CLS', score: 0.9, numericValue: 0.05 },
+    'largest-contentful-paint': {
+      id: 'largest-contentful-paint',
+      title: 'LCP',
+      score: 0.3,
+      numericValue: 4200,
+    },
+    'first-contentful-paint': {
+      id: 'first-contentful-paint',
+      title: 'FCP',
+      score: 0.7,
+      numericValue: 1900,
+    },
+    'server-response-time': {
+      id: 'server-response-time',
+      title: 'TTFB',
+      score: 0.9,
+      numericValue: 600,
+    },
+    'total-blocking-time': {
+      id: 'total-blocking-time',
+      title: 'TBT',
+      score: 0.5,
+      numericValue: 450,
+    },
+    'cumulative-layout-shift': {
+      id: 'cumulative-layout-shift',
+      title: 'CLS',
+      score: 0.9,
+      numericValue: 0.05,
+    },
     'network-requests': {
       id: 'network-requests',
       title: 'Network',
       score: null,
       details: {
         items: [
-          { url: 'https://example.com/shop', resourceType: 'Document', transferSize: 12_000, networkRequestTime: 0, networkEndTime: 600, statusCode: 200 },
-          { url: 'https://example.com/app.js', resourceType: 'Script', transferSize: 300_000, networkRequestTime: 700, networkEndTime: 2100, statusCode: 200 },
-          { url: 'https://cdn.tagmanager.test/gtm.js', resourceType: 'Script', transferSize: 90_000, networkRequestTime: 800, networkEndTime: 1500, statusCode: 200 },
+          {
+            url: 'https://example.com/shop',
+            resourceType: 'Document',
+            transferSize: 12_000,
+            networkRequestTime: 0,
+            networkEndTime: 600,
+            statusCode: 200,
+          },
+          {
+            url: 'https://example.com/app.js',
+            resourceType: 'Script',
+            transferSize: 300_000,
+            networkRequestTime: 700,
+            networkEndTime: 2100,
+            statusCode: 200,
+          },
+          {
+            url: 'https://cdn.tagmanager.test/gtm.js',
+            resourceType: 'Script',
+            transferSize: 90_000,
+            networkRequestTime: 800,
+            networkEndTime: 1500,
+            statusCode: 200,
+          },
         ],
       },
     },
-    'uses-responsive-images': { id: 'uses-responsive-images', title: 'Properly size images', description: 'Serve images that are appropriately-sized. [Learn more](https://web.dev/uses-responsive-images/).', score: 0.4, metricSavings: { LCP: 900 }, details: { type: 'opportunity', overallSavingsMs: 900, items: [{ url: 'https://example.com/hero.png' }] } },
-    'screenshot-thumbnails': { id: 'screenshot-thumbnails', title: 'Filmstrip', score: null, details: { items: [{ timing: 500, data: 'data:image/jpeg;base64,AAA' }, { timing: 1000, data: 'data:image/jpeg;base64,BBB' }] } },
+    'uses-responsive-images': {
+      id: 'uses-responsive-images',
+      title: 'Properly size images',
+      description:
+        'Serve images that are appropriately-sized. [Learn more](https://web.dev/uses-responsive-images/).',
+      score: 0.4,
+      metricSavings: { LCP: 900 },
+      details: {
+        type: 'opportunity',
+        overallSavingsMs: 900,
+        items: [{ url: 'https://example.com/hero.png' }],
+      },
+    },
+    'screenshot-thumbnails': {
+      id: 'screenshot-thumbnails',
+      title: 'Filmstrip',
+      score: null,
+      details: {
+        items: [
+          { timing: 500, data: 'data:image/jpeg;base64,AAA' },
+          { timing: 1000, data: 'data:image/jpeg;base64,BBB' },
+        ],
+      },
+    },
   },
 }
 

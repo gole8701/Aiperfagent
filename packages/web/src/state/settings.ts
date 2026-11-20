@@ -45,7 +45,13 @@ export const useSettings = create<SettingsState>((set, get) => ({
 
 /** Reads a dotted path such as "ai.provider" from the config object. */
 export function configValue(config: Record<string, unknown> | undefined, path: string): unknown {
-  return path.split('.').reduce<unknown>((acc, key) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined), config)
+  return path
+    .split('.')
+    .reduce<unknown>(
+      (acc, key) =>
+        acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined,
+      config,
+    )
 }
 
 /** Builds the partial patch { a: { b: value } } for a dotted path. */

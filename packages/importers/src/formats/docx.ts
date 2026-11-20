@@ -6,7 +6,14 @@ import type { Importer } from '../types.js'
 
 import { zipHas } from './xlsx.js'
 
-const ENTITIES: Record<string, string> = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': ' ' }
+const ENTITIES: Record<string, string> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'",
+  '&nbsp;': ' ',
+}
 
 /** Mammoth's HTML keeps table rows together; raw text would split every cell onto its own line. */
 export function htmlToLines(html: string): string {
@@ -36,8 +43,17 @@ export const docxImporter: Importer = {
     try {
       text = await extractDocxText(input.buffer ?? new Uint8Array())
     } catch (error) {
-      throw new PerfAgentError('IMPORT_INVALID', `This Word file could not be read (${errorMessage(error)}).`, 'Save it again as .docx, or copy its text and paste it instead.')
+      throw new PerfAgentError(
+        'IMPORT_INVALID',
+        `This Word file could not be read (${errorMessage(error)}).`,
+        'Save it again as .docx, or copy its text and paste it instead.',
+      )
     }
-    return resultFromDetected('docx', detectMetricsInText(text, input.filename ?? 'Word'), input, text)
+    return resultFromDetected(
+      'docx',
+      detectMetricsInText(text, input.filename ?? 'Word'),
+      input,
+      text,
+    )
   },
 }

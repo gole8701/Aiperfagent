@@ -23,10 +23,25 @@ const LONG_TASK_US = 50_000
 export const traceImporter: Importer = {
   format: 'trace',
   matches: (_input, json) => asEvents(json) !== undefined,
-  run: (input, json) => Promise.resolve({ format: 'trace', report: fromTrace(asEvents(json) ?? [], input.filename ?? 'Chrome trace'), detected: [], warnings: [], exact: true }),
+  run: (input, json) =>
+    Promise.resolve({
+      format: 'trace',
+      report: fromTrace(asEvents(json) ?? [], input.filename ?? 'Chrome trace'),
+      detected: [],
+      warnings: [],
+      exact: true,
+    }),
 }
 
-interface Pending { url?: string; type?: string; startUs: number; bytes: number; status: number; endUs?: number; mime?: string }
+interface Pending {
+  url?: string
+  type?: string
+  startUs: number
+  bytes: number
+  status: number
+  endUs?: number
+  mime?: string
+}
 
 /** One pass over the events; timestamps are kept in µs and made relative to navigationStart at the end. */
 function fromTrace(events: TraceEvent[], label: string): ReturnType<typeof emptyReport> {
@@ -46,7 +61,11 @@ function fromTrace(events: TraceEvent[], label: string): ReturnType<typeof empty
     if (ts < minTs) minTs = ts
     switch (e.name) {
       case 'navigationStart':
-        if (navStart === undefined || data.isOutermostMainFrame === true || data.isLoadingMainFrame === true) {
+        if (
+          navStart === undefined ||
+          data.isOutermostMainFrame === true ||
+          data.isLoadingMainFrame === true
+        ) {
           navStart = ts
           pageUrl = typeof data.documentLoaderURL === 'string' ? data.documentLoaderURL : pageUrl
         }
@@ -69,17 +88,30 @@ function fromTrace(events: TraceEvent[], label: string): ReturnType<typeof empty
         break
       case 'ResourceSendRequest': {
         const id = idOf(data.requestId)
-        if (id) pending.set(id, { url: str(data.url), type: str(data.resourceType), startUs: ts, bytes: 0, status: 0 })
+        if (id)
+          pending.set(id, {
+            url: str(data.url),
+            type: str(data.resourceType),
+            startUs: ts,
+            bytes: 0,
+            status: 0,
+          })
         break
       }
       case 'ResourceReceiveResponse': {
         const p = pending.get(idOf(data.requestId))
-        if (p) { p.status = Number(data.statusCode ?? 0); p.mime = str(data.mimeType) }
+        if (p) {
+          p.status = Number(data.statusCode ?? 0)
+          p.mime = str(data.mimeType)
+        }
         break
       }
       case 'ResourceFinish': {
         const p = pending.get(idOf(data.requestId))
-        if (p) { p.endUs = ts; p.bytes = Number(data.encodedDataLength ?? 0) }
+        if (p) {
+          p.endUs = ts
+          p.bytes = Number(data.encodedDataLength ?? 0)
+        }
         break
       }
       default:
@@ -90,9 +122,15 @@ function fromTrace(events: TraceEvent[], label: string): ReturnType<typeof empty
   const t0 = navStart ?? (minTs === Infinity ? 0 : minTs)
   const ms = (us: number): number => Math.max(0, Math.round((us - t0) / 100) / 10)
   const url = pageUrl ?? [...pending.values()][0]?.url ?? 'http://imported/'
-  const longTasks: LongTask[] = tasks.map((t) => ({ startMs: ms(t.us), durationMs: t.durUs / 1000 })).slice(0, 2000)
-  const tbt = tasks.filter((t) => fcpUs === undefined || t.us >= fcpUs).reduce((s, t) => s + (t.durUs - LONG_TASK_US) / 1000, 0)
-  const layoutShifts: LayoutShift[] = shifts.map((s) => ({ value: s.score, timeMs: ms(s.us) })).slice(0, 2000)
+  const longTasks: LongTask[] = tasks
+    .map((t) => ({ startMs: ms(t.us), durationMs: t.durUs / 1000 }))
+    .slice(0, 2000)
+  const tbt = tasks
+    .filter((t) => fcpUs === undefined || t.us >= fcpUs)
+    .reduce((s, t) => s + (t.durUs - LONG_TASK_US) / 1000, 0)
+  const layoutShifts: LayoutShift[] = shifts
+    .map((s) => ({ value: s.score, timeMs: ms(s.us) }))
+    .slice(0, 2000)
   const requests: RequestInfo[] = [...pending.values()].slice(0, 5000).map((p) => ({
     url: p.url ?? '',
     type: resourceType(p.type, p.mime),
@@ -103,21 +141,38 @@ function fromTrace(events: TraceEvent[], label: string): ReturnType<typeof empty
     thirdParty: hostOf(p.url ?? '') !== hostOf(url),
     cached: false,
   }))
-  const page = pageFromMetrics(url, {
-    fcp: fcpUs !== undefined ? ms(fcpUs) : undefined,
-    lcp: lcpUs !== undefined ? ms(lcpUs) : undefined,
-    cls: shifts.length ? Math.round(cls * 1000) / 1000 : undefined,
-    tbt: tasks.length ? Math.round(tbt) : undefined,
-    requests: requests.length || undefined,
-    transferKb: requests.length ? requests.reduce((s, r) => s + r.transferBytes, 0) / 1024 : undefined,
-  }, 'mobile', requests)
+  const page = pageFromMetrics(
+    url,
+    {
+      fcp: fcpUs !== undefined ? ms(fcpUs) : undefined,
+      lcp: lcpUs !== undefined ? ms(lcpUs) : undefined,
+      cls: shifts.length ? Math.round(cls * 1000) / 1000 : undefined,
+      tbt: tasks.length ? Math.round(tbt) : undefined,
+      requests: requests.length || undefined,
+      transferKb: requests.length
+        ? requests.reduce((s, r) => s + r.transferBytes, 0) / 1024
+        : undefined,
+    },
+    'mobile',
+    requests,
+  )
   page.longTasks = longTasks
   page.layoutShifts = layoutShifts
-  return emptyReport(label, { environment: { name: 'chrome-trace', url, device: 'mobile', browser: 'chromium', mode: 'imported' }, pages: [page] })
+  return emptyReport(label, {
+    environment: {
+      name: 'chrome-trace',
+      url,
+      device: 'mobile',
+      browser: 'chromium',
+      mode: 'imported',
+    },
+    pages: [page],
+  })
 }
 
 const str = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined)
-const idOf = (v: unknown): string => (typeof v === 'string' || typeof v === 'number' ? String(v) : '')
+const idOf = (v: unknown): string =>
+  typeof v === 'string' || typeof v === 'number' ? String(v) : ''
 
 function resourceType(kind: string | undefined, mime: string | undefined): RequestInfo['type'] {
   const k = (kind ?? '').toLowerCase()

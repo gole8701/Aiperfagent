@@ -13,7 +13,15 @@ const TABS = [
 ]
 
 /** Shared frame for the three settings screens: tabs, loading and error states, settings fetched once. */
-export function SettingsShell({ active, title, children }: { active: string; title: string; children: ReactNode }) {
+export function SettingsShell({
+  active,
+  title,
+  children,
+}: {
+  active: string
+  title: string
+  children: ReactNode
+}) {
   const { config, loading, error, load } = useSettings()
   useEffect(() => {
     void load()
@@ -25,7 +33,10 @@ export function SettingsShell({ active, title, children }: { active: string; tit
       <Tabs label="Settings sections" active={active} items={TABS} />
       <h2 style={{ marginBottom: 12 }}>{title}</h2>
       {IS_STATIC && active !== 'display' ? (
-        <Empty>Settings are stored by the installed tool. On the website only display options are available.</Empty>
+        <Empty>
+          Settings are stored by the installed tool. On the website only display options are
+          available.
+        </Empty>
       ) : error ? (
         <ErrorBox error={error} />
       ) : loading || (!config && !IS_STATIC) ? (

@@ -7,11 +7,28 @@ import { readAttributes } from './otel-spans.js'
  * points carry `type` (input/output/cacheRead/cacheCreation) and `model`;
  * `claude_code.cost.usage` carries the dollars. One sample per model.
  */
-interface DataPoint { attributes?: unknown; asInt?: string | number; asDouble?: number; timeUnixNano?: string | number }
-interface Metric { name?: string; sum?: { dataPoints?: DataPoint[] }; gauge?: { dataPoints?: DataPoint[] } }
-interface ResourceMetrics { resourceMetrics?: { scopeMetrics?: { metrics?: Metric[] }[] }[] }
+interface DataPoint {
+  attributes?: unknown
+  asInt?: string | number
+  asDouble?: number
+  timeUnixNano?: string | number
+}
+interface Metric {
+  name?: string
+  sum?: { dataPoints?: DataPoint[] }
+  gauge?: { dataPoints?: DataPoint[] }
+}
+interface ResourceMetrics {
+  resourceMetrics?: { scopeMetrics?: { metrics?: Metric[] }[] }[]
+}
 
-interface Totals { input: number; output: number; cached: number; costUsd: number; at?: number }
+interface Totals {
+  input: number
+  output: number
+  cached: number
+  costUsd: number
+  at?: number
+}
 
 export function readClaudeCodeMetrics(json: unknown): AiCallSample[] {
   const resources = (json as ResourceMetrics | null)?.resourceMetrics
@@ -22,8 +39,11 @@ export function readClaudeCodeMetrics(json: unknown): AiCallSample[] {
     byModel.set(model, t)
     return t
   }
-  for (const metric of resources.flatMap((r) => (r.scopeMetrics ?? []).flatMap((s) => s.metrics ?? []))) {
-    if (metric.name !== 'claude_code.token.usage' && metric.name !== 'claude_code.cost.usage') continue
+  for (const metric of resources.flatMap((r) =>
+    (r.scopeMetrics ?? []).flatMap((s) => s.metrics ?? []),
+  )) {
+    if (metric.name !== 'claude_code.token.usage' && metric.name !== 'claude_code.cost.usage')
+      continue
     for (const point of metric.sum?.dataPoints ?? metric.gauge?.dataPoints ?? []) {
       const attrs = readAttributes(point.attributes)
       const t = totals(String(attrs.model ?? 'claude-code'))

@@ -12,13 +12,34 @@ export function FixRunView() {
   if (!run) return null
 
   return (
-    <Card title={`AI fix run · branch ${run.branch} · ${run.status}`} action={<Button small onClick={clear}>Close</Button>}>
+    <Card
+      title={`AI fix run · branch ${run.branch} · ${run.status}`}
+      action={
+        <Button small onClick={clear}>
+          Close
+        </Button>
+      }
+    >
       {error ? <ErrorBox error={error} /> : null}
-      <ol className="stack" style={{ gap: 4, paddingLeft: 18, fontSize: 13, margin: '0 0 10px' }} aria-live="polite" aria-label="Fix run events">
+      <ol
+        className="stack"
+        style={{ gap: 4, paddingLeft: 18, fontSize: 13, margin: '0 0 10px' }}
+        aria-live="polite"
+        aria-label="Fix run events"
+      >
         {run.events.map((event, index) => (
-          <li key={index} className={event.type === 'error' || (event.type === 'check' && !event.ok) ? 'sev-critical' : undefined}>
+          <li
+            key={index}
+            className={
+              event.type === 'error' || (event.type === 'check' && !event.ok)
+                ? 'sev-critical'
+                : undefined
+            }
+          >
             {describeEvent(event)}
-            {event.type === 'check' && !event.ok && event.output ? <pre style={{ marginTop: 4, maxHeight: 160 }}>{event.output}</pre> : null}
+            {event.type === 'check' && !event.ok && event.output ? (
+              <pre style={{ marginTop: 4, maxHeight: 160 }}>{event.output}</pre>
+            ) : null}
           </li>
         ))}
         {run.status === 'running' ? <li className="muted">Working…</li> : null}
@@ -26,15 +47,32 @@ export function FixRunView() {
       {run.pending.map((pending) => {
         const edited = edits[pending.changeId] ?? pending.change.after
         return (
-          <div key={pending.changeId} className="stack" style={{ gap: 8, padding: '10px 0', borderTop: '1px solid var(--border)' }}>
+          <div
+            key={pending.changeId}
+            className="stack"
+            style={{ gap: 8, padding: '10px 0', borderTop: '1px solid var(--border)' }}
+          >
             <div style={{ fontSize: 13 }}>{pending.change.explanation}</div>
             <CodeDiff file={pending.change.file} before={pending.change.before} after={edited} />
             <label className="field">
               <span>Edit the proposed code before accepting</span>
-              <textarea className="input mono" value={edited} onChange={(event) => setEdits({ ...edits, [pending.changeId]: event.target.value })} />
+              <textarea
+                className="input mono"
+                value={edited}
+                onChange={(event) => setEdits({ ...edits, [pending.changeId]: event.target.value })}
+              />
             </label>
             <div className="row">
-              <Button variant="primary" busy={busy} onClick={() => void accept([pending.changeId], edits[pending.changeId] ? { [pending.changeId]: edited } : undefined)}>
+              <Button
+                variant="primary"
+                busy={busy}
+                onClick={() =>
+                  void accept(
+                    [pending.changeId],
+                    edits[pending.changeId] ? { [pending.changeId]: edited } : undefined,
+                  )
+                }
+              >
                 Accept
               </Button>
               <Button busy={busy} onClick={() => void skip([pending.changeId])}>

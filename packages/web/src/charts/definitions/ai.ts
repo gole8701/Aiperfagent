@@ -3,7 +3,8 @@ import { formatMetric, percentile, type AiCallSample, type AiReport } from '@per
 import { axisStyle, baseOption, gauge, num, round, sum, type FormatterParams } from './helpers'
 import type { ChartContext, ChartDefinition } from './types'
 
-const NEEDS_AI = 'Needs measured AI calls: wrap your client with watchAI() or send OpenTelemetry GenAI spans. Shows sample data until connected.'
+const NEEDS_AI =
+  'Needs measured AI calls: wrap your client with watchAI() or send OpenTelemetry GenAI spans. Shows sample data until connected.'
 
 function sampleCalls(): AiCallSample[] {
   const out: AiCallSample[] = []
@@ -38,7 +39,15 @@ function ai(ctx: ChartContext): { report: AiReport; sample: boolean } {
   const real = ctx.report.ai
   if (real?.calls.length) return { report: real, sample: false }
   const calls = sampleCalls()
-  return { report: { calls, callSites: real?.callSites ?? [], models: summariseModels(calls), budgetUsdPerDay: real?.budgetUsdPerDay ?? 4 }, sample: true }
+  return {
+    report: {
+      calls,
+      callSites: real?.callSites ?? [],
+      models: summariseModels(calls),
+      budgetUsdPerDay: real?.budgetUsdPerDay ?? 4,
+    },
+    sample: true,
+  }
 }
 
 function summariseModels(calls: AiCallSample[]): AiReport['models'] {
@@ -47,14 +56,21 @@ function summariseModels(calls: AiCallSample[]): AiReport['models'] {
   return [...byModel.entries()].map(([model, list]) => ({
     model,
     calls: list.length,
-    p50FirstTokenMs: percentile(list.map((c) => c.firstTokenMs), 50),
-    p95FirstTokenMs: percentile(list.map((c) => c.firstTokenMs), 95),
+    p50FirstTokenMs: percentile(
+      list.map((c) => c.firstTokenMs),
+      50,
+    ),
+    p95FirstTokenMs: percentile(
+      list.map((c) => c.firstTokenMs),
+      95,
+    ),
     costUsd: sum(list.map((c) => c.costUsd)),
     errorRate: list.filter((c) => c.error).length / list.length,
   }))
 }
 
-const sampleNote = (ctx: ChartContext): string | undefined => (ai(ctx).sample ? NEEDS_AI : undefined)
+const sampleNote = (ctx: ChartContext): string | undefined =>
+  ai(ctx).sample ? NEEDS_AI : undefined
 
 const tiles: ChartDefinition = {
   id: 'ai-tiles',
@@ -67,18 +83,49 @@ const tiles: ChartDefinition = {
     const { report } = ai(ctx)
     const calls = report.calls
     const today = new Date().toDateString()
-    const costToday = sum(calls.filter((c) => new Date(c.at).toDateString() === today).map((c) => c.costUsd))
-    const cache = sum(calls.map((c) => c.cachedTokens)) / Math.max(1, sum(calls.map((c) => c.inputTokens)))
+    const costToday = sum(
+      calls.filter((c) => new Date(c.at).toDateString() === today).map((c) => c.costUsd),
+    )
+    const cache =
+      sum(calls.map((c) => c.cachedTokens)) / Math.max(1, sum(calls.map((c) => c.inputTokens)))
     const failures = calls.filter((c) => c.error).length / Math.max(1, calls.length)
-    const first = percentile(calls.map((c) => c.firstTokenMs), 95)
+    const first = percentile(
+      calls.map((c) => c.firstTokenMs),
+      95,
+    )
     return [
-      { label: 'First word (p95)', value: formatMetric('aiFirstTokenMs', first), note: 'time until the answer starts', rating: first <= 1000 ? 'good' : first <= 3000 ? 'needs-work' : 'poor' },
-      { label: 'Cost today', value: formatMetric('aiCostUsd', costToday), note: report.budgetUsdPerDay ? `budget ${formatMetric('aiCostUsd', report.budgetUsdPerDay)}` : 'no budget set', rating: report.budgetUsdPerDay && costToday > report.budgetUsdPerDay ? 'poor' : 'good' },
-      { label: 'Cache reuse', value: formatMetric('aiCacheHitRate', cache), note: 'of prompt tokens served from cache', rating: cache >= 0.7 ? 'good' : cache >= 0.3 ? 'needs-work' : 'poor' },
-      { label: 'Failures', value: formatMetric('aiErrorRate', failures), note: 'calls that failed or were rate limited', rating: failures <= 0.01 ? 'good' : failures <= 0.05 ? 'needs-work' : 'poor' },
+      {
+        label: 'First word (p95)',
+        value: formatMetric('aiFirstTokenMs', first),
+        note: 'time until the answer starts',
+        rating: first <= 1000 ? 'good' : first <= 3000 ? 'needs-work' : 'poor',
+      },
+      {
+        label: 'Cost today',
+        value: formatMetric('aiCostUsd', costToday),
+        note: report.budgetUsdPerDay
+          ? `budget ${formatMetric('aiCostUsd', report.budgetUsdPerDay)}`
+          : 'no budget set',
+        rating: report.budgetUsdPerDay && costToday > report.budgetUsdPerDay ? 'poor' : 'good',
+      },
+      {
+        label: 'Cache reuse',
+        value: formatMetric('aiCacheHitRate', cache),
+        note: 'of prompt tokens served from cache',
+        rating: cache >= 0.7 ? 'good' : cache >= 0.3 ? 'needs-work' : 'poor',
+      },
+      {
+        label: 'Failures',
+        value: formatMetric('aiErrorRate', failures),
+        note: 'calls that failed or were rate limited',
+        rating: failures <= 0.01 ? 'good' : failures <= 0.05 ? 'needs-work' : 'poor',
+      },
     ]
   },
-  takeaway: (ctx) => (ai(ctx).sample ? 'Sample numbers: connect your AI calls to see your own.' : `${ai(ctx).report.calls.length} AI calls measured.`),
+  takeaway: (ctx) =>
+    ai(ctx).sample
+      ? 'Sample numbers: connect your AI calls to see your own.'
+      : `${ai(ctx).report.calls.length} AI calls measured.`,
 }
 
 const wait: ChartDefinition = {
@@ -93,15 +140,33 @@ const wait: ChartDefinition = {
     const p = ctx.palette
     const { report } = ai(ctx)
     const models = report.models
-    const total = (model: string): number => percentile(report.calls.filter((c) => c.model === model).map((c) => c.totalMs), 50)
+    const total = (model: string): number =>
+      percentile(
+        report.calls.filter((c) => c.model === model).map((c) => c.totalMs),
+        50,
+      )
     return {
       ...baseOption(p),
       legend: { bottom: 0, textStyle: { color: p.text } },
-      xAxis: { type: 'value', ...axisStyle(p), axisLabel: { color: p.muted, formatter: (v: number) => `${(v / 1000).toFixed(1)} s` } },
+      xAxis: {
+        type: 'value',
+        ...axisStyle(p),
+        axisLabel: { color: p.muted, formatter: (v: number) => `${(v / 1000).toFixed(1)} s` },
+      },
       yAxis: { type: 'category', data: models.map((m) => m.model), ...axisStyle(p) },
       series: [
-        { name: 'first word', type: 'bar', data: models.map((m) => round(m.p50FirstTokenMs)), itemStyle: { color: p.series[3] ?? p.accent, opacity: 0.6 } },
-        { name: 'answer done', type: 'bar', data: models.map((m) => round(total(m.model))), itemStyle: { color: p.series[3] ?? p.accent } },
+        {
+          name: 'first word',
+          type: 'bar',
+          data: models.map((m) => round(m.p50FirstTokenMs)),
+          itemStyle: { color: p.series[3] ?? p.accent, opacity: 0.6 },
+        },
+        {
+          name: 'answer done',
+          type: 'bar',
+          data: models.map((m) => round(total(m.model))),
+          itemStyle: { color: p.series[3] ?? p.accent },
+        },
       ],
     }
   },
@@ -109,7 +174,9 @@ const wait: ChartDefinition = {
     const models = [...ai(ctx).report.models].sort((a, b) => a.p50FirstTokenMs - b.p50FirstTokenMs)
     const fast = models[0]
     const slow = models[models.length - 1]
-    return fast && slow && fast !== slow ? `${fast.model} starts answering ${(slow.p50FirstTokenMs / Math.max(1, fast.p50FirstTokenMs)).toFixed(1)}× faster than ${slow.model}. Use the slow one only for hard questions.` : `First word after ${formatMetric('aiFirstTokenMs', fast?.p50FirstTokenMs ?? 0)} (median).`
+    return fast && slow && fast !== slow
+      ? `${fast.model} starts answering ${(slow.p50FirstTokenMs / Math.max(1, fast.p50FirstTokenMs)).toFixed(1)}× faster than ${slow.model}. Use the slow one only for hard questions.`
+      : `First word after ${formatMetric('aiFirstTokenMs', fast?.p50FirstTokenMs ?? 0)} (median).`
   },
 }
 
@@ -134,9 +201,27 @@ const tokens: ChartDefinition = {
       xAxis: { type: 'value', ...axisStyle(p), axisLabel: { color: p.muted } },
       yAxis: { type: 'category', data: ['typical request'], ...axisStyle(p) },
       series: [
-        { name: 'repeated instructions (cached)', type: 'bar', stack: 't', data: [round(cached)], itemStyle: { color: p.good } },
-        { name: 'instructions + question', type: 'bar', stack: 't', data: [round(input)], itemStyle: { color: p.warning } },
-        { name: 'answer', type: 'bar', stack: 't', data: [round(output)], itemStyle: { color: p.accent } },
+        {
+          name: 'repeated instructions (cached)',
+          type: 'bar',
+          stack: 't',
+          data: [round(cached)],
+          itemStyle: { color: p.good },
+        },
+        {
+          name: 'instructions + question',
+          type: 'bar',
+          stack: 't',
+          data: [round(input)],
+          itemStyle: { color: p.warning },
+        },
+        {
+          name: 'answer',
+          type: 'bar',
+          stack: 't',
+          data: [round(output)],
+          itemStyle: { color: p.accent },
+        },
       ],
     }
   },
@@ -145,7 +230,9 @@ const tokens: ChartDefinition = {
     const input = sum(calls.map((c) => c.inputTokens))
     const cached = sum(calls.map((c) => c.cachedTokens))
     const share = input ? Math.round(((input - cached) / input) * 100) : 0
-    return share > 60 ? `${share}% of the cost is the same instructions sent every time. Prompt caching makes it cheaper and faster.` : 'Most of the prompt is already served from cache.'
+    return share > 60
+      ? `${share}% of the cost is the same instructions sent every time. Prompt caching makes it cheaper and faster.`
+      : 'Most of the prompt is already served from cache.'
   },
   onClick: () => ({ filter: 'metric:aiCostUsd' }),
 }
@@ -169,17 +256,49 @@ const costPerDay: ChartDefinition = {
     return {
       ...baseOption(p),
       xAxis: { type: 'category', data: [...byDay.keys()], ...axisStyle(p) },
-      yAxis: { type: 'value', ...axisStyle(p), axisLabel: { color: p.muted, formatter: '${value}' } },
-      series: [{ type: 'line', data: [...byDay.values()].map((v) => round(v, 2)), lineStyle: { color: p.accent }, itemStyle: { color: p.accent }, areaStyle: { opacity: 0.1 }, markLine: report.budgetUsdPerDay ? { symbol: 'none', data: [{ yAxis: report.budgetUsdPerDay, label: { formatter: 'budget', color: p.critical }, lineStyle: { color: p.critical, type: 'dashed' } }] } : undefined }],
+      yAxis: {
+        type: 'value',
+        ...axisStyle(p),
+        axisLabel: { color: p.muted, formatter: '${value}' },
+      },
+      series: [
+        {
+          type: 'line',
+          data: [...byDay.values()].map((v) => round(v, 2)),
+          lineStyle: { color: p.accent },
+          itemStyle: { color: p.accent },
+          areaStyle: { opacity: 0.1 },
+          markLine: report.budgetUsdPerDay
+            ? {
+                symbol: 'none',
+                data: [
+                  {
+                    yAxis: report.budgetUsdPerDay,
+                    label: { formatter: 'budget', color: p.critical },
+                    lineStyle: { color: p.critical, type: 'dashed' },
+                  },
+                ],
+              }
+            : undefined,
+        },
+      ],
     }
   },
   takeaway: (ctx) => {
     const { report } = ai(ctx)
     const budget = report.budgetUsdPerDay
     const byDay = new Map<string, number>()
-    for (const c of report.calls) byDay.set(new Date(c.at).toDateString(), (byDay.get(new Date(c.at).toDateString()) ?? 0) + c.costUsd)
+    for (const c of report.calls)
+      byDay.set(
+        new Date(c.at).toDateString(),
+        (byDay.get(new Date(c.at).toDateString()) ?? 0) + c.costUsd,
+      )
     const over = budget ? [...byDay.values()].filter((v) => v > budget).length : 0
-    return budget ? (over ? `${over} day${over > 1 ? 's' : ''} went over the ${formatMetric('aiCostUsd', budget)} budget.` : 'Every day stayed inside the budget.') : 'Set ai.budgetUsdPerDay in the config to see a budget line.'
+    return budget
+      ? over
+        ? `${over} day${over > 1 ? 's' : ''} went over the ${formatMetric('aiCostUsd', budget)} budget.`
+        : 'Every day stayed inside the budget.'
+      : 'Set ai.budgetUsdPerDay in the config to see a budget line.'
   },
 }
 
@@ -205,11 +324,33 @@ const steps: ChartDefinition = {
     return {
       ...baseOption(p),
       grid: { left: 12, right: 60, top: 8, bottom: 8, containLabel: true },
-      xAxis: { type: 'value', ...axisStyle(p), axisLabel: { color: p.muted, formatter: (v: number) => `${(v / 1000).toFixed(1)} s` } },
+      xAxis: {
+        type: 'value',
+        ...axisStyle(p),
+        axisLabel: { color: p.muted, formatter: (v: number) => `${(v / 1000).toFixed(1)} s` },
+      },
       yAxis: { type: 'category', data: rows.map((r) => r.name), inverse: true, ...axisStyle(p) },
       series: [
-        { type: 'bar', stack: 'g', data: rows.map((r) => r.start), itemStyle: { color: 'transparent' }, silent: true, barWidth: 16 },
-        { type: 'bar', stack: 'g', barWidth: 16, data: rows.map((r) => ({ value: r.ms, itemStyle: { color: r.colour } })), label: { show: true, position: 'right', color: p.text, formatter: (d: FormatterParams) => `${(num(d.value) / 1000).toFixed(1)} s` } },
+        {
+          type: 'bar',
+          stack: 'g',
+          data: rows.map((r) => r.start),
+          itemStyle: { color: 'transparent' },
+          silent: true,
+          barWidth: 16,
+        },
+        {
+          type: 'bar',
+          stack: 'g',
+          barWidth: 16,
+          data: rows.map((r) => ({ value: r.ms, itemStyle: { color: r.colour } })),
+          label: {
+            show: true,
+            position: 'right',
+            color: p.text,
+            formatter: (d: FormatterParams) => `${(num(d.value) / 1000).toFixed(1)} s`,
+          },
+        },
       ],
     }
   },
@@ -218,7 +359,9 @@ const steps: ChartDefinition = {
     const list = call?.steps ?? []
     const total = sum(list.map((s) => s.ms))
     const biggest = [...list].sort((a, b) => b.ms - a.ms)[0]
-    return biggest ? `${biggest.name} takes ${Math.round((biggest.ms / total) * 100)}% of the time${biggest.kind !== 'llm' ? ', not the AI itself' : ''}.` : 'No agent steps recorded.'
+    return biggest
+      ? `${biggest.name} takes ${Math.round((biggest.ms / total) * 100)}% of the time${biggest.kind !== 'llm' ? ', not the AI itself' : ''}.`
+      : 'No agent steps recorded.'
   },
   onClick: () => ({ filter: 'metric:aiFirstTokenMs' }),
 }
@@ -233,13 +376,21 @@ const cache: ChartDefinition = {
   sample: sampleNote,
   build: (ctx) => {
     const calls = ai(ctx).report.calls
-    const share = Math.round((sum(calls.map((c) => c.cachedTokens)) / Math.max(1, sum(calls.map((c) => c.inputTokens)))) * 100)
+    const share = Math.round(
+      (sum(calls.map((c) => c.cachedTokens)) / Math.max(1, sum(calls.map((c) => c.inputTokens)))) *
+        100,
+    )
     return gauge(ctx, share, { unit: '%', target: 70, label: 'from cache' })
   },
   takeaway: (ctx) => {
     const calls = ai(ctx).report.calls
-    const share = Math.round((sum(calls.map((c) => c.cachedTokens)) / Math.max(1, sum(calls.map((c) => c.inputTokens)))) * 100)
-    return share < 70 ? `Only ${share}% is reused: most repeated instructions are paid for again every time.` : `${share}% reused: prompt caching is working.`
+    const share = Math.round(
+      (sum(calls.map((c) => c.cachedTokens)) / Math.max(1, sum(calls.map((c) => c.inputTokens)))) *
+        100,
+    )
+    return share < 70
+      ? `Only ${share}% is reused: most repeated instructions are paid for again every time.`
+      : `${share}% reused: prompt caching is working.`
   },
 }
 
@@ -262,13 +413,23 @@ const failures: ChartDefinition = {
       ...baseOption(p),
       xAxis: { type: 'category', data: [...byDay.keys()], ...axisStyle(p) },
       yAxis: { type: 'value', ...axisStyle(p), minInterval: 1 },
-      series: [{ type: 'bar', data: [...byDay.values()], itemStyle: { color: p.critical }, barMaxWidth: 30, label: { show: true, color: p.text } }],
+      series: [
+        {
+          type: 'bar',
+          data: [...byDay.values()],
+          itemStyle: { color: p.critical },
+          barMaxWidth: 30,
+          label: { show: true, color: p.text },
+        },
+      ],
     }
   },
   takeaway: (ctx) => {
     const calls = ai(ctx).report.calls
     const retries = sum(calls.map((c) => c.retries))
-    return retries ? `${retries} retries happened: failed requests were retried instantly. Waiting a little between retries fixes most of it.` : 'No failures or rate limits recorded.'
+    return retries
+      ? `${retries} retries happened: failed requests were retried instantly. Waiting a little between retries fixes most of it.`
+      : 'No failures or rate limits recorded.'
   },
 }
 
@@ -287,16 +448,55 @@ const bestDeal: ChartDefinition = {
     return {
       ...baseOption(p),
       grid: { left: 12, right: 24, top: 16, bottom: 8, containLabel: true },
-      xAxis: { type: 'value', name: 'faster →', inverse: true, ...axisStyle(p), axisLabel: { color: p.muted, formatter: (v: number) => `${(v / 1000).toFixed(1)} s` } },
-      yAxis: { type: 'value', name: 'cheaper ↑', max: 100, ...axisStyle(p), axisLabel: { color: p.muted, formatter: '{value}' } },
-      series: [{ type: 'scatter', data: models.map((m, i) => ({ name: m.model, value: [round(m.p50FirstTokenMs), round(100 - ((m.costUsd / Math.max(1, m.calls)) / maxCost) * 100)], symbolSize: 20 + Math.min(40, m.calls), itemStyle: { color: p.series[i % p.series.length] }, label: { show: true, formatter: '{b}', position: 'top', color: p.text } })) }],
+      xAxis: {
+        type: 'value',
+        name: 'faster →',
+        inverse: true,
+        ...axisStyle(p),
+        axisLabel: { color: p.muted, formatter: (v: number) => `${(v / 1000).toFixed(1)} s` },
+      },
+      yAxis: {
+        type: 'value',
+        name: 'cheaper ↑',
+        max: 100,
+        ...axisStyle(p),
+        axisLabel: { color: p.muted, formatter: '{value}' },
+      },
+      series: [
+        {
+          type: 'scatter',
+          data: models.map((m, i) => ({
+            name: m.model,
+            value: [
+              round(m.p50FirstTokenMs),
+              round(100 - (m.costUsd / Math.max(1, m.calls) / maxCost) * 100),
+            ],
+            symbolSize: 20 + Math.min(40, m.calls),
+            itemStyle: { color: p.series[i % p.series.length] },
+            label: { show: true, formatter: '{b}', position: 'top', color: p.text },
+          })),
+        },
+      ],
     }
   },
   takeaway: (ctx) => {
     const models = ai(ctx).report.models
-    const cheapest = [...models].sort((a, b) => a.costUsd / Math.max(1, a.calls) - b.costUsd / Math.max(1, b.calls))[0]
-    return cheapest && models.length > 1 ? `${cheapest.model} is the cheapest per call and still fast. Send simple questions to it.` : 'Measure more than one model to compare them.'
+    const cheapest = [...models].sort(
+      (a, b) => a.costUsd / Math.max(1, a.calls) - b.costUsd / Math.max(1, b.calls),
+    )[0]
+    return cheapest && models.length > 1
+      ? `${cheapest.model} is the cheapest per call and still fast. Send simple questions to it.`
+      : 'Measure more than one model to compare them.'
   },
 }
 
-export const aiCharts: ChartDefinition[] = [tiles, wait, tokens, costPerDay, steps, cache, failures, bestDeal]
+export const aiCharts: ChartDefinition[] = [
+  tiles,
+  wait,
+  tokens,
+  costPerDay,
+  steps,
+  cache,
+  failures,
+  bestDeal,
+]

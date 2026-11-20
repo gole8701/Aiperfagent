@@ -10,10 +10,18 @@ export interface StubServer {
 }
 
 export async function startStubServer(): Promise<StubServer> {
-  const stub: StubServer = { url: '', requests: [], reply: () => 'OK', status: 200, close: () => Promise.resolve() }
+  const stub: StubServer = {
+    url: '',
+    requests: [],
+    reply: () => 'OK',
+    status: 200,
+    close: () => Promise.resolve(),
+  }
   const server: Server = createServer((req, res) => {
     let raw = ''
-    req.on('data', (c: Buffer) => { raw += c.toString() })
+    req.on('data', (c: Buffer) => {
+      raw += c.toString()
+    })
     req.on('end', () => {
       const body = raw ? (JSON.parse(raw) as Record<string, unknown>) : {}
       stub.requests.push({ path: req.url ?? '', headers: req.headers, body })
@@ -32,23 +40,54 @@ export async function startStubServer(): Promise<StubServer> {
       if (req.url === '/v1/messages') {
         if (body.stream) {
           res.writeHead(200, { 'content-type': 'text/event-stream' })
-          res.write(`event: message_start\ndata: ${JSON.stringify({ type: 'message_start', message: { model: body.model, usage: { input_tokens: usage.in, cache_read_input_tokens: usage.cached } } })}\n\n`)
-          res.write(`event: content_block_delta\ndata: ${JSON.stringify({ type: 'content_block_delta', delta: { type: 'text_delta', text } })}\n\n`)
-          res.end(`event: message_delta\ndata: ${JSON.stringify({ type: 'message_delta', usage: { output_tokens: usage.out } })}\n\n`)
+          res.write(
+            `event: message_start\ndata: ${JSON.stringify({ type: 'message_start', message: { model: body.model, usage: { input_tokens: usage.in, cache_read_input_tokens: usage.cached } } })}\n\n`,
+          )
+          res.write(
+            `event: content_block_delta\ndata: ${JSON.stringify({ type: 'content_block_delta', delta: { type: 'text_delta', text } })}\n\n`,
+          )
+          res.end(
+            `event: message_delta\ndata: ${JSON.stringify({ type: 'message_delta', usage: { output_tokens: usage.out } })}\n\n`,
+          )
         } else {
           res.writeHead(200, { 'content-type': 'application/json' })
-          res.end(JSON.stringify({ model: body.model, content: [{ type: 'text', text }], usage: { input_tokens: usage.in, output_tokens: usage.out, cache_read_input_tokens: usage.cached } }))
+          res.end(
+            JSON.stringify({
+              model: body.model,
+              content: [{ type: 'text', text }],
+              usage: {
+                input_tokens: usage.in,
+                output_tokens: usage.out,
+                cache_read_input_tokens: usage.cached,
+              },
+            }),
+          )
         }
         return
       }
       if (body.stream) {
         res.writeHead(200, { 'content-type': 'text/event-stream' })
-        for (const piece of text.match(/.{1,40}/gs) ?? ['']) res.write(`data: ${JSON.stringify({ model: body.model, choices: [{ delta: { content: piece } }] })}\n\n`)
-        res.write(`data: ${JSON.stringify({ model: body.model, choices: [], usage: { prompt_tokens: usage.in, completion_tokens: usage.out, prompt_tokens_details: { cached_tokens: usage.cached } } })}\n\n`)
+        for (const piece of text.match(/.{1,40}/gs) ?? [''])
+          res.write(
+            `data: ${JSON.stringify({ model: body.model, choices: [{ delta: { content: piece } }] })}\n\n`,
+          )
+        res.write(
+          `data: ${JSON.stringify({ model: body.model, choices: [], usage: { prompt_tokens: usage.in, completion_tokens: usage.out, prompt_tokens_details: { cached_tokens: usage.cached } } })}\n\n`,
+        )
         res.end('data: [DONE]\n\n')
       } else {
         res.writeHead(200, { 'content-type': 'application/json' })
-        res.end(JSON.stringify({ model: body.model, choices: [{ message: { content: text } }], usage: { prompt_tokens: usage.in, completion_tokens: usage.out, prompt_tokens_details: { cached_tokens: usage.cached } } }))
+        res.end(
+          JSON.stringify({
+            model: body.model,
+            choices: [{ message: { content: text } }],
+            usage: {
+              prompt_tokens: usage.in,
+              completion_tokens: usage.out,
+              prompt_tokens_details: { cached_tokens: usage.cached },
+            },
+          }),
+        )
       }
     })
   })

@@ -33,7 +33,12 @@ export function getStaticReport(id: string): Report | undefined {
 }
 
 export function listStaticReports(): HistoryPoint[] {
-  return [...reports.values()].map((r) => ({ reportId: r.id, at: r.createdAt, score: metricValue(r.pages[0]?.metrics ?? [], 'score') ?? 0, label: r.label }))
+  return [...reports.values()].map((r) => ({
+    reportId: r.id,
+    at: r.createdAt,
+    score: metricValue(r.pages[0]?.metrics ?? [], 'score') ?? 0,
+    label: r.label,
+  }))
 }
 
 /** Accepts PerfAgent JSON or a Lighthouse JSON result. Anything else is rejected with a plain message. */
@@ -53,11 +58,31 @@ export function staticStatus(report: Report | undefined): Status {
     version: 'website',
     mode: 'static',
     modeReasons: ['Static website: nothing can be scanned or changed here'],
-    project: { root: '', name: report?.label ?? 'Demo shop', framework: report?.build?.framework, frameworkVersion: report?.build?.frameworkVersion },
-    config: { urls: [], device: 'mobile', runs: 1, editor: 'auto', theme: 'system', language: 'en', aiProvider: 'none', environments: {} },
+    project: {
+      root: '',
+      name: report?.label ?? 'Demo shop',
+      framework: report?.build?.framework,
+      frameworkVersion: report?.build?.frameworkVersion,
+    },
+    config: {
+      urls: [],
+      device: 'mobile',
+      runs: 1,
+      editor: 'auto',
+      theme: 'system',
+      language: 'en',
+      aiProvider: 'none',
+      environments: {},
+    },
     editors: {},
     latestReportId: report?.id,
-    capabilities: { scanProject: false, openEditor: false, applyFixes: false, ai: false, live: false },
+    capabilities: {
+      scanProject: false,
+      openEditor: false,
+      applyFixes: false,
+      ai: false,
+      live: false,
+    },
     options: [],
   }
 }
@@ -68,12 +93,20 @@ export async function loadStaticGuides(): Promise<GuideMeta[]> {
   return (await response.json()) as GuideMeta[]
 }
 
-export async function loadStaticGuide(topic: string, language: string): Promise<GuideDoc | undefined> {
+export async function loadStaticGuide(
+  topic: string,
+  language: string,
+): Promise<GuideDoc | undefined> {
   const metas = await loadStaticGuides()
   const meta = metas.find((g) => g.topic === topic)
   if (!meta) return undefined
   const safe = topic.replace(/[^a-z0-9-]/gi, '')
-  const localized = language === 'en' ? undefined : await fetch(`${GUIDES_BASE}/${safe}.${language}.md`).then((r) => (r.ok ? r.text() : undefined)).catch(() => undefined)
+  const localized =
+    language === 'en'
+      ? undefined
+      : await fetch(`${GUIDES_BASE}/${safe}.${language}.md`)
+          .then((r) => (r.ok ? r.text() : undefined))
+          .catch(() => undefined)
   const english = await fetch(`${GUIDES_BASE}/${safe}.md`)
   const body: string = localized ?? (english.ok ? await english.text() : '')
   return { ...meta, body: stripFrontMatter(body) }

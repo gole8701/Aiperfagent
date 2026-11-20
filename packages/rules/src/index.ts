@@ -12,7 +12,14 @@ export { runRules, severityRank } from './engine.js'
 export type { Rule, RuleContext, Finding } from './engine.js'
 
 /** Registry: adding a pack means adding one line here. */
-export const allRules: Rule[] = [...generalRules, ...reactRules, ...nextRules, ...realtimeRules, ...aiRules, ...agentRules]
+export const allRules: Rule[] = [
+  ...generalRules,
+  ...reactRules,
+  ...nextRules,
+  ...realtimeRules,
+  ...aiRules,
+  ...agentRules,
+]
 
 export const packNames = ['general', 'react', 'next', 'realtime', 'ai', 'agents'] as const
 export type PackName = (typeof packNames)[number]
@@ -30,6 +37,9 @@ export function findRule(id: string): Rule | undefined {
   return allRules.find((r) => r.id === id)
 }
 
-export function detectIssues(ctx: RuleContext, disabled: string[] = []): ReturnType<typeof runRules> {
+export function detectIssues(
+  ctx: RuleContext,
+  disabled: string[] = [],
+): ReturnType<typeof runRules> {
   return runRules(allRules, ctx, disabled)
 }

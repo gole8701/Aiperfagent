@@ -1,5 +1,14 @@
 import { worstSeverity, type Severity, type TreeNode } from '@perfagent/core'
-import { Background, Handle, MiniMap, Position, ReactFlow, type Edge, type Node, type NodeProps } from '@xyflow/react'
+import {
+  Background,
+  Handle,
+  MiniMap,
+  Position,
+  ReactFlow,
+  type Edge,
+  type Node,
+  type NodeProps,
+} from '@xyflow/react'
 import { memo, useEffect, useMemo, useState } from 'react'
 import '@xyflow/react/dist/style.css'
 
@@ -15,17 +24,35 @@ interface FlowCanvasProps {
 
 // A type alias, not an interface: xyflow requires node data to fit Record<string, unknown>.
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type FlowNodeData = { node: TreeNode; expanded: boolean; hasChildren: boolean; match: boolean; selected: boolean; onToggle: (node: TreeNode) => void }
+type FlowNodeData = {
+  node: TreeNode
+  expanded: boolean
+  hasChildren: boolean
+  match: boolean
+  selected: boolean
+  onToggle: (node: TreeNode) => void
+}
 type FlowNode = Node<FlowNodeData, 'tree'>
 
-const SEVERITY_VAR: Record<Severity, string> = { critical: 'var(--critical)', warning: 'var(--warning)', info: 'var(--info)' }
+const SEVERITY_VAR: Record<Severity, string> = {
+  critical: 'var(--critical)',
+  warning: 'var(--warning)',
+  info: 'var(--info)',
+}
 
 const TreeNodeView = memo(function TreeNodeView({ data }: NodeProps<FlowNode>) {
   const { node, expanded, hasChildren, match, selected } = data
   const severity = worstSeverity(node)
   const count = node.counts.critical + node.counts.warning + node.counts.info
   return (
-    <div className={`flow-node ${selected ? 'selected' : ''} ${match ? 'match' : ''}`} style={{ borderColor: severity ? SEVERITY_VAR[severity] : undefined, width: NODE_WIDTH, height: NODE_HEIGHT }}>
+    <div
+      className={`flow-node ${selected ? 'selected' : ''} ${match ? 'match' : ''}`}
+      style={{
+        borderColor: severity ? SEVERITY_VAR[severity] : undefined,
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT,
+      }}
+    >
       <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
       {hasChildren ? (
         <button
@@ -48,7 +75,10 @@ const TreeNodeView = memo(function TreeNodeView({ data }: NodeProps<FlowNode>) {
         {node.name}
       </span>
       {count ? (
-        <span className={`flow-badge badge-${severity ?? 'info'}`} aria-label={`${count} problems inside`}>
+        <span
+          className={`flow-badge badge-${severity ?? 'info'}`}
+          aria-label={`${count} problems inside`}
+        >
           {count}
         </span>
       ) : null}
@@ -78,7 +108,14 @@ export function FlowCanvas({ graph, selectedId, onSelect, onToggle }: FlowCanvas
         id: v.node.id,
         type: 'tree',
         position: positions.get(v.node.id) ?? { x: v.depth * (NODE_WIDTH + 60), y: 0 },
-        data: { node: v.node, expanded: v.expanded, hasChildren: v.hasChildren, match: v.match, selected: v.node.id === selectedId, onToggle },
+        data: {
+          node: v.node,
+          expanded: v.expanded,
+          hasChildren: v.hasChildren,
+          match: v.match,
+          selected: v.node.id === selectedId,
+          onToggle,
+        },
         draggable: false,
         selectable: true,
       })),
@@ -92,7 +129,10 @@ export function FlowCanvas({ graph, selectedId, onSelect, onToggle }: FlowCanvas
         source: e.source,
         target: e.target,
         type: 'smoothstep',
-        style: { stroke: e.severity ? SEVERITY_VAR[e.severity] : 'var(--border-strong)', strokeWidth: e.severity ? 2 : 1 },
+        style: {
+          stroke: e.severity ? SEVERITY_VAR[e.severity] : 'var(--border-strong)',
+          strokeWidth: e.severity ? 2 : 1,
+        },
         animated: e.severity === 'critical',
       })),
     [graph],
@@ -114,7 +154,17 @@ export function FlowCanvas({ graph, selectedId, onSelect, onToggle }: FlowCanvas
         aria-label="Project flow diagram"
       >
         <Background gap={24} color="var(--border)" />
-        <MiniMap pannable zoomable nodeColor={(n) => (worstSeverity((n.data as FlowNodeData).node) === 'critical' ? '#ff6b4a' : worstSeverity((n.data as FlowNodeData).node) === 'warning' ? '#f5b83d' : '#4fa3ff')} />
+        <MiniMap
+          pannable
+          zoomable
+          nodeColor={(n) =>
+            worstSeverity((n.data as FlowNodeData).node) === 'critical'
+              ? '#ff6b4a'
+              : worstSeverity((n.data as FlowNodeData).node) === 'warning'
+                ? '#f5b83d'
+                : '#4fa3ff'
+          }
+        />
       </ReactFlow>
     </div>
   )

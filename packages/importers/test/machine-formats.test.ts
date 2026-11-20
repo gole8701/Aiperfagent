@@ -49,11 +49,21 @@ describe('HAR', () => {
     expect(metric(page, 'ttfb')).toBe(820.4)
     expect(metric(page, 'fcp')).toBe(1805.2)
     expect(metric(page, 'requests')).toBe(10)
-    expect(metric(page, 'transferKb')).toBeCloseTo((18420 + 412880 + 141020 + 24210 + 48310 + 98540 + 2210 + 684120 + 210330 + 120) / 1024, 2)
+    expect(metric(page, 'transferKb')).toBeCloseTo(
+      (18420 + 412880 + 141020 + 24210 + 48310 + 98540 + 2210 + 684120 + 210330 + 120) / 1024,
+      2,
+    )
     expect(metric(page, 'jsKb')).toBeCloseTo((412880 + 141020 + 98540 + 210330) / 1024, 2)
     expect(r.report.createdAt).toBe('2026-11-18T09:12:44.120Z')
     const byUrl = (part: string) => page?.requests.find((q) => q.url.includes(part))
-    expect(byUrl('index-Bd3k2.js')).toMatchObject({ type: 'script', transferBytes: 412880, startMs: 853, durationMs: 1058, thirdParty: false, blocking: true })
+    expect(byUrl('index-Bd3k2.js')).toMatchObject({
+      type: 'script',
+      transferBytes: 412880,
+      startMs: 853,
+      durationMs: 1058,
+      thirdParty: false,
+      blocking: true,
+    })
     expect(byUrl('gtm.js')).toMatchObject({ type: 'script', thirdParty: true, cached: false })
     expect(byUrl('fonts.gstatic.com')).toMatchObject({ type: 'font', thirdParty: true })
     expect(byUrl('logo.svg')).toMatchObject({ type: 'image', cached: true, status: 304 })
@@ -74,12 +84,25 @@ describe('Chrome trace', () => {
     expect(metric(page, 'requests')).toBe(4)
     expect(page?.layoutShifts).toHaveLength(2)
     expect(page?.longTasks.map((t) => t.durationMs)).toEqual([120, 180, 261])
-    expect(page?.requests.find((q) => q.url.includes('gtm.js'))).toMatchObject({ type: 'script', thirdParty: true, transferBytes: 98540, status: 200 })
+    expect(page?.requests.find((q) => q.url.includes('gtm.js'))).toMatchObject({
+      type: 'script',
+      thirdParty: true,
+      transferBytes: 98540,
+      status: 200,
+    })
   })
 
   it('accepts a bare event array', async () => {
     const { importReport } = await import('../src/index.js')
-    const events = [{ name: 'navigationStart', ph: 'R', ts: 100, args: { data: { documentLoaderURL: 'https://a.example/x' } } }, { name: 'firstContentfulPaint', ph: 'R', ts: 1_500_100, args: {} }]
+    const events = [
+      {
+        name: 'navigationStart',
+        ph: 'R',
+        ts: 100,
+        args: { data: { documentLoaderURL: 'https://a.example/x' } },
+      },
+      { name: 'firstContentfulPaint', ph: 'R', ts: 1_500_100, args: {} },
+    ]
     const r = await importReport({ text: JSON.stringify(events) })
     expect(r.format).toBe('trace')
     expect(metric(r.report.pages[0], 'fcp')).toBe(1500)
@@ -96,9 +119,18 @@ describe('bundle stats', () => {
     expect(metric(page, 'transferKb')).toBeCloseTo((318902 + 612344 + 88120 + 41210) / 1024, 2)
     expect(page?.requests.find((q) => q.url.endsWith('.css'))?.type).toBe('stylesheet')
     const large = r.report.issues.filter((i) => i.ruleId === 'bundle/large-chunk').map((i) => i.id)
-    expect(large).toEqual(['bundle/large-chunk:main.3f2a1c.js', 'bundle/large-chunk:vendors.7d2e4b.js'])
-    const dupes = r.report.issues.filter((i) => i.ruleId === 'bundle/duplicate-package').map((i) => i.id).sort()
-    expect(dupes).toEqual(['bundle/duplicate-package:@scope/ui', 'bundle/duplicate-package:date-fns'])
+    expect(large).toEqual([
+      'bundle/large-chunk:main.3f2a1c.js',
+      'bundle/large-chunk:vendors.7d2e4b.js',
+    ])
+    const dupes = r.report.issues
+      .filter((i) => i.ruleId === 'bundle/duplicate-package')
+      .map((i) => i.id)
+      .sort()
+    expect(dupes).toEqual([
+      'bundle/duplicate-package:@scope/ui',
+      'bundle/duplicate-package:date-fns',
+    ])
     const issue = r.report.issues[0]
     expect(issue).toMatchObject({ status: 'open', confidence: 0.8 })
     expect(issue?.chain.map((c) => c.kind)).toEqual(['metric', 'dependency'])
@@ -111,8 +143,13 @@ describe('bundle stats', () => {
     const page = r.report.pages[0]
     expect(r.format).toBe('bundle-stats')
     expect(metric(page, 'requests')).toBe(3)
-    expect(page?.requests.find((q) => q.url === 'assets/index-Bd3k2.js')?.transferBytes).toBe(2410 + 8120 + 4230 + 132040 + 7220 + 544098 + 61200 + 58900)
-    expect(r.report.issues.map((i) => i.id)).toEqual(['bundle/large-chunk:assets/index-Bd3k2.js', 'bundle/duplicate-package:date-fns'])
+    expect(page?.requests.find((q) => q.url === 'assets/index-Bd3k2.js')?.transferBytes).toBe(
+      2410 + 8120 + 4230 + 132040 + 7220 + 544098 + 61200 + 58900,
+    )
+    expect(r.report.issues.map((i) => i.id)).toEqual([
+      'bundle/large-chunk:assets/index-Bd3k2.js',
+      'bundle/duplicate-package:date-fns',
+    ])
   })
 })
 
@@ -125,12 +162,30 @@ describe('OpenTelemetry', () => {
     expect(metric(pageAt(r, '/'), 'ttfb')).toBe(410)
     const calls = r.report.ai?.calls ?? []
     expect(calls).toHaveLength(3)
-    expect(calls[0]).toMatchObject({ model: 'claude-sonnet-5-5', provider: 'anthropic', firstTokenMs: 920, totalMs: 3400, inputTokens: 1200, outputTokens: 350, cachedTokens: 800, route: '/api/assistant' })
+    expect(calls[0]).toMatchObject({
+      model: 'claude-sonnet-5-5',
+      provider: 'anthropic',
+      firstTokenMs: 920,
+      totalMs: 3400,
+      inputTokens: 1200,
+      outputTokens: 350,
+      cachedTokens: 800,
+      route: '/api/assistant',
+    })
     expect(calls[0]?.costUsd).toBeCloseTo((1200 * 2 + 350 * 10) / 1e6, 6)
     expect(calls[1]?.firstTokenMs).toBe(1450)
-    expect(calls[2]).toMatchObject({ model: 'claude-haiku-5-5', error: 'rate_limit_error: 429', firstTokenMs: 310 })
+    expect(calls[2]).toMatchObject({
+      model: 'claude-haiku-5-5',
+      error: 'rate_limit_error: 429',
+      firstTokenMs: 310,
+    })
     const sonnet = r.report.ai?.models.find((m) => m.model === 'claude-sonnet-5-5')
-    expect(sonnet).toMatchObject({ calls: 2, p50FirstTokenMs: 1185, p95FirstTokenMs: 1450, errorRate: 0 })
+    expect(sonnet).toMatchObject({
+      calls: 2,
+      p50FirstTokenMs: 1185,
+      p95FirstTokenMs: 1450,
+      errorRate: 0,
+    })
     expect(r.report.ai?.models.find((m) => m.model === 'claude-haiku-5-5')?.errorRate).toBe(1)
   })
 
@@ -139,16 +194,43 @@ describe('OpenTelemetry', () => {
     const calls = r.report.ai?.calls ?? []
     expect(r.format).toBe('otel')
     expect(calls.map((c) => c.provider)).toEqual(['claude-code', 'claude-code'])
-    expect(calls[0]).toMatchObject({ model: 'claude-sonnet-5-5', inputTokens: 48210, outputTokens: 9120, cachedTokens: 312000, costUsd: 0.2184 })
+    expect(calls[0]).toMatchObject({
+      model: 'claude-sonnet-5-5',
+      inputTokens: 48210,
+      outputTokens: 9120,
+      cachedTokens: 312000,
+      costUsd: 0.2184,
+    })
     expect(r.report.ai?.models.reduce((s, m) => s + m.costUsd, 0)).toBeCloseTo(0.21942, 5)
   })
 
   it('reads the JS SDK console exporter array', async () => {
     const { importReport } = await import('../src/index.js')
-    const spans = [{ traceId: 'abc', spanId: '1', name: 'chat', kind: 3, timestamp: 1_763_460_000_000_000, duration: 2_000_000, attributes: { 'gen_ai.system': 'openai', 'gen_ai.request.model': 'gpt-4o-mini', 'gen_ai.usage.input_tokens': 100, 'gen_ai.usage.output_tokens': 50 }, status: { code: 0 }, events: [] }]
+    const spans = [
+      {
+        traceId: 'abc',
+        spanId: '1',
+        name: 'chat',
+        kind: 3,
+        timestamp: 1_763_460_000_000_000,
+        duration: 2_000_000,
+        attributes: {
+          'gen_ai.system': 'openai',
+          'gen_ai.request.model': 'gpt-4o-mini',
+          'gen_ai.usage.input_tokens': 100,
+          'gen_ai.usage.output_tokens': 50,
+        },
+        status: { code: 0 },
+        events: [],
+      },
+    ]
     const r = await importReport({ text: JSON.stringify(spans) })
     expect(r.format).toBe('otel')
-    expect(r.report.ai?.calls[0]).toMatchObject({ model: 'gpt-4o-mini', totalMs: 2000, firstTokenMs: 2000 })
+    expect(r.report.ai?.calls[0]).toMatchObject({
+      model: 'gpt-4o-mini',
+      totalMs: 2000,
+      firstTokenMs: 2000,
+    })
   })
 })
 
@@ -161,7 +243,10 @@ describe('web-vitals export', () => {
     expect(metric(checkout, 'inp')).toBe(210)
     expect(metric(checkout, 'cls')).toBe(0.121)
     expect(metric(checkout, 'ttfb')).toBe(820)
-    expect(checkout?.metrics.find((m) => m.id === 'lcp')).toMatchObject({ p75: 3412.5, sampleCount: 4 })
+    expect(checkout?.metrics.find((m) => m.id === 'lcp')).toMatchObject({
+      p75: 3412.5,
+      sampleCount: 4,
+    })
     expect(metric(pageAt(r, '/'), 'lcp')).toBe(2104.2)
   })
 })

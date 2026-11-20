@@ -12,7 +12,10 @@ import { createAiService, createKeyStore } from '../src/index.js'
 
 import { startStubServer, type StubServer } from './stub-server.js'
 
-const fixture = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../fixtures/reports/demo-shop-before.json')
+const fixture = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../../fixtures/reports/demo-shop-before.json',
+)
 
 let stub: StubServer
 let root: string
@@ -34,8 +37,19 @@ beforeEach(async () => {
   stub.reply = () => 'The hero image loads late because of loading="lazy".'
 })
 
-function service(provider: 'openai' | 'anthropic' | 'none' = 'openai', overrides: Record<string, unknown> = {}) {
-  const config = configSchema.parse({ root, ai: { provider, model: provider === 'anthropic' ? 'claude-sonnet-4-5' : 'gpt-4.1-mini', baseUrl: provider === 'openai' ? `${stub.url}/v1` : stub.url, ...overrides } })
+function service(
+  provider: 'openai' | 'anthropic' | 'none' = 'openai',
+  overrides: Record<string, unknown> = {},
+) {
+  const config = configSchema.parse({
+    root,
+    ai: {
+      provider,
+      model: provider === 'anthropic' ? 'claude-sonnet-4-5' : 'gpt-4.1-mini',
+      baseUrl: provider === 'openai' ? `${stub.url}/v1` : stub.url,
+      ...overrides,
+    },
+  })
   const keyStore = createKeyStore({ dir: path.join(root, 'keys'), fileOnly: true })
   return { ai: createAiService({ config, store, keyStore }), keyStore }
 }
@@ -69,7 +83,14 @@ describe('keys', () => {
 
   it('lists all six providers with the browser one handled in the dashboard', async () => {
     const providers = await service().ai.providers()
-    expect(providers.map((p) => p.id)).toEqual(['ollama', 'anthropic', 'openai', 'openai-compatible', 'gemini', 'browser'])
+    expect(providers.map((p) => p.id)).toEqual([
+      'ollama',
+      'anthropic',
+      'openai',
+      'openai-compatible',
+      'gemini',
+      'browser',
+    ])
     expect(providers.find((p) => p.id === 'browser')?.detail).toBe('handled in the dashboard')
   })
 })
@@ -78,7 +99,9 @@ describe('explain / usage / audit', () => {
   it('explains through an OpenAI-compatible endpoint, records usage with a cost and an audit line without content', async () => {
     const { ai } = service()
     await ai.storeKey('openai', 'sk-test-1234567890abcdef3f9')
-    const text = await ai.explain(issue, [{ path: 'src/components/HeroBanner.tsx', text: '<img loading="lazy" />' }])
+    const text = await ai.explain(issue, [
+      { path: 'src/components/HeroBanner.tsx', text: '<img loading="lazy" />' },
+    ])
     expect(text).toContain('hero image')
     const req = stub.requests[0]
     expect(req?.headers.authorization).toBe('Bearer sk-test-1234567890abcdef3f9')
@@ -97,7 +120,12 @@ describe('explain / usage / audit', () => {
   it('redacts secrets before sending', async () => {
     const { ai } = service()
     await ai.storeKey('openai', 'sk-test-1234567890abcdef3f9')
-    await ai.explain(issue, [{ path: 'a.ts', text: 'const key = "sk-live-abcdefghijklmnopqrstuvwxyz"; mail admin@example.com' }])
+    await ai.explain(issue, [
+      {
+        path: 'a.ts',
+        text: 'const key = "sk-live-abcdefghijklmnopqrstuvwxyz"; mail admin@example.com',
+      },
+    ])
     const sent = JSON.stringify(stub.requests[0]?.body)
     expect(sent).not.toContain('sk-live-abcdefghijklmnopqrstuvwxyz')
     expect(sent).not.toContain('admin@example.com')
@@ -126,7 +154,8 @@ describe('explain / usage / audit', () => {
     const { ai } = service('none', { baseUrl: undefined })
     // Ollama may be running on this machine; only assert the no-provider path when it is not.
     const active = await ai.activeProvider()
-    if (active === 'rules') await expect(ai.explain(issue, [])).rejects.toMatchObject({ code: 'AI_NOT_CONFIGURED' })
+    if (active === 'rules')
+      await expect(ai.explain(issue, [])).rejects.toMatchObject({ code: 'AI_NOT_CONFIGURED' })
     else expect(active).toBe('ollama')
   })
 
@@ -146,21 +175,32 @@ describe('proposeFix', () => {
   it('keeps only changes whose before is found in a shared file', async () => {
     const { ai } = service()
     await ai.storeKey('openai', 'sk-test-1234567890abcdef3f9')
-    stub.reply = () => JSON.stringify([
-      { file: 'src/a.ts', before: 'const a = 1', after: 'const a = 10', explanation: 'ok' },
-      { file: 'src/a.ts', before: 'nope', after: 'x', explanation: 'before missing' },
-      { file: '../outside.ts', before: 'const a = 1', after: 'x', explanation: 'file not shared' },
-      { file: 'src/a.ts', before: 'const b = 2', after: 'const b = 2', explanation: 'no-op' },
-    ])
+    stub.reply = () =>
+      JSON.stringify([
+        { file: 'src/a.ts', before: 'const a = 1', after: 'const a = 10', explanation: 'ok' },
+        { file: 'src/a.ts', before: 'nope', after: 'x', explanation: 'before missing' },
+        {
+          file: '../outside.ts',
+          before: 'const a = 1',
+          after: 'x',
+          explanation: 'file not shared',
+        },
+        { file: 'src/a.ts', before: 'const b = 2', after: 'const b = 2', explanation: 'no-op' },
+      ])
     const changes = await ai.proposeFix([issue], files)
-    expect(changes).toEqual([{ file: 'src/a.ts', before: 'const a = 1', after: 'const a = 10', explanation: 'ok' }])
+    expect(changes).toEqual([
+      { file: 'src/a.ts', before: 'const a = 1', after: 'const a = 10', explanation: 'ok' },
+    ])
   })
 
   it('re-asks once when the answer is not JSON', async () => {
     const { ai } = service()
     await ai.storeKey('openai', 'sk-test-1234567890abcdef3f9')
     let calls = 0
-    stub.reply = () => (++calls === 1 ? 'Sure! Here is my plan...' : '```json\n[{"file":"src/a.ts","before":"const b = 2","after":"const b = 3","explanation":"e"}]\n```')
+    stub.reply = () =>
+      ++calls === 1
+        ? 'Sure! Here is my plan...'
+        : '```json\n[{"file":"src/a.ts","before":"const b = 2","after":"const b = 3","explanation":"e"}]\n```'
     const changes = await ai.proposeFix([issue], files)
     expect(calls).toBe(2)
     expect(changes).toHaveLength(1)
@@ -170,8 +210,19 @@ describe('proposeFix', () => {
   it('strips line-number prefixes from snippet windows', async () => {
     const { ai } = service()
     await ai.storeKey('openai', 'sk-test-1234567890abcdef3f9')
-    stub.reply = () => JSON.stringify([{ file: 'src/a.ts', before: '   1| const a = 1', after: '   1| const a = 2', explanation: '' }])
-    const changes = await ai.proposeFix([issue], [{ path: 'src/a.ts', text: '   1| const a = 1\n   2| const b = 2' }])
+    stub.reply = () =>
+      JSON.stringify([
+        {
+          file: 'src/a.ts',
+          before: '   1| const a = 1',
+          after: '   1| const a = 2',
+          explanation: '',
+        },
+      ])
+    const changes = await ai.proposeFix(
+      [issue],
+      [{ path: 'src/a.ts', text: '   1| const a = 1\n   2| const b = 2' }],
+    )
     expect(changes[0]).toMatchObject({ before: 'const a = 1', after: 'const a = 2' })
   })
 })
@@ -180,26 +231,68 @@ describe('report and model comparison', () => {
   it('aggregates samples into an AiReport', async () => {
     await store.init()
     const lines = [
-      { at: '2026-01-01T00:00:00Z', model: 'gpt-4o', provider: 'openai', firstTokenMs: 100, totalMs: 900, inputTokens: 10, outputTokens: 20, cachedTokens: 0, costUsd: 0.001, retries: 0, stalls: 0 },
-      { at: '2026-01-01T00:00:01Z', model: 'gpt-4o', provider: 'openai', firstTokenMs: 300, totalMs: 1200, inputTokens: 10, outputTokens: 20, cachedTokens: 0, costUsd: 0.001, retries: 1, stalls: 0, error: '429' },
+      {
+        at: '2026-01-01T00:00:00Z',
+        model: 'gpt-4o',
+        provider: 'openai',
+        firstTokenMs: 100,
+        totalMs: 900,
+        inputTokens: 10,
+        outputTokens: 20,
+        cachedTokens: 0,
+        costUsd: 0.001,
+        retries: 0,
+        stalls: 0,
+      },
+      {
+        at: '2026-01-01T00:00:01Z',
+        model: 'gpt-4o',
+        provider: 'openai',
+        firstTokenMs: 300,
+        totalMs: 1200,
+        inputTokens: 10,
+        outputTokens: 20,
+        cachedTokens: 0,
+        costUsd: 0.001,
+        retries: 1,
+        stalls: 0,
+        error: '429',
+      },
       'not json',
     ]
-    await writeFile(path.join(root, '.perfagent', 'ai-samples.jsonl'), lines.map((l) => (typeof l === 'string' ? l : JSON.stringify(l))).join('\n'))
+    await writeFile(
+      path.join(root, '.perfagent', 'ai-samples.jsonl'),
+      lines.map((l) => (typeof l === 'string' ? l : JSON.stringify(l))).join('\n'),
+    )
     const { ai } = service('openai', { budgetUsdPerDay: 2 })
     const result = await ai.report()
     expect(result.calls).toHaveLength(2)
-    expect(result.models[0]).toMatchObject({ model: 'gpt-4o', calls: 2, p50FirstTokenMs: 100, errorRate: 0.5, costUsd: 0.002 })
+    expect(result.models[0]).toMatchObject({
+      model: 'gpt-4o',
+      calls: 2,
+      p50FirstTokenMs: 100,
+      errorRate: 0.5,
+      costUsd: 0.002,
+    })
     expect(result.budgetUsdPerDay).toBe(2)
   })
 
   it('runs the same question through several models', async () => {
     const { ai } = service()
     await ai.storeKey('openai', 'sk-test-1234567890abcdef3f9')
-    const rows = await ai.compareModels(['What is LCP?'], [{ provider: 'openai', model: 'gpt-4.1-mini' }, { provider: 'openai', model: 'gpt-4o' }])
+    const rows = await ai.compareModels(
+      ['What is LCP?'],
+      [
+        { provider: 'openai', model: 'gpt-4.1-mini' },
+        { provider: 'openai', model: 'gpt-4o' },
+      ],
+    )
     expect(rows.map((r) => r.model)).toEqual(['gpt-4.1-mini', 'gpt-4o'])
     expect(rows[0]?.qualityScore).toBe(1)
     expect(rows[1]?.costUsd).toBeGreaterThan(rows[0]?.costUsd ?? 0)
   })
 })
 
-afterAll(async () => { await rm(root, { recursive: true, force: true }) })
+afterAll(async () => {
+  await rm(root, { recursive: true, force: true })
+})

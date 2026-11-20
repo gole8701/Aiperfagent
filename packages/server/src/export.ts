@@ -2,11 +2,18 @@ import { METRICS, formatMetric, summarise, type Report } from '@perfagent/core'
 
 export type ExportFormat = 'json' | 'csv' | 'md' | 'html'
 
-export function exportReport(report: Report, format: ExportFormat): { body: string; contentType: string; filename: string } {
+export function exportReport(
+  report: Report,
+  format: ExportFormat,
+): { body: string; contentType: string; filename: string } {
   const base = `perfagent-report-${report.id}`
   switch (format) {
     case 'json':
-      return { body: JSON.stringify(report, null, 2), contentType: 'application/json', filename: `${base}.json` }
+      return {
+        body: JSON.stringify(report, null, 2),
+        contentType: 'application/json',
+        filename: `${base}.json`,
+      }
     case 'csv':
       return { body: toCsv(report), contentType: 'text/csv', filename: `${base}.csv` }
     case 'md':
@@ -18,9 +25,23 @@ export function exportReport(report: Report, format: ExportFormat): { body: stri
 
 function toCsv(report: Report): string {
   const rows: string[][] = [['page', 'metric', 'value', 'unit', 'rating']]
-  for (const page of report.pages) for (const m of page.metrics) rows.push([page.route, m.id, String(m.value), m.unit, ''])
-  rows.push([], ['severity', 'title', 'plain', 'file', 'line', 'metric', 'gain_points', 'first_step'])
-  for (const i of report.issues) rows.push([i.severity, i.title, i.plain, i.location?.file ?? '', String(i.location?.line ?? ''), i.gain.metric, String(i.gain.scoreDelta), i.fix.steps[0] ?? ''])
+  for (const page of report.pages)
+    for (const m of page.metrics) rows.push([page.route, m.id, String(m.value), m.unit, ''])
+  rows.push(
+    [],
+    ['severity', 'title', 'plain', 'file', 'line', 'metric', 'gain_points', 'first_step'],
+  )
+  for (const i of report.issues)
+    rows.push([
+      i.severity,
+      i.title,
+      i.plain,
+      i.location?.file ?? '',
+      String(i.location?.line ?? ''),
+      i.gain.metric,
+      String(i.gain.scoreDelta),
+      i.fix.steps[0] ?? '',
+    ])
   return rows.map((r) => r.map(csvCell).join(',')).join('\n')
 }
 
@@ -31,17 +52,44 @@ function csvCell(v: string): string {
 /** Markdown ready to paste into a pull request or ticket. */
 export function toMarkdown(report: Report): string {
   const summary = summarise(report)
-  const lines = [`# PerfAgent report: ${report.label ?? report.environment.name}`, '', `_${new Date(report.createdAt).toLocaleString()} · ${report.environment.device} · ${report.environment.mode} mode_`, '', `**${summary.headline}.** ${summary.sentences.join(' ')}`, '']
+  const lines = [
+    `# PerfAgent report: ${report.label ?? report.environment.name}`,
+    '',
+    `_${new Date(report.createdAt).toLocaleString()} · ${report.environment.device} · ${report.environment.mode} mode_`,
+    '',
+    `**${summary.headline}.** ${summary.sentences.join(' ')}`,
+    '',
+  ]
   for (const page of report.pages) {
     lines.push(`## ${page.route}`, '', '| Metric | Value | Rating |', '|---|---|---|')
-    for (const m of page.metrics) lines.push(`| ${METRICS[m.id].short} | ${formatMetric(m.id, m.value)} | ${ratingWord(m.id, m.value)} |`)
+    for (const m of page.metrics)
+      lines.push(
+        `| ${METRICS[m.id].short} | ${formatMetric(m.id, m.value)} | ${ratingWord(m.id, m.value)} |`,
+      )
     lines.push('')
   }
   const open = report.issues.filter((i) => i.status === 'open')
   lines.push(`## Problems (${open.length})`, '')
   for (const i of open) {
-    lines.push(`### ${sevIcon(i.severity)} ${i.title}`, '', i.plain + (i.location ? ` — \`${i.location.file}:${i.location.line}\`` : ''), '', `**Why:** ${i.why}`, '', `**Fix:**`, ...i.fix.steps.map((s) => `1. ${s}`), '')
-    if (i.fix.changes[0]) lines.push('```diff', ...i.fix.changes[0].before.split('\n').map((l) => `- ${l}`), ...i.fix.changes[0].after.split('\n').map((l) => `+ ${l}`), '```', '')
+    lines.push(
+      `### ${sevIcon(i.severity)} ${i.title}`,
+      '',
+      i.plain + (i.location ? ` — \`${i.location.file}:${i.location.line}\`` : ''),
+      '',
+      `**Why:** ${i.why}`,
+      '',
+      `**Fix:**`,
+      ...i.fix.steps.map((s) => `1. ${s}`),
+      '',
+    )
+    if (i.fix.changes[0])
+      lines.push(
+        '```diff',
+        ...i.fix.changes[0].before.split('\n').map((l) => `- ${l}`),
+        ...i.fix.changes[0].after.split('\n').map((l) => `+ ${l}`),
+        '```',
+        '',
+      )
   }
   return lines.join('\n')
 }

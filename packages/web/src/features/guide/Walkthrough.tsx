@@ -52,7 +52,13 @@ export function Walkthrough({ title, steps, step, onStep, nextTopic }: Walkthrou
       </div>
       <div className="stage">
         <SceneView screen={current.screen} highlight={current.area} />
-        {area ? <div className={`pointer ${reducedMotion ? 'no-motion' : ''}`} style={{ left: `${area.l + area.w / 2}%`, top: `${area.t + area.h / 2}%` }} aria-hidden="true" /> : null}
+        {area ? (
+          <div
+            className={`pointer ${reducedMotion ? 'no-motion' : ''}`}
+            style={{ left: `${area.l + area.w / 2}%`, top: `${area.t + area.h / 2}%` }}
+            aria-hidden="true"
+          />
+        ) : null}
         <div className="caption" aria-live="polite">
           <strong>
             {step + 1}. {current.title}
@@ -62,13 +68,28 @@ export function Walkthrough({ title, steps, step, onStep, nextTopic }: Walkthrou
       </div>
       <div className="row" style={{ marginTop: 10, justifyContent: 'space-between' }}>
         <div className="row">
-          <Button small onClick={() => onStep(Math.max(0, step - 1))} disabled={step === 0} aria-label="Previous step">
+          <Button
+            small
+            onClick={() => onStep(Math.max(0, step - 1))}
+            disabled={step === 0}
+            aria-label="Previous step"
+          >
             ‹
           </Button>
-          <Button small variant="primary" onClick={() => setPlaying((p) => !p)} aria-pressed={playing}>
+          <Button
+            small
+            variant="primary"
+            onClick={() => setPlaying((p) => !p)}
+            aria-pressed={playing}
+          >
             {playing ? 'Pause' : 'Play'}
           </Button>
-          <Button small onClick={() => onStep(Math.min(steps.length - 1, step + 1))} disabled={step === steps.length - 1} aria-label="Next step">
+          <Button
+            small
+            onClick={() => onStep(Math.min(steps.length - 1, step + 1))}
+            disabled={step === steps.length - 1}
+            aria-label="Next step"
+          >
             ›
           </Button>
           <Button
@@ -82,7 +103,15 @@ export function Walkthrough({ title, steps, step, onStep, nextTopic }: Walkthrou
           </Button>
           <div className="dots" role="tablist" aria-label="Steps">
             {steps.map((s, i) => (
-              <button key={i} type="button" role="tab" aria-selected={i === step} aria-label={`Step ${i + 1}: ${s.title}`} className={`dot-btn ${i === step ? 'active' : ''}`} onClick={() => onStep(i)} />
+              <button
+                key={i}
+                type="button"
+                role="tab"
+                aria-selected={i === step}
+                aria-label={`Step ${i + 1}: ${s.title}`}
+                className={`dot-btn ${i === step ? 'active' : ''}`}
+                onClick={() => onStep(i)}
+              />
             ))}
           </div>
         </div>
@@ -113,5 +142,12 @@ async function runTour(steps: WalkthroughStep[]): Promise<void> {
     .filter((x) => x.selector && document.querySelector(x.selector))
     .map((x) => ({ element: x.selector, popover: { title: x.s.title, description: x.s.text } }))
   if (tourSteps.length === 0) return
-  driver({ showProgress: true, animate: !reduced, steps: tourSteps, nextBtnText: 'Next ›', prevBtnText: '‹ Back', doneBtnText: 'Done' }).drive()
+  driver({
+    showProgress: true,
+    animate: !reduced,
+    steps: tourSteps,
+    nextBtnText: 'Next ›',
+    prevBtnText: '‹ Back',
+    doneBtnText: 'Done',
+  }).drive()
 }

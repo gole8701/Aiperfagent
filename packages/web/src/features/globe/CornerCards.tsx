@@ -6,7 +6,9 @@ interface CornerCardsProps {
 
 /** The four facts the mock-up pins to the globe's corners: slowest LCP, live WebSocket, AI, bundle. */
 export function CornerCards({ report }: CornerCardsProps) {
-  const slowest = [...report.pages].sort((a, b) => (metricValue(b.metrics, 'lcp') ?? 0) - (metricValue(a.metrics, 'lcp') ?? 0))[0]
+  const slowest = [...report.pages].sort(
+    (a, b) => (metricValue(b.metrics, 'lcp') ?? 0) - (metricValue(a.metrics, 'lcp') ?? 0),
+  )[0]
   const lcp = slowest ? metricValue(slowest.metrics, 'lcp') : undefined
   const live = report.live
   const wsRate = live ? average(live.websocket.messagesPerSec) : undefined
@@ -26,12 +28,26 @@ export function CornerCards({ report }: CornerCardsProps) {
       <div className="corner-card">
         <span className="muted">Live · WebSocket</span>
         <strong>{wsRate !== undefined ? `${Math.round(wsRate)} msg/s` : 'not recorded'}</strong>
-        <span>{live ? `${live.websocket.reconnects.length} reconnects` : 'Start Live to record'}</span>
+        <span>
+          {live ? `${live.websocket.reconnects.length} reconnects` : 'Start Live to record'}
+        </span>
       </div>
       <div className="corner-card">
         <span className="muted">AI · first token p95</span>
-        <strong>{aiFirst !== undefined ? formatMetric('aiFirstTokenMs', aiFirst) : ai?.callSites.length ? `${ai.callSites.length} call sites` : 'no AI calls'}</strong>
-        <span>{aiCost !== undefined && ai?.calls.length ? `${formatMetric('aiCostUsd', aiCost)} measured` : ai?.callSites.length ? 'wrap calls to measure' : ''}</span>
+        <strong>
+          {aiFirst !== undefined
+            ? formatMetric('aiFirstTokenMs', aiFirst)
+            : ai?.callSites.length
+              ? `${ai.callSites.length} call sites`
+              : 'no AI calls'}
+        </strong>
+        <span>
+          {aiCost !== undefined && ai?.calls.length
+            ? `${formatMetric('aiCostUsd', aiCost)} measured`
+            : ai?.callSites.length
+              ? 'wrap calls to measure'
+              : ''}
+        </span>
       </div>
       <div className="corner-card">
         <span className="muted">Bundle · first load</span>

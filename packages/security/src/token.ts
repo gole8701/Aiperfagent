@@ -11,7 +11,10 @@ export function tokenMatches(expected: string, given: string | undefined): boole
 }
 
 /** Reads the token from `Authorization: Bearer …`, the `?token=` query or the session cookie. */
-export function extractToken(headers: Record<string, string | string[] | undefined>, url: string): string | undefined {
+export function extractToken(
+  headers: Record<string, string | string[] | undefined>,
+  url: string,
+): string | undefined {
   const auth = headerValue(headers.authorization)
   if (auth?.startsWith('Bearer ')) return auth.slice(7).trim()
   const query = new URL(url, 'http://127.0.0.1').searchParams.get('token')

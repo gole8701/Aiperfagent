@@ -25,12 +25,21 @@ export default function FixSettings() {
     <SettingsShell active="fix" title="Fix settings">
       <div className="settings-grid">
         <Card title="How fixes are applied">
-          <SchemaRows include={(p) => p.startsWith('fix.') && !p.startsWith('fix.target') && !p.startsWith('fix.max')} labels={LABELS} />
+          <SchemaRows
+            include={(p) =>
+              p.startsWith('fix.') && !p.startsWith('fix.target') && !p.startsWith('fix.max')
+            }
+            labels={LABELS}
+          />
         </Card>
         <Card title="Limits and targets">
-          <SchemaRows include={(p) => p.startsWith('fix.max') || p.startsWith('fix.target')} labels={LABELS} />
+          <SchemaRows
+            include={(p) => p.startsWith('fix.max') || p.startsWith('fix.target')}
+            labels={LABELS}
+          />
           <p className="muted" style={{ fontSize: 12, marginTop: 12 }}>
-            Always true: never on main directly, never pushes, merges or deploys by itself, never in deployed environments, and every change can be undone.
+            Always true: never on main directly, never pushes, merges or deploys by itself, never in
+            deployed environments, and every change can be undone.
           </p>
         </Card>
       </div>

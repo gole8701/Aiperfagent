@@ -3,7 +3,12 @@ import type { TreeNode } from '@perfagent/core'
 /** Deterministic synthetic project tree with roughly `fileCount` files for performance tests. */
 export function generateTree(fileCount: number, filesPerDir = 20): TreeNode {
   let counter = 0
-  const node = (kind: TreeNode['kind'], name: string, path: string, children: TreeNode[] = []): TreeNode => ({
+  const node = (
+    kind: TreeNode['kind'],
+    name: string,
+    path: string,
+    children: TreeNode[] = [],
+  ): TreeNode => ({
     id: `n${counter++}`,
     name,
     kind,
@@ -27,7 +32,14 @@ export function generateTree(fileCount: number, filesPerDir = 20): TreeNode {
       files.push(file)
     }
     const dir = node('dir', `dir${d}`, `src/dir${d}`, files)
-    dir.counts = files.reduce((acc, f) => ({ critical: acc.critical + f.counts.critical, warning: acc.warning + f.counts.warning, info: 0 }), { critical: 0, warning: 0, info: 0 })
+    dir.counts = files.reduce(
+      (acc, f) => ({
+        critical: acc.critical + f.counts.critical,
+        warning: acc.warning + f.counts.warning,
+        info: 0,
+      }),
+      { critical: 0, warning: 0, info: 0 },
+    )
     dirs.push(dir)
   }
   const src = node('dir', 'src', 'src', dirs)

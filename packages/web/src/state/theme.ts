@@ -17,14 +17,20 @@ const KEY = 'perfagent.display'
 function read(): Pick<DisplayState, 'theme' | 'density' | 'presentation'> {
   try {
     const saved = JSON.parse(localStorage.getItem(KEY) ?? '{}') as Partial<DisplayState>
-    return { theme: saved.theme ?? 'dark', density: saved.density ?? 'comfortable', presentation: saved.presentation ?? false }
+    return {
+      theme: saved.theme ?? 'dark',
+      density: saved.density ?? 'comfortable',
+      presentation: saved.presentation ?? false,
+    }
   } catch {
     return { theme: 'dark', density: 'comfortable', presentation: false }
   }
 }
 
-const media = typeof window !== 'undefined' ? window.matchMedia('(prefers-color-scheme: light)') : undefined
-const motion = typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)') : undefined
+const media =
+  typeof window !== 'undefined' ? window.matchMedia('(prefers-color-scheme: light)') : undefined
+const motion =
+  typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)') : undefined
 
 function apply(state: Pick<DisplayState, 'theme' | 'density' | 'presentation'>): void {
   const resolved = state.theme === 'system' ? (media?.matches ? 'light' : 'dark') : state.theme
@@ -53,7 +59,12 @@ export const useDisplay = create<DisplayState>((set, get) => {
   }
 })
 
-export const THEME_LABELS: Record<Theme, string> = { dark: 'Dark', light: 'Light', system: 'System', 'high-contrast': 'High contrast' }
+export const THEME_LABELS: Record<Theme, string> = {
+  dark: 'Dark',
+  light: 'Light',
+  system: 'System',
+  'high-contrast': 'High contrast',
+}
 
 /** Reads a design token at runtime so canvases (globe, charts) follow the theme. */
 export function token(name: string): string {

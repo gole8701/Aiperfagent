@@ -1,4 +1,13 @@
-import type { Area, Issue, MetricId, MetricValue, PageResult, Report, RequestInfo, Severity } from '@perfagent/core'
+import type {
+  Area,
+  Issue,
+  MetricId,
+  MetricValue,
+  PageResult,
+  Report,
+  RequestInfo,
+  Severity,
+} from '@perfagent/core'
 import { METRICS } from '@perfagent/core'
 
 /**
@@ -43,7 +52,9 @@ export interface Lighthouse {
   audits: Record<string, Audit>
 }
 
-export function isLighthouseJson(data: unknown): data is Lighthouse | { lighthouseResult: Lighthouse } {
+export function isLighthouseJson(
+  data: unknown,
+): data is Lighthouse | { lighthouseResult: Lighthouse } {
   if (!data || typeof data !== 'object') return false
   const d = data as { audits?: unknown; lighthouseResult?: { audits?: unknown } }
   return typeof d.audits === 'object' || typeof d.lighthouseResult?.audits === 'object'
@@ -93,7 +104,10 @@ export function convertLighthouse(input: Lighthouse | { lighthouseResult: Lighth
     requests: requests(lhr, url),
     longTasks: [],
     layoutShifts: [],
-    filmstrip: (lhr.audits['screenshot-thumbnails']?.details?.items ?? []).map((f) => ({ timeMs: f.timing ?? 0, image: f.data ?? '' })),
+    filmstrip: (lhr.audits['screenshot-thumbnails']?.details?.items ?? []).map((f) => ({
+      timeMs: f.timing ?? 0,
+      image: f.data ?? '',
+    })),
     lcpElement: lhr.audits['largest-contentful-paint-element']?.details?.items?.[0]?.node?.selector,
     coverage: coverage(lhr),
   }
@@ -103,7 +117,13 @@ export function convertLighthouse(input: Lighthouse | { lighthouseResult: Lighth
     tool: { name: 'perfagent', version: `lighthouse-${lhr.lighthouseVersion ?? 'unknown'}` },
     id,
     createdAt: lhr.fetchTime ?? new Date().toISOString(),
-    environment: { name: 'lighthouse', url, device: page.device, browser: 'chromium', mode: 'imported' },
+    environment: {
+      name: 'lighthouse',
+      url,
+      device: page.device,
+      browser: 'chromium',
+      mode: 'imported',
+    },
     pages: [page],
     issues: issues(lhr, route),
     label: `Lighthouse · ${route}`,
@@ -117,12 +137,23 @@ function metricValues(lhr: Lighthouse): MetricValue[] {
     if (typeof value === 'number') values.push({ id, value, unit: METRICS[id].unit })
   }
   const score = lhr.categories?.performance?.score
-  if (typeof score === 'number') values.push({ id: 'score', value: Math.round(score * 100), unit: 'score' })
+  if (typeof score === 'number')
+    values.push({ id: 'score', value: Math.round(score * 100), unit: 'score' })
   const items = lhr.audits['network-requests']?.details?.items ?? []
   if (items.length) {
     values.push({ id: 'requests', value: items.length, unit: 'count' })
-    values.push({ id: 'transferKb', value: sum(items.map((i) => i.transferSize ?? 0)) / 1024, unit: 'kb' })
-    values.push({ id: 'jsKb', value: sum(items.filter((i) => i.resourceType === 'Script').map((i) => i.transferSize ?? 0)) / 1024, unit: 'kb' })
+    values.push({
+      id: 'transferKb',
+      value: sum(items.map((i) => i.transferSize ?? 0)) / 1024,
+      unit: 'kb',
+    })
+    values.push({
+      id: 'jsKb',
+      value:
+        sum(items.filter((i) => i.resourceType === 'Script').map((i) => i.transferSize ?? 0)) /
+        1024,
+      unit: 'kb',
+    })
   }
   return values
 }
@@ -181,8 +212,17 @@ function requestType(resourceType: string | undefined): RequestInfo['type'] {
 }
 
 function coverage(lhr: Lighthouse): PageResult['coverage'] {
-  const rows = [...(lhr.audits['unused-javascript']?.details?.items ?? []), ...(lhr.audits['unused-css-rules']?.details?.items ?? [])]
-  return rows.filter((r) => r.url && r.totalBytes).map((r) => ({ url: r.url ?? '', totalBytes: r.totalBytes ?? 0, unusedBytes: r.wastedBytes ?? 0 }))
+  const rows = [
+    ...(lhr.audits['unused-javascript']?.details?.items ?? []),
+    ...(lhr.audits['unused-css-rules']?.details?.items ?? []),
+  ]
+  return rows
+    .filter((r) => r.url && r.totalBytes)
+    .map((r) => ({
+      url: r.url ?? '',
+      totalBytes: r.totalBytes ?? 0,
+      unusedBytes: r.wastedBytes ?? 0,
+    }))
 }
 
 function issues(lhr: Lighthouse, route: string): Issue[] {
@@ -191,7 +231,12 @@ function issues(lhr: Lighthouse, route: string): Issue[] {
     if (audit.score === null || audit.score >= 0.9) continue
     const isOpportunity = audit.details?.type === 'opportunity' || Boolean(audit.metricSavings)
     if (!isOpportunity && !AUDIT_AREAS[audit.id]) continue
-    const savingsMs = audit.details?.overallSavingsMs ?? audit.metricSavings?.LCP ?? audit.metricSavings?.TBT ?? audit.metricSavings?.FCP ?? 0
+    const savingsMs =
+      audit.details?.overallSavingsMs ??
+      audit.metricSavings?.LCP ??
+      audit.metricSavings?.TBT ??
+      audit.metricSavings?.FCP ??
+      0
     const metric = gainMetric(audit)
     const from = lhr.audits[METRIC_AUDITS.find(([m]) => m === metric)?.[1] ?? '']?.numericValue ?? 0
     out.push({
@@ -203,10 +248,28 @@ function issues(lhr: Lighthouse, route: string): Issue[] {
       metrics: [metric],
       areas: AUDIT_AREAS[audit.id] ?? ['network'],
       route,
-      chain: [{ kind: 'metric', label: `${METRICS[metric].short} ${audit.displayValue ?? ''}`.trim() }, ...(audit.details?.items?.[0]?.url ? [{ kind: 'request' as const, label: audit.details.items[0].url }] : [])],
+      chain: [
+        { kind: 'metric', label: `${METRICS[metric].short} ${audit.displayValue ?? ''}`.trim() },
+        ...(audit.details?.items?.[0]?.url
+          ? [{ kind: 'request' as const, label: audit.details.items[0].url }]
+          : []),
+      ],
       why: stripMarkdown(audit.description ?? ''),
-      gain: { metric, from, to: metric === 'cls' ? Math.max(0, from - (audit.metricSavings?.CLS ?? 0)) : Math.max(0, from - savingsMs), scoreDelta: Math.min(15, Math.round(savingsMs / 300)), note: 'estimate from Lighthouse savings' },
-      fix: { steps: [stripMarkdown(audit.description ?? '').split('. ')[0] ?? audit.title], changes: [], automatic: false },
+      gain: {
+        metric,
+        from,
+        to:
+          metric === 'cls'
+            ? Math.max(0, from - (audit.metricSavings?.CLS ?? 0))
+            : Math.max(0, from - savingsMs),
+        scoreDelta: Math.min(15, Math.round(savingsMs / 300)),
+        note: 'estimate from Lighthouse savings',
+      },
+      fix: {
+        steps: [stripMarkdown(audit.description ?? '').split('. ')[0] ?? audit.title],
+        changes: [],
+        automatic: false,
+      },
       docs: docLinks(audit.description ?? ''),
       status: 'open',
       confidence: 0.6,
@@ -236,7 +299,8 @@ function stripMarkdown(text: string): string {
 
 function docLinks(text: string): Issue['docs'] {
   const links: Issue['docs'] = []
-  for (const match of text.matchAll(/\[([^\]]+)\]\((https?:[^)]+)\)/g)) links.push({ label: match[1] ?? 'Docs', url: match[2] ?? '' })
+  for (const match of text.matchAll(/\[([^\]]+)\]\((https?:[^)]+)\)/g))
+    links.push({ label: match[1] ?? 'Docs', url: match[2] ?? '' })
   return links
 }
 

@@ -7,7 +7,13 @@ import { promisify } from 'node:util'
 
 import { configSchema, type PerfAgentConfig } from '@perfagent/config'
 import type { Issue, Report } from '@perfagent/core'
-import { ReportStore, git, type AiService, type FixRunRequest, type ProposedChange } from '@perfagent/engine'
+import {
+  ReportStore,
+  git,
+  type AiService,
+  type FixRunRequest,
+  type ProposedChange,
+} from '@perfagent/engine'
 
 const run = promisify(execFile)
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -28,25 +34,62 @@ export interface Repo {
 }
 
 /** A throw-away git repo on `main` with a passing (or failing) `test` script. */
-export async function makeRepo(options: { testPasses?: boolean; configOverrides?: Record<string, unknown> } = {}): Promise<Repo> {
+export async function makeRepo(
+  options: { testPasses?: boolean; configOverrides?: Record<string, unknown> } = {},
+): Promise<Repo> {
   const root = await mkdtemp(path.join(os.tmpdir(), 'perfagent-fixer-'))
   await mkdir(path.join(root, 'src', 'components'), { recursive: true })
   await mkdir(path.join(root, 'src', 'payments'), { recursive: true })
-  await cp(path.join(demoShop, 'src', 'components', 'HeroBanner.tsx'), path.join(root, 'src', 'components', 'HeroBanner.tsx'))
+  await cp(
+    path.join(demoShop, 'src', 'components', 'HeroBanner.tsx'),
+    path.join(root, 'src', 'components', 'HeroBanner.tsx'),
+  )
   await writeFile(path.join(root, 'src', 'a.ts'), 'export const a = 1\r\nexport const b = 2\r\n')
   await writeFile(path.join(root, 'src', 'payments', 'pay.ts'), 'export const fee = 1\n')
   await writeFile(path.join(root, '.env'), 'SECRET=do-not-touch\n')
-  await writeFile(path.join(root, 'package.json'), JSON.stringify({ name: 'fixture', private: true, scripts: { test: options.testPasses === false ? 'node -e "process.exit(1)"' : 'node -e "process.exit(0)"' } }))
+  await writeFile(
+    path.join(root, 'package.json'),
+    JSON.stringify({
+      name: 'fixture',
+      private: true,
+      scripts: {
+        test:
+          options.testPasses === false ? 'node -e "process.exit(1)"' : 'node -e "process.exit(0)"',
+      },
+    }),
+  )
   await writeFile(path.join(root, '.gitignore'), '.perfagent\n')
-  for (const args of [['init', '-q', '-b', 'main'], ['config', 'user.email', 'test@example.com'], ['config', 'user.name', 'Test'], ['config', 'commit.gpgsign', 'false'], ['add', '-A'], ['commit', '-q', '-m', 'init']]) await run('git', args, { cwd: root })
+  for (const args of [
+    ['init', '-q', '-b', 'main'],
+    ['config', 'user.email', 'test@example.com'],
+    ['config', 'user.name', 'Test'],
+    ['config', 'commit.gpgsign', 'false'],
+    ['add', '-A'],
+    ['commit', '-q', '-m', 'init'],
+  ])
+    await run('git', args, { cwd: root })
 
   const report = JSON.parse(await readFile(reportFile, 'utf8')) as Report
-  const heroIssue = report.issues.find((i) => i.location?.file === 'src/components/HeroBanner.tsx' && i.fix.automatic) as Issue
-  const aiIssue: Issue = { ...heroIssue, id: 'ai/test@src/a.ts:1', ruleId: 'ai/test', title: 'Needs AI', location: { file: 'src/a.ts', line: 1 }, fix: { steps: ['ask'], changes: [], automatic: false }, gain: { ...heroIssue.gain, scoreDelta: 1 } }
+  const heroIssue = report.issues.find(
+    (i) => i.location?.file === 'src/components/HeroBanner.tsx' && i.fix.automatic,
+  ) as Issue
+  const aiIssue: Issue = {
+    ...heroIssue,
+    id: 'ai/test@src/a.ts:1',
+    ruleId: 'ai/test',
+    title: 'Needs AI',
+    location: { file: 'src/a.ts', line: 1 },
+    fix: { steps: ['ask'], changes: [], automatic: false },
+    gain: { ...heroIssue.gain, scoreDelta: 1 },
+  }
   report.issues = [heroIssue, aiIssue]
   const store = new ReportStore(root)
   await store.save(report)
-  const config = configSchema.parse({ root, urls: [], fix: { review: false, ...(options.configOverrides ?? {}) } })
+  const config = configSchema.parse({
+    root,
+    urls: [],
+    fix: { review: false, ...(options.configOverrides ?? {}) },
+  })
   const gitLog: string[][] = []
   const spy: typeof git = (r, args) => {
     gitLog.push(args)
@@ -64,7 +107,10 @@ export function stubAi(script: () => ProposedChange[] = () => []): AiService & {
     storeKey: () => Promise.resolve(),
     removeKey: () => Promise.resolve(),
     explain: () => Promise.resolve('explained'),
-    proposeFix: () => { stub.calls++; return Promise.resolve(script()) },
+    proposeFix: () => {
+      stub.calls++
+      return Promise.resolve(script())
+    },
     summarise: () => Promise.resolve('summary'),
     usage: () => Promise.resolve({ monthUsd: 0, calls: 0 }),
     activeProvider: () => Promise.resolve('openai' as const),
@@ -74,7 +120,11 @@ export function stubAi(script: () => ProposedChange[] = () => []): AiService & {
   return stub
 }
 
-export function request(repo: Repo, issue: Issue, extra: Partial<FixRunRequest> = {}): FixRunRequest {
+export function request(
+  repo: Repo,
+  issue: Issue,
+  extra: Partial<FixRunRequest> = {},
+): FixRunRequest {
   return { reportId: repo.report.id, scope: { kind: 'issue', issueIds: [issue.id] }, ...extra }
 }
 

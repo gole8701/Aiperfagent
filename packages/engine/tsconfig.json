@@ -4,7 +4,12 @@
   "include": ["src"],
   "exclude": ["src/**/*.test.ts"],
   "references": [
-    { "path": "../core" }, { "path": "../config" }, { "path": "../security" }, { "path": "../report-schema" },
-    { "path": "../scanner" }, { "path": "../rules" }, { "path": "../collectors" }
+    { "path": "../core" },
+    { "path": "../config" },
+    { "path": "../security" },
+    { "path": "../report-schema" },
+    { "path": "../scanner" },
+    { "path": "../rules" },
+    { "path": "../collectors" }
   ]
 }

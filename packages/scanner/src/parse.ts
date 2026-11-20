@@ -1,27 +1,55 @@
 import ts from 'typescript'
 
-import type { ComponentInfo, ElementInfo, FunctionInfo, HookCall, ImportInfo, SourceFile } from './types.js'
+import type {
+  ComponentInfo,
+  ElementInfo,
+  FunctionInfo,
+  HookCall,
+  ImportInfo,
+  SourceFile,
+} from './types.js'
 
 const HOOK_RE = /^use[A-Z]/
 const COMPONENT_RE = /^[A-Z][A-Za-z0-9]*$/
 
 export function parseSource(relativePath: string, text: string): SourceFile {
-  const kind = relativePath.endsWith('.tsx') ? ts.ScriptKind.TSX : relativePath.endsWith('.jsx') ? ts.ScriptKind.JSX : relativePath.endsWith('.js') || relativePath.endsWith('.mjs') ? ts.ScriptKind.JS : ts.ScriptKind.TS
+  const kind = relativePath.endsWith('.tsx')
+    ? ts.ScriptKind.TSX
+    : relativePath.endsWith('.jsx')
+      ? ts.ScriptKind.JSX
+      : relativePath.endsWith('.js') || relativePath.endsWith('.mjs')
+        ? ts.ScriptKind.JS
+        : ts.ScriptKind.TS
   const sf = ts.createSourceFile(relativePath, text, ts.ScriptTarget.Latest, true, kind)
-  const file: SourceFile = { path: relativePath, text, sizeBytes: Buffer.byteLength(text), imports: [], components: [], functions: [], hasJsx: false }
-  const line = (node: ts.Node): number => sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1
-  const endLine = (node: ts.Node): number => sf.getLineAndCharacterOfPosition(node.getEnd()).line + 1
+  const file: SourceFile = {
+    path: relativePath,
+    text,
+    sizeBytes: Buffer.byteLength(text),
+    imports: [],
+    components: [],
+    functions: [],
+    hasJsx: false,
+  }
+  const line = (node: ts.Node): number =>
+    sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1
+  const endLine = (node: ts.Node): number =>
+    sf.getLineAndCharacterOfPosition(node.getEnd()).line + 1
 
   const visitTop = (node: ts.Node): void => {
     if (ts.isImportDeclaration(node)) file.imports.push(readImport(node, line(node)))
-    else if (ts.isFunctionDeclaration(node) && node.name) readFunction(node, node.name.text, node.body)
+    else if (ts.isFunctionDeclaration(node) && node.name)
+      readFunction(node, node.name.text, node.body)
     else if (ts.isVariableStatement(node)) {
       for (const decl of node.declarationList.declarations) {
         if (!ts.isIdentifier(decl.name) || !decl.initializer) continue
         const init = unwrapMemo(decl.initializer)
-        if (ts.isArrowFunction(init.fn) || ts.isFunctionExpression(init.fn)) readFunction(init.fn, decl.name.text, init.fn.body, init.memoized, decl)
+        if (ts.isArrowFunction(init.fn) || ts.isFunctionExpression(init.fn))
+          readFunction(init.fn, decl.name.text, init.fn.body, init.memoized, decl)
       }
-    } else if (ts.isExportAssignment(node) && (ts.isArrowFunction(node.expression) || ts.isFunctionExpression(node.expression))) {
+    } else if (
+      ts.isExportAssignment(node) &&
+      (ts.isArrowFunction(node.expression) || ts.isFunctionExpression(node.expression))
+    ) {
       readFunction(node.expression, 'default', node.expression.body)
     }
     findDynamicImports(node)
@@ -30,23 +58,51 @@ export function parseSource(relativePath: string, text: string): SourceFile {
   function findDynamicImports(node: ts.Node): void {
     if (ts.isCallExpression(node) && isDynamicImport(node)) {
       const arg = node.arguments[0]
-      if (arg && ts.isStringLiteral(arg)) file.imports.push({ source: arg.text, namespace: false, named: [], line: line(node), dynamic: true })
+      if (arg && ts.isStringLiteral(arg))
+        file.imports.push({
+          source: arg.text,
+          namespace: false,
+          named: [],
+          line: line(node),
+          dynamic: true,
+        })
     }
     ts.forEachChild(node, findDynamicImports)
   }
 
-  function readFunction(fn: ts.SignatureDeclaration, name: string, body: ts.Node | undefined, memoized = false, anchor: ts.Node = fn): void {
+  function readFunction(
+    fn: ts.SignatureDeclaration,
+    name: string,
+    body: ts.Node | undefined,
+    memoized = false,
+    anchor: ts.Node = fn,
+  ): void {
     if (!body) return
-    const info: FunctionInfo = { name, line: line(anchor), endLine: endLine(fn), async: hasAsync(fn), awaits: [], calls: [] }
+    const info: FunctionInfo = {
+      name,
+      line: line(anchor),
+      endLine: endLine(fn),
+      async: hasAsync(fn),
+      awaits: [],
+      calls: [],
+    }
     const elements: ElementInfo[] = []
     const hooks: HookCall[] = []
     const conditional = new Set<string>()
     let depth = 0
     const walk = (node: ts.Node, inLoop: boolean, inConditional: boolean): void => {
-      if (ts.isAwaitExpression(node) && ts.isCallExpression(node.expression)) info.awaits.push({ callee: calleeName(node.expression), line: line(node), inLoop })
+      if (ts.isAwaitExpression(node) && ts.isCallExpression(node.expression))
+        info.awaits.push({ callee: calleeName(node.expression), line: line(node), inLoop })
       if (ts.isCallExpression(node)) {
         const callee = calleeName(node)
-        info.calls.push({ callee, line: line(node), argsText: node.arguments.map((a) => a.getText(sf)).join(', ').slice(0, 300) })
+        info.calls.push({
+          callee,
+          line: line(node),
+          argsText: node.arguments
+            .map((a) => a.getText(sf))
+            .join(', ')
+            .slice(0, 300),
+        })
         if (HOOK_RE.test(callee) && depth === 0) hooks.push(readHook(node, callee))
       }
       if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
@@ -55,17 +111,38 @@ export function parseSource(relativePath: string, text: string): SourceFile {
         elements.push({ tag, line: line(node), attributes: readAttributes(node.attributes, sf) })
         if (inConditional && COMPONENT_RE.test(tag)) conditional.add(tag)
       }
-      const loop = inLoop || ts.isForStatement(node) || ts.isForOfStatement(node) || ts.isForInStatement(node) || ts.isWhileStatement(node) || ts.isDoStatement(node) || isArrayIterationCallback(node)
-      const cond = inConditional || (ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken) || ts.isConditionalExpression(node)
+      const loop =
+        inLoop ||
+        ts.isForStatement(node) ||
+        ts.isForOfStatement(node) ||
+        ts.isForInStatement(node) ||
+        ts.isWhileStatement(node) ||
+        ts.isDoStatement(node) ||
+        isArrayIterationCallback(node)
+      const cond =
+        inConditional ||
+        (ts.isBinaryExpression(node) &&
+          node.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken) ||
+        ts.isConditionalExpression(node)
       const nested = ts.isFunctionLike(node) && node !== fn
       if (nested) depth++
-      ts.forEachChild(node, (child) => { walk(child, loop, cond) })
+      ts.forEachChild(node, (child) => {
+        walk(child, loop, cond)
+      })
       if (nested) depth--
     }
     walk(body, false, false)
     file.functions.push(info)
     if (COMPONENT_RE.test(name) && (elements.length > 0 || hooks.length > 0)) {
-      const component: ComponentInfo = { name, line: info.line, endLine: info.endLine, memoized, hooks, elements, conditionalChildren: [...conditional] }
+      const component: ComponentInfo = {
+        name,
+        line: info.line,
+        endLine: info.endLine,
+        memoized,
+        hooks,
+        elements,
+        conditionalChildren: [...conditional],
+      }
       file.components.push(component)
     }
   }
@@ -76,7 +153,10 @@ export function parseSource(relativePath: string, text: string): SourceFile {
     const cb = node.arguments[0]
     if (cb && (ts.isArrowFunction(cb) || ts.isFunctionExpression(cb))) {
       const body = cb.body
-      if (ts.isBlock(body)) hasCleanup = body.statements.some((s) => ts.isReturnStatement(s) && s.expression !== undefined)
+      if (ts.isBlock(body))
+        hasCleanup = body.statements.some(
+          (s) => ts.isReturnStatement(s) && s.expression !== undefined,
+        )
       else hasCleanup = ts.isArrowFunction(body) || ts.isFunctionExpression(body)
       const walk = (n: ts.Node): void => {
         if (ts.isCallExpression(n)) calls.push(calleeName(n))
@@ -120,7 +200,8 @@ function unwrapMemo(expr: ts.Expression): { fn: ts.Expression; memoized: boolean
   if (ts.isCallExpression(expr)) {
     const callee = calleeName(expr)
     const first = expr.arguments[0]
-    if ((callee === 'memo' || callee === 'React.memo' || callee === 'forwardRef') && first) return { fn: unwrapMemo(first).fn, memoized: callee !== 'forwardRef' }
+    if ((callee === 'memo' || callee === 'React.memo' || callee === 'forwardRef') && first)
+      return { fn: unwrapMemo(first).fn, memoized: callee !== 'forwardRef' }
   }
   return { fn: expr, memoized: false }
 }
@@ -133,7 +214,11 @@ function calleeName(call: ts.CallExpression): string {
 }
 
 function hasAsync(fn: ts.SignatureDeclaration): boolean {
-  return (ts.canHaveModifiers(fn) ? ts.getModifiers(fn) : undefined)?.some((m) => m.kind === ts.SyntaxKind.AsyncKeyword) ?? false
+  return (
+    (ts.canHaveModifiers(fn) ? ts.getModifiers(fn) : undefined)?.some(
+      (m) => m.kind === ts.SyntaxKind.AsyncKeyword,
+    ) ?? false
+  )
 }
 
 function isDynamicImport(call: ts.CallExpression): boolean {
@@ -141,5 +226,9 @@ function isDynamicImport(call: ts.CallExpression): boolean {
 }
 
 function isArrayIterationCallback(node: ts.Node): boolean {
-  return ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression) && ['map', 'forEach', 'reduce', 'filter'].includes(node.expression.name.text)
+  return (
+    ts.isCallExpression(node) &&
+    ts.isPropertyAccessExpression(node.expression) &&
+    ['map', 'forEach', 'reduce', 'filter'].includes(node.expression.name.text)
+  )
 }

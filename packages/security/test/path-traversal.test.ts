@@ -25,12 +25,17 @@ describe('guardPath', () => {
     expect(g.relative).toBe('src/app.ts')
   })
 
-  it.each(['../outside', '../../etc/passwd', 'src/../../x', '/etc/passwd', 'src/\0x'])('blocks %s', async (p) => {
-    await expect(guardPath(root, p)).rejects.toMatchObject({ code: 'PATH_OUTSIDE_ROOT' })
-  })
+  it.each(['../outside', '../../etc/passwd', 'src/../../x', '/etc/passwd', 'src/\0x'])(
+    'blocks %s',
+    async (p) => {
+      await expect(guardPath(root, p)).rejects.toMatchObject({ code: 'PATH_OUTSIDE_ROOT' })
+    },
+  )
 
   it('blocks symlinks that point outside', async () => {
-    await expect(guardPath(root, 'src/escape.txt')).rejects.toMatchObject({ code: 'PATH_OUTSIDE_ROOT' })
+    await expect(guardPath(root, 'src/escape.txt')).rejects.toMatchObject({
+      code: 'PATH_OUTSIDE_ROOT',
+    })
   })
 
   it('never reads .env, keys or node_modules', async () => {
@@ -45,7 +50,9 @@ describe('guardPath', () => {
   it('allows a missing file only when its parent is inside the root', async () => {
     const g = await guardPath(root, 'src/new-file.ts', { allowMissing: true })
     expect(g.relative).toBe('src/new-file.ts')
-    await expect(guardPath(root, '../new.ts', { allowMissing: true })).rejects.toMatchObject({ code: 'PATH_OUTSIDE_ROOT' })
+    await expect(guardPath(root, '../new.ts', { allowMissing: true })).rejects.toMatchObject({
+      code: 'PATH_OUTSIDE_ROOT',
+    })
   })
 })
 

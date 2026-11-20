@@ -30,7 +30,9 @@ const PICKERS: { id: Picker; label: string }[] = [
 export function SourceCard({ label, source, scans, onChange, onRemove }: SourceCardProps) {
   const [picker, setPicker] = useState<Picker>('saved')
   const [text, setText] = useState('')
-  const pickers = IS_STATIC ? PICKERS.filter((p) => p.id === 'saved' || p.id === 'url' || p.id === 'file') : PICKERS
+  const pickers = IS_STATIC
+    ? PICKERS.filter((p) => p.id === 'saved' || p.id === 'url' || p.id === 'file')
+    : PICKERS
 
   return (
     <div className="card source-card">
@@ -45,9 +47,21 @@ export function SourceCard({ label, source, scans, onChange, onRemove }: SourceC
           ) : null}
         </span>
       </div>
-      <div className="row" style={{ marginBottom: 8 }} role="tablist" aria-label={`How to add source ${label}`}>
+      <div
+        className="row"
+        style={{ marginBottom: 8 }}
+        role="tablist"
+        aria-label={`How to add source ${label}`}
+      >
         {pickers.map((p) => (
-          <button key={p.id} type="button" role="tab" className="tab" aria-selected={picker === p.id} onClick={() => setPicker(p.id)}>
+          <button
+            key={p.id}
+            type="button"
+            role="tab"
+            className="tab"
+            aria-selected={picker === p.id}
+            onClick={() => setPicker(p.id)}
+          >
             {p.label}
           </button>
         ))}
@@ -57,23 +71,61 @@ export function SourceCard({ label, source, scans, onChange, onRemove }: SourceC
           label={`Saved scan for ${label}`}
           hideLabel
           value={source.kind === 'report' ? source.reportId : ''}
-          options={[{ value: '', label: 'Pick a saved scan' }, ...scans.map((s) => ({ value: s.reportId, label: `${s.label ?? s.reportId} · ${new Date(s.at).toLocaleString()} · score ${s.score}` }))]}
+          options={[
+            { value: '', label: 'Pick a saved scan' },
+            ...scans.map((s) => ({
+              value: s.reportId,
+              label: `${s.label ?? s.reportId} · ${new Date(s.at).toLocaleString()} · score ${s.score}`,
+            })),
+          ]}
           onChange={(id) => {
             const scan = scans.find((s) => s.reportId === id)
-            if (scan) onChange({ kind: 'report', reportId: id, title: `${scan.label ?? id} · ${new Date(scan.at).toLocaleDateString()}` })
+            if (scan)
+              onChange({
+                kind: 'report',
+                reportId: id,
+                title: `${scan.label ?? id} · ${new Date(scan.at).toLocaleDateString()}`,
+              })
           }}
         />
       ) : null}
       {picker === 'url' || picker === 'link' ? (
         <div className="row">
-          <input className="input" type="url" style={{ flex: 1 }} aria-label={picker === 'url' ? 'URL to test now' : 'Dashboard or report link'} placeholder={picker === 'url' ? 'https://your-site.com/checkout' : 'http://127.0.0.1:4545/?report=… or …/report.json'} value={text} onChange={(e) => setText(e.target.value)} />
-          <Button onClick={() => text && onChange({ kind: picker, url: text })}>{picker === 'url' ? 'Use this URL' : 'Use link'}</Button>
+          <input
+            className="input"
+            type="url"
+            style={{ flex: 1 }}
+            aria-label={picker === 'url' ? 'URL to test now' : 'Dashboard or report link'}
+            placeholder={
+              picker === 'url'
+                ? 'https://your-site.com/checkout'
+                : 'http://127.0.0.1:4545/?report=… or …/report.json'
+            }
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <Button onClick={() => text && onChange({ kind: picker, url: text })}>
+            {picker === 'url' ? 'Use this URL' : 'Use link'}
+          </Button>
         </div>
       ) : null}
-      {picker === 'file' ? <ImportDrop compact onImported={(result) => onChange({ kind: 'file', result, title: result.report.label ?? result.format })} /> : null}
+      {picker === 'file' ? (
+        <ImportDrop
+          compact
+          onImported={(result) =>
+            onChange({ kind: 'file', result, title: result.report.label ?? result.format })
+          }
+        />
+      ) : null}
       {picker === 'text' ? (
         <div className="stack" style={{ gap: 6 }}>
-          <textarea className="input" aria-label="Pasted report text" placeholder="Paste a table, a Lighthouse JSON or any report text" value={text} onChange={(e) => setText(e.target.value)} />
+          <textarea
+            className="input"
+            aria-label="Pasted report text"
+            placeholder="Paste a table, a Lighthouse JSON or any report text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
           <Button onClick={() => text && onChange({ kind: 'text', text })}>Use this text</Button>
         </div>
       ) : null}

@@ -18,7 +18,13 @@ export function SchemaRows({ include, labels = {} }: SchemaRowsProps) {
   return (
     <div className="stack" style={{ gap: 12 }} aria-busy={saving}>
       {rows.map((row) => (
-        <OptionRow key={row.path} row={row} value={configValue(config, row.path)} label={labels[row.path] ?? humanise(row.path)} onSave={(value) => void save(patchFor(row.path, value)).catch(() => undefined)} />
+        <OptionRow
+          key={row.path}
+          row={row}
+          value={configValue(config, row.path)}
+          label={labels[row.path] ?? humanise(row.path)}
+          onSave={(value) => void save(patchFor(row.path, value)).catch(() => undefined)}
+        />
       ))}
     </div>
   )
@@ -35,11 +41,24 @@ function OptionRow({ row, value, label, onSave }: OptionRowProps) {
   const [draft, setDraft] = useState<string>()
   const text = draft ?? stringify(value ?? row.default, row.type)
 
-  if (row.type === 'boolean') return <Toggle label={label} description={row.description} checked={Boolean(value ?? row.default)} onChange={onSave} />
+  if (row.type === 'boolean')
+    return (
+      <Toggle
+        label={label}
+        description={row.description}
+        checked={Boolean(value ?? row.default)}
+        onChange={onSave}
+      />
+    )
   if (row.type === 'choice' && row.choices) {
     return (
       <div className="field">
-        <Select label={label} value={(value ?? row.default ?? '') as string} options={row.choices.map((c) => ({ value: c, label: c }))} onChange={onSave} />
+        <Select
+          label={label}
+          value={(value ?? row.default ?? '') as string}
+          options={row.choices.map((c) => ({ value: c, label: c }))}
+          onChange={onSave}
+        />
         <span>{row.description}</span>
       </div>
     )
@@ -70,7 +89,11 @@ function stringify(value: unknown, type: string): string {
 
 function parse(text: string, type: string): unknown {
   if (type === 'number') return Number(text)
-  if (type === 'list') return text.split(',').map((s) => s.trim()).filter(Boolean)
+  if (type === 'list')
+    return text
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
   if (type === 'map' || type === 'choice or list') {
     try {
       return JSON.parse(text)

@@ -20,7 +20,9 @@ export function Snippet({ location, fallback, canReadFiles }: SnippetProps) {
     if (!canReadFiles) return
     let cancelled = false
     api
-      .get<SnippetData>(`/api/files/snippet?file=${encodeURIComponent(location.file)}&line=${location.line}&radius=6`)
+      .get<SnippetData>(
+        `/api/files/snippet?file=${encodeURIComponent(location.file)}&line=${location.line}&radius=6`,
+      )
       .then((s) => {
         if (!cancelled) setData(s)
       })
@@ -32,13 +34,30 @@ export function Snippet({ location, fallback, canReadFiles }: SnippetProps) {
 
   if (!data) return fallback ? <pre aria-label="Code at the problem line">{fallback}</pre> : null
   return (
-    <pre aria-label={`Code around line ${location.line} of ${location.file}`} style={{ padding: 0 }}>
+    <pre
+      aria-label={`Code around line ${location.line} of ${location.file}`}
+      style={{ padding: 0 }}
+    >
       {data.lines.map((line, index) => {
         const number = data.startLine + index
         const isTarget = number === location.line
         return (
-          <div key={number} style={{ display: 'flex', gap: 10, padding: '0 10px', background: isTarget ? 'color-mix(in srgb, var(--critical) 18%, transparent)' : undefined }}>
-            <span className="muted" style={{ width: 36, textAlign: 'right', flex: '0 0 auto', userSelect: 'none' }} aria-hidden="true">
+          <div
+            key={number}
+            style={{
+              display: 'flex',
+              gap: 10,
+              padding: '0 10px',
+              background: isTarget
+                ? 'color-mix(in srgb, var(--critical) 18%, transparent)'
+                : undefined,
+            }}
+          >
+            <span
+              className="muted"
+              style={{ width: 36, textAlign: 'right', flex: '0 0 auto', userSelect: 'none' }}
+              aria-hidden="true"
+            >
               {number}
             </span>
             <span style={{ whiteSpace: 'pre-wrap' }}>{line || ' '}</span>

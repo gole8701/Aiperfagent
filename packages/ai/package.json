@@ -7,11 +7,22 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
-    "./watch": { "types": "./dist/watch/index.d.ts", "import": "./dist/watch/index.js" }
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./watch": {
+      "types": "./dist/watch/index.d.ts",
+      "import": "./dist/watch/index.js"
+    }
   },
-  "files": ["dist"],
-  "scripts": { "build": "tsc -b", "typecheck": "tsc --noEmit -p tsconfig.json" },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
   "dependencies": {
     "@perfagent/config": "workspace:*",
     "@perfagent/core": "workspace:*",

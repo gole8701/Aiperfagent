@@ -48,7 +48,8 @@ export function providerForUrl(url: string): string | undefined {
 
 export function providerForPath(path: string): string {
   if (path.startsWith('messages.')) return 'anthropic'
-  if (path.startsWith('chat.') || path.startsWith('responses.') || path.startsWith('embeddings.')) return 'openai'
+  if (path.startsWith('chat.') || path.startsWith('responses.') || path.startsWith('embeddings.'))
+    return 'openai'
   if (path.startsWith('models.')) return 'gemini'
   return 'unknown'
 }
@@ -57,24 +58,47 @@ export function providerForPath(path: string): string {
 export function usageOf(value: unknown): Usage | undefined {
   if (typeof value !== 'object' || value === null) return undefined
   const v = value as Record<string, unknown>
-  const raw = (v.usage ?? v.usageMetadata ?? (v.response as Record<string, unknown> | undefined)?.usage ?? (v.message as Record<string, unknown> | undefined)?.usage) as Record<string, unknown> | undefined
+  const raw = (v.usage ??
+    v.usageMetadata ??
+    (v.response as Record<string, unknown> | undefined)?.usage ??
+    (v.message as Record<string, unknown> | undefined)?.usage) as
+    | Record<string, unknown>
+    | undefined
   if (raw) {
     const n = (k: string): number => {
       const v = raw[k]
       return typeof v === 'number' ? v : 0
     }
-    const details = (k: string): Record<string, unknown> => (typeof raw[k] === 'object' && raw[k] ? (raw[k] as Record<string, unknown>) : {})
-    const cached = n('cache_read_input_tokens') || n('cachedContentTokenCount') || Number(details('prompt_tokens_details').cached_tokens ?? 0) || Number(details('input_tokens_details').cached_tokens ?? 0)
-    return { input: n('input_tokens') || n('prompt_tokens') || n('promptTokenCount') || n('promptTokens'), output: n('output_tokens') || n('completion_tokens') || n('candidatesTokenCount') || n('completionTokens'), cached }
+    const details = (k: string): Record<string, unknown> =>
+      typeof raw[k] === 'object' && raw[k] ? (raw[k] as Record<string, unknown>) : {}
+    const cached =
+      n('cache_read_input_tokens') ||
+      n('cachedContentTokenCount') ||
+      Number(details('prompt_tokens_details').cached_tokens ?? 0) ||
+      Number(details('input_tokens_details').cached_tokens ?? 0)
+    return {
+      input: n('input_tokens') || n('prompt_tokens') || n('promptTokenCount') || n('promptTokens'),
+      output:
+        n('output_tokens') ||
+        n('completion_tokens') ||
+        n('candidatesTokenCount') ||
+        n('completionTokens'),
+      cached,
+    }
   }
-  if (typeof v.prompt_eval_count === 'number' || typeof v.eval_count === 'number') return { input: Number(v.prompt_eval_count ?? 0), output: Number(v.eval_count ?? 0), cached: 0 }
+  if (typeof v.prompt_eval_count === 'number' || typeof v.eval_count === 'number')
+    return { input: Number(v.prompt_eval_count ?? 0), output: Number(v.eval_count ?? 0), cached: 0 }
   return undefined
 }
 
 export function modelOf(value: unknown, fallback: string): string {
   if (typeof value !== 'object' || value === null) return fallback
   const v = value as Record<string, unknown>
-  const model = v.model ?? v.modelVersion ?? (v.response as Record<string, unknown> | undefined)?.model ?? (v.message as Record<string, unknown> | undefined)?.model
+  const model =
+    v.model ??
+    v.modelVersion ??
+    (v.response as Record<string, unknown> | undefined)?.model ??
+    (v.message as Record<string, unknown> | undefined)?.model
   return typeof model === 'string' ? model : fallback
 }
 
@@ -93,13 +117,20 @@ export class Recorder {
   private batch: Sample[] = []
   private timer: ReturnType<typeof setTimeout> | undefined
   private lastErrorAt = new Map<string, number>()
-  private appendFile: Promise<((file: string, data: string) => Promise<void>) | undefined> | undefined
+  private appendFile:
+    | Promise<((file: string, data: string) => Promise<void>) | undefined>
+    | undefined
 
   constructor(readonly options: RecorderOptions) {
-    const proc = (globalThis as { process?: { on?: (event: string, cb: () => void) => void } }).process
+    const proc = (globalThis as { process?: { on?: (event: string, cb: () => void) => void } })
+      .process
     try {
-      proc?.on?.('beforeExit', () => { this.flush() })
-      proc?.on?.('exit', () => { this.flush() })
+      proc?.on?.('beforeExit', () => {
+        this.flush()
+      })
+      proc?.on?.('exit', () => {
+        this.flush()
+      })
     } catch {
       // Not Node: no exit hook, the interval flush covers it.
     }
@@ -117,7 +148,13 @@ export class Recorder {
 
   record(sample: Sample): void {
     try {
-      sample.costUsd = estimateCostUsd(sample.model, sample.inputTokens, sample.outputTokens, sample.cachedTokens, sample.provider)
+      sample.costUsd = estimateCostUsd(
+        sample.model,
+        sample.inputTokens,
+        sample.outputTokens,
+        sample.cachedTokens,
+        sample.provider,
+      )
       if (!this.options.logPrompts) {
         delete sample.prompt
         delete sample.answer
@@ -125,7 +162,10 @@ export class Recorder {
       this.options.onSample?.(sample)
       this.batch.push(sample)
       if (this.batch.length >= 200) this.flush()
-      else this.timer ??= setTimeoutUnref(() => { this.flush() }, this.options.flushMs ?? 2000)
+      else
+        this.timer ??= setTimeoutUnref(() => {
+          this.flush()
+        }, this.options.flushMs ?? 2000)
     } catch {
       // Never into the user's app.
     }
@@ -143,12 +183,19 @@ export class Recorder {
 
   private async write(text: string, lines: Sample[]): Promise<void> {
     if (this.options.endpoint) {
-      await fetch(this.options.endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(lines), signal: AbortSignal.timeout(3000) }).catch(() => undefined)
+      await fetch(this.options.endpoint, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(lines),
+        signal: AbortSignal.timeout(3000),
+      }).catch(() => undefined)
       if (!this.options.file) return
     }
     const append = await this.fs()
     if (!append) return
-    const file = this.options.file ?? `${(globalThis as { process?: { cwd?: () => string } }).process?.cwd?.() ?? '.'}/.perfagent/ai-samples.jsonl`
+    const file =
+      this.options.file ??
+      `${(globalThis as { process?: { cwd?: () => string } }).process?.cwd?.() ?? '.'}/.perfagent/ai-samples.jsonl`
     await append(file, text)
   }
 

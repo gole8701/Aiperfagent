@@ -30,7 +30,11 @@ export function Chart({ definition, ctx }: ChartProps) {
   }
 
   return (
-    <section className="card chart-card" aria-labelledby={`chart-${definition.id}`} data-chart={definition.id}>
+    <section
+      className="card chart-card"
+      aria-labelledby={`chart-${definition.id}`}
+      data-chart={definition.id}
+    >
       <div className="card-title" style={{ alignItems: 'flex-start' }}>
         <div>
           <h3 id={`chart-${definition.id}`} style={{ fontSize: '1.05em' }}>
@@ -54,7 +58,23 @@ export function Chart({ definition, ctx }: ChartProps) {
           Sample data · {sample}
         </div>
       ) : null}
-      {error ? <div className="error-box">{error}</div> : <Body definition={definition} ctx={ctx} instance={instance} onError={setError} onClick={(click) => void navigate(click.issueId ? `/issues/${encodeURIComponent(click.issueId)}` : `/?filter=${click.filter ?? 'all'}`)} />}
+      {error ? (
+        <div className="error-box">{error}</div>
+      ) : (
+        <Body
+          definition={definition}
+          ctx={ctx}
+          instance={instance}
+          onError={setError}
+          onClick={(click) =>
+            void navigate(
+              click.issueId
+                ? `/issues/${encodeURIComponent(click.issueId)}`
+                : `/?filter=${click.filter ?? 'all'}`,
+            )
+          }
+        />
+      )}
       <p className="chart-takeaway">
         <strong>What this means:</strong> {definition.takeaway(ctx)}
       </p>
@@ -101,7 +121,14 @@ function Body({ definition, ctx, instance, onError, onClick }: BodyProps) {
       <div className="filmstrip" role="list">
         {frames.map((frame, i) => (
           <figure key={i} role="listitem">
-            {frame.image ? <img src={frame.image} alt={`Screen at ${(frame.timeMs / 1000).toFixed(1)} seconds`} /> : <div className="filmstrip-empty" aria-hidden="true" />}
+            {frame.image ? (
+              <img
+                src={frame.image}
+                alt={`Screen at ${(frame.timeMs / 1000).toFixed(1)} seconds`}
+              />
+            ) : (
+              <div className="filmstrip-empty" aria-hidden="true" />
+            )}
             <figcaption>{(frame.timeMs / 1000).toFixed(1)} s</figcaption>
           </figure>
         ))}
@@ -110,10 +137,24 @@ function Body({ definition, ctx, instance, onError, onClick }: BodyProps) {
       <div className="muted">No screenshots in this scan.</div>
     )
   }
-  return <EChart definition={definition} ctx={ctx} instance={instance} onError={onError} onClick={onClick} />
+  return (
+    <EChart
+      definition={definition}
+      ctx={ctx}
+      instance={instance}
+      onError={onError}
+      onClick={onClick}
+    />
+  )
 }
 
-function EChart({ definition, ctx, instance, onError, onClick }: BodyProps & { definition: Extract<ChartDefinition, { kind: 'echarts' }> }) {
+function EChart({
+  definition,
+  ctx,
+  instance,
+  onError,
+  onClick,
+}: BodyProps & { definition: Extract<ChartDefinition, { kind: 'echarts' }> }) {
   const ref = useRef<HTMLDivElement>(null)
   const reducedMotion = useDisplay((s) => s.reducedMotion)
 
@@ -125,7 +166,10 @@ function EChart({ definition, ctx, instance, onError, onClick }: BodyProps & { d
     const observer = new ResizeObserver(() => chart.resize())
     observer.observe(el)
     chart.on('click', (params) => {
-      const click = definition.onClick?.({ name: params.name, dataIndex: params.dataIndex, seriesName: params.seriesName }, ctx)
+      const click = definition.onClick?.(
+        { name: params.name, dataIndex: params.dataIndex, seriesName: params.seriesName },
+        ctx,
+      )
       if (click) onClick(click)
     })
     return () => {
@@ -138,11 +182,21 @@ function EChart({ definition, ctx, instance, onError, onClick }: BodyProps & { d
 
   useEffect(() => {
     try {
-      instance.current?.setOption({ animation: !reducedMotion, backgroundColor: 'transparent', ...definition.build(ctx) }, true)
+      instance.current?.setOption(
+        { animation: !reducedMotion, backgroundColor: 'transparent', ...definition.build(ctx) },
+        true,
+      )
     } catch (error) {
       onError(error instanceof Error ? error.message : 'This chart could not be drawn')
     }
   }, [definition, ctx, reducedMotion, instance, onError])
 
-  return <div ref={ref} style={{ height: definition.height ?? 280 }} role="img" aria-label={`${definition.question} ${definition.takeaway(ctx)}`} />
+  return (
+    <div
+      ref={ref}
+      style={{ height: definition.height ?? 280 }}
+      role="img"
+      aria-label={`${definition.question} ${definition.takeaway(ctx)}`}
+    />
+  )
 }

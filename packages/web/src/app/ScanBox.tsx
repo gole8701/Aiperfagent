@@ -36,7 +36,15 @@ export function ScanBox() {
         return
       }
       const envUrl = environments.find(([name]) => name === environment)?.[1].url
-      const body = target ? { urls: [normalise(target)], project: knownUrls.has(normalise(target)), environmentName: environment || undefined } : envUrl ? { urls: [envUrl], environmentName: environment } : {}
+      const body = target
+        ? {
+            urls: [normalise(target)],
+            project: knownUrls.has(normalise(target)),
+            environmentName: environment || undefined,
+          }
+        : envUrl
+          ? { urls: [envUrl], environmentName: environment }
+          : {}
       const { jobId } = await api.post<{ jobId: string }>('/api/scans', body)
       setScan({ jobId, phase: 'queued', message: 'Starting scan', fraction: 0 })
     } catch (err) {
@@ -53,7 +61,10 @@ export function ScanBox() {
           label="Environment"
           hideLabel
           value={environment}
-          options={[{ value: '', label: 'Environment: project' }, ...environments.map(([name]) => ({ value: name, label: name }))]}
+          options={[
+            { value: '', label: 'Environment: project' },
+            ...environments.map(([name]) => ({ value: name, label: name })),
+          ]}
           onChange={setEnvironment}
         />
       ) : null}
@@ -68,7 +79,12 @@ export function ScanBox() {
           if (event.key === 'Enter') void start()
         }}
       />
-      <Button variant="primary" onClick={() => void start()} busy={busy || (scan !== undefined && !scan.error)} data-tour="scan">
+      <Button
+        variant="primary"
+        onClick={() => void start()}
+        busy={busy || (scan !== undefined && !scan.error)}
+        data-tour="scan"
+      >
         Scan
       </Button>
       {!IS_STATIC && status?.capabilities.live ? (

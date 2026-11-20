@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { createSessionToken, extractToken, hostAllowed, originAllowed, requestRejection, tokenMatches } from '../src/index.js'
+import {
+  createSessionToken,
+  extractToken,
+  hostAllowed,
+  originAllowed,
+  requestRejection,
+  tokenMatches,
+} from '../src/index.js'
 
 const policy = { port: 4545 }
 
@@ -18,14 +25,25 @@ describe('origin and host checks', () => {
     expect(originAllowed('null', policy)).toBe(false)
     expect(hostAllowed('evil.example', policy)).toBe(false)
     expect(hostAllowed('127.0.0.1.evil.example:4545', policy)).toBe(false)
-    expect(requestRejection({ host: '127.0.0.1:4545', origin: 'https://evil.example' }, policy)).toMatch(/another website/)
+    expect(
+      requestRejection({ host: '127.0.0.1:4545', origin: 'https://evil.example' }, policy),
+    ).toMatch(/another website/)
     expect(requestRejection({ host: 'attacker.test:4545' }, policy)).toMatch(/Host/)
-    expect(requestRejection({ host: '127.0.0.1:4545', 'sec-fetch-site': 'cross-site' }, policy)).toMatch(/Cross-site/)
-    expect(requestRejection({ host: '127.0.0.1:4545', origin: 'http://127.0.0.1:4545' }, policy)).toBeNull()
+    expect(
+      requestRejection({ host: '127.0.0.1:4545', 'sec-fetch-site': 'cross-site' }, policy),
+    ).toMatch(/Cross-site/)
+    expect(
+      requestRejection({ host: '127.0.0.1:4545', origin: 'http://127.0.0.1:4545' }, policy),
+    ).toBeNull()
   })
 
   it('allows an explicitly configured dev origin', () => {
-    expect(originAllowed('http://localhost:5173', { port: 4545, extraOrigins: ['http://localhost:5173'] })).toBe(true)
+    expect(
+      originAllowed('http://localhost:5173', {
+        port: 4545,
+        extraOrigins: ['http://localhost:5173'],
+      }),
+    ).toBe(true)
   })
 })
 

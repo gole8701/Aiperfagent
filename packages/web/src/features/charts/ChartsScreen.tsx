@@ -42,7 +42,8 @@ export default function ChartsScreen() {
     return { report, page, route: route || undefined, history, expert, palette }
   }, [report, route, history, expert, palette])
 
-  if (!tab || !CHART_TABS.some((t) => t.id === tab)) return <Navigate to="/charts/overview" replace />
+  if (!tab || !CHART_TABS.some((t) => t.id === tab))
+    return <Navigate to="/charts/overview" replace />
   if (loading) {
     return (
       <div className="page">
@@ -75,16 +76,34 @@ export default function ChartsScreen() {
         <div>
           <h1>Your performance in simple charts</h1>
           <div className="muted" style={{ fontSize: 13 }}>
-            {report.label ?? report.environment.name} · {report.environment.device} · every chart says what it means in plain words · <Link to="/">Back to the globe</Link>
+            {report.label ?? report.environment.name} · {report.environment.device} · every chart
+            says what it means in plain words · <Link to="/">Back to the globe</Link>
           </div>
         </div>
         <div className="row no-print">
-          <Select label="Page" hideLabel value={route} options={[{ value: '', label: 'All pages' }, ...report.pages.map((p) => ({ value: p.route, label: p.route }))]} onChange={setRoute} />
+          <Select
+            label="Page"
+            hideLabel
+            value={route}
+            options={[
+              { value: '', label: 'All pages' },
+              ...report.pages.map((p) => ({ value: p.route, label: p.route })),
+            ]}
+            onChange={setRoute}
+          />
           <Toggle label="Expert mode" checked={expert} onChange={setExpert} />
           <Button onClick={() => window.print()}>Export charts (PDF)</Button>
         </div>
       </div>
-      <Tabs label="Chart groups" active={tab} items={CHART_TABS.map((t) => ({ id: t.id, label: `${t.label} · ${CHARTS[t.id].length}`, to: `/charts/${t.id}` }))} />
+      <Tabs
+        label="Chart groups"
+        active={tab}
+        items={CHART_TABS.map((t) => ({
+          id: t.id,
+          label: `${t.label} · ${CHARTS[t.id].length}`,
+          to: `/charts/${t.id}`,
+        }))}
+      />
       <div className="charts-grid">
         {charts.map((definition) => (
           <Chart key={definition.id} definition={definition} ctx={ctx} />

@@ -19,7 +19,14 @@ const layerOf = (name) => layers.findIndex((layer) => layer.includes(name))
 export default tseslint.config(
   {
     // fixtures/ holds the deliberately slow demo shop and sample reports: test input, not our code.
-    ignores: ['**/dist/**', '**/dist-static/**', '**/node_modules/**', '**/*.config.*', 'fixtures/**', 'scripts/**'],
+    ignores: [
+      '**/dist/**',
+      '**/dist-static/**',
+      '**/node_modules/**',
+      '**/*.config.*',
+      'fixtures/**',
+      'scripts/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
@@ -32,12 +39,26 @@ export default tseslint.config(
     plugins: { 'import-x': importX },
     rules: {
       '@typescript-eslint/explicit-module-boundary-types': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_', ignoreRestSiblings: true }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
       '@typescript-eslint/no-confusing-void-expression': 'off',
-      '@typescript-eslint/no-unnecessary-condition': ['error', { allowConstantLoopConditions: true }],
+      '@typescript-eslint/no-unnecessary-condition': [
+        'error',
+        { allowConstantLoopConditions: true },
+      ],
       '@typescript-eslint/prefer-includes': 'off',
       // `a || b` on booleans and strings is intended: '' and false fall through.
-      '@typescript-eslint/prefer-nullish-coalescing': ['error', { ignorePrimitives: { boolean: true, string: true } }],
+      '@typescript-eslint/prefer-nullish-coalescing': [
+        'error',
+        { ignorePrimitives: { boolean: true, string: true } },
+      ],
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
       '@typescript-eslint/no-non-null-assertion': 'error',
       // Its autofix turns `as T` into `!`, which the rule above forbids.
@@ -48,7 +69,12 @@ export default tseslint.config(
       'no-restricted-imports': [
         'error',
         {
-          patterns: [{ group: ['**/dist/*', '!@xyflow/react/dist/style.css'], message: 'Import the package, not its build output.' }],
+          patterns: [
+            {
+              group: ['**/dist/*', '!@xyflow/react/dist/style.css'],
+              message: 'Import the package, not its build output.',
+            },
+          ],
         },
       ],
     },
@@ -111,6 +137,10 @@ export default tseslint.config(
     // Tests and .mjs scripts are linted without type information: they sit outside the package tsconfigs.
     files: ['**/*.test.ts', '**/*.test.tsx', '**/test/**', '**/e2e/**', '**/*.mjs'],
     ...tseslint.configs.disableTypeChecked,
-    rules: { ...tseslint.configs.disableTypeChecked.rules, '@typescript-eslint/explicit-module-boundary-types': 'off', 'no-console': 'off' },
+    rules: {
+      ...tseslint.configs.disableTypeChecked.rules,
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      'no-console': 'off',
+    },
   },
 )

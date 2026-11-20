@@ -42,5 +42,10 @@ export function flagNumber(flags: ParsedArgs['flags'], name: string): number | u
 
 export function flagList(flags: ParsedArgs['flags'], name: string): string[] | undefined {
   const value = flagString(flags, name)
-  return value ? value.split(',').map((s) => s.trim()).filter(Boolean) : undefined
+  return value
+    ? value
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : undefined
 }

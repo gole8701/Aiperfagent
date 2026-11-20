@@ -1,4 +1,11 @@
-import type { Comparison, DetectedValue, HistoryPoint, Issue, LiveStats, Report } from '@perfagent/core'
+import type {
+  Comparison,
+  DetectedValue,
+  HistoryPoint,
+  Issue,
+  LiveStats,
+  Report,
+} from '@perfagent/core'
 
 export type Mode = 'local' | 'deployed' | 'imported' | 'static'
 
@@ -6,11 +13,33 @@ export interface Status {
   version: string
   mode: Mode
   modeReasons: string[]
-  project: { root: string; name?: string; framework?: string; frameworkVersion?: string; commit?: string; branch?: string }
-  config: { urls: string[]; device: string; runs: number; editor: string; theme: string; language: string; aiProvider: string; environments: Record<string, { url: string }> }
+  project: {
+    root: string
+    name?: string
+    framework?: string
+    frameworkVersion?: string
+    commit?: string
+    branch?: string
+  }
+  config: {
+    urls: string[]
+    device: string
+    runs: number
+    editor: string
+    theme: string
+    language: string
+    aiProvider: string
+    environments: Record<string, { url: string }>
+  }
   editors: Record<string, string>
   latestReportId?: string
-  capabilities: { scanProject: boolean; openEditor: boolean; applyFixes: boolean; ai: boolean; live: boolean }
+  capabilities: {
+    scanProject: boolean
+    openEditor: boolean
+    applyFixes: boolean
+    ai: boolean
+    live: boolean
+  }
   options: OptionDoc[]
 }
 
@@ -45,7 +74,11 @@ export interface ImportResult {
   report: Report
 }
 
-export type CompareSource = { kind: 'report'; reportId: string } | { kind: 'url'; url: string } | { kind: 'text'; text: string; filename?: string } | { kind: 'link'; url: string }
+export type CompareSource =
+  | { kind: 'report'; reportId: string }
+  | { kind: 'url'; url: string }
+  | { kind: 'text'; text: string; filename?: string }
+  | { kind: 'link'; url: string }
 
 export interface CompareResponse {
   comparison: Comparison
@@ -83,7 +116,12 @@ export interface ProposedChange {
   explanation: string
 }
 
-export type FixScope = { kind: 'issue'; issueIds: string[] } | { kind: 'file'; file: string } | { kind: 'chip'; chip: string } | { kind: 'route'; route: string } | { kind: 'site' }
+export type FixScope =
+  | { kind: 'issue'; issueIds: string[] }
+  | { kind: 'file'; file: string }
+  | { kind: 'chip'; chip: string }
+  | { kind: 'route'; route: string }
+  | { kind: 'site' }
 
 export type FixEvent =
   | { type: 'round'; round: number; issueId: string; message: string }
@@ -92,7 +130,19 @@ export type FixEvent =
   | { type: 'check'; name: string; ok: boolean; output: string }
   | { type: 'retest'; issueId: string; predicted: number; actual: number }
   | { type: 'rolled-back'; changeId: string; reason: string }
-  | { type: 'done'; summary: { branch: string; rounds: number; applied: number; skipped: number; rolledBack: number; costUsd: number; before: number; after: number } }
+  | {
+      type: 'done'
+      summary: {
+        branch: string
+        rounds: number
+        applied: number
+        skipped: number
+        rolledBack: number
+        costUsd: number
+        before: number
+        after: number
+      }
+    }
   | { type: 'error'; message: string }
 
 export interface FixRun {
@@ -154,4 +204,8 @@ export interface Snippet {
 
 export type ScanList = HistoryPoint[]
 
-export interface IssuesResponse { reportId?: string; issues: Issue[]; chips: { metrics: Record<string, number>; areas: Record<string, number>; total: number } }
+export interface IssuesResponse {
+  reportId?: string
+  issues: Issue[]
+  chips: { metrics: Record<string, number>; areas: Record<string, number>; total: number }
+}

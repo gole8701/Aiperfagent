@@ -141,7 +141,9 @@
   font-size: 11px;
   color: var(--muted);
   padding: 4px;
-  transition: border-color 0.3s, background 0.3s;
+  transition:
+    border-color 0.3s,
+    background 0.3s;
 }
 
 .scene-area.active {
@@ -175,7 +177,9 @@
   border: 3px solid var(--warning);
   background: color-mix(in srgb, var(--warning) 30%, transparent);
   transform: translate(-50%, -50%);
-  transition: left 0.8s ease, top 0.8s ease;
+  transition:
+    left 0.8s ease,
+    top 0.8s ease;
   pointer-events: none;
 }
 

@@ -14,9 +14,16 @@ const repo = path.resolve(web, '../..')
 const out = path.join(web, 'dist-static')
 
 await mkdir(path.join(out, 'demo'), { recursive: true })
-await cp(path.join(repo, 'fixtures/reports/demo-shop-before.json'), path.join(out, 'demo/demo-shop-before.json'))
+await cp(
+  path.join(repo, 'fixtures/reports/demo-shop-before.json'),
+  path.join(out, 'demo/demo-shop-before.json'),
+)
 
-const candidates = [process.env.PERFAGENT_GUIDES_DIR && path.resolve(process.env.PERFAGENT_GUIDES_DIR), path.join(repo, 'docs/guides'), path.join(web, 'e2e/fixtures/guides')].filter(Boolean)
+const candidates = [
+  process.env.PERFAGENT_GUIDES_DIR && path.resolve(process.env.PERFAGENT_GUIDES_DIR),
+  path.join(repo, 'docs/guides'),
+  path.join(web, 'e2e/fixtures/guides'),
+].filter(Boolean)
 let source
 for (const dir of candidates) {
   const files = await readdir(dir).catch(() => [])
@@ -49,8 +56,20 @@ function frontMatter(text, topic) {
   if (match) {
     for (const line of match[1].split('\n')) {
       const [key, ...rest] = line.split(':')
-      if (key && rest.length) fields[key.trim()] = rest.join(':').trim().replace(/^["']|["']$/g, '')
+      if (key && rest.length)
+        fields[key.trim()] = rest
+          .join(':')
+          .trim()
+          .replace(/^["']|["']$/g, '')
     }
   }
-  return { topic, title: fields.title ?? topic, group: fields.group ?? 'Other', summary: fields.summary ?? '', order: Number(fields.order ?? 999), tryIt: fields.tryIt, metric: fields.metric }
+  return {
+    topic,
+    title: fields.title ?? topic,
+    group: fields.group ?? 'Other',
+    summary: fields.summary ?? '',
+    order: Number(fields.order ?? 999),
+    tryIt: fields.tryIt,
+    metric: fields.metric,
+  }
 }

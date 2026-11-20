@@ -29,11 +29,24 @@ marked.setOptions({ gfm: true, breaks: false })
 /** Markdown → sanitised HTML. Links open in a new tab; scripts, handlers and styles never survive. */
 export function renderMarkdown(markdown: string): string {
   const html = marked.parse(markdown, { async: false })
-  return DOMPurify.sanitize(html, { USE_PROFILES: { html: true }, ADD_ATTR: ['target'], FORBID_TAGS: ['style', 'iframe', 'object', 'embed', 'form', 'input'] }).replace(/<a /g, '<a target="_blank" rel="noreferrer noopener" ')
+  return DOMPurify.sanitize(html, {
+    USE_PROFILES: { html: true },
+    ADD_ATTR: ['target'],
+    FORBID_TAGS: ['style', 'iframe', 'object', 'embed', 'form', 'input'],
+  }).replace(/<a /g, '<a target="_blank" rel="noreferrer noopener" ')
 }
 
 const WALKTHROUGH_BLOCK = /```walkthrough\s*\n([\s\S]*?)```/g
-const SCENES: SceneId[] = ['globe', 'flow', 'charts', 'compare', 'terminal', 'settings', 'editor', 'assistant']
+const SCENES: SceneId[] = [
+  'globe',
+  'flow',
+  'charts',
+  'compare',
+  'terminal',
+  'settings',
+  'editor',
+  'assistant',
+]
 
 export function parseGuide(body: string): ParsedGuide {
   const walkthrough: WalkthroughStep[] = []
@@ -48,14 +61,32 @@ export function parseGuide(body: string): ParsedGuide {
   })
   const sections = splitSections(withoutWalkthrough)
   const commandsSection = sections.find((s) => /commands|config/i.test(s.title))
-  const commands = commandsSection ? [...commandsSection.raw.matchAll(/```[a-z]*\s*\n([\s\S]*?)```/g)].map((m) => (m[1] ?? '').trim()).filter(Boolean) : []
-  return { sections: sections.map((s) => ({ title: s.title, html: renderMarkdown(s.raw), expert: /expert/i.test(s.title) })), walkthrough, commands }
+  const commands = commandsSection
+    ? [...commandsSection.raw.matchAll(/```[a-z]*\s*\n([\s\S]*?)```/g)]
+        .map((m) => (m[1] ?? '').trim())
+        .filter(Boolean)
+    : []
+  return {
+    sections: sections.map((s) => ({
+      title: s.title,
+      html: renderMarkdown(s.raw),
+      expert: /expert/i.test(s.title),
+    })),
+    walkthrough,
+    commands,
+  }
 }
 
 function isStep(value: unknown): value is WalkthroughStep {
   if (!value || typeof value !== 'object') return false
   const v = value as Record<string, unknown>
-  return typeof v.screen === 'string' && SCENES.includes(v.screen as SceneId) && typeof v.area === 'string' && typeof v.title === 'string' && typeof v.text === 'string'
+  return (
+    typeof v.screen === 'string' &&
+    SCENES.includes(v.screen as SceneId) &&
+    typeof v.area === 'string' &&
+    typeof v.title === 'string' &&
+    typeof v.text === 'string'
+  )
 }
 
 function splitSections(markdown: string): { title: string; raw: string }[] {

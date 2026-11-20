@@ -20,7 +20,8 @@ export async function startHttpTransport(options: McpServerOptions): Promise<voi
   const host = options.host ?? '127.0.0.1'
   const port = options.port ?? DEFAULT_PORT
   const fromEnv = process.env.PERFAGENT_MCP_TOKEN
-  const token = fromEnv !== undefined && fromEnv !== '' ? fromEnv : randomBytes(24).toString('base64url')
+  const token =
+    fromEnv !== undefined && fromEnv !== '' ? fromEnv : randomBytes(24).toString('base64url')
   const sessions = new Map<string, StreamableHTTPServerTransport>()
 
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -30,7 +31,11 @@ export async function startHttpTransport(options: McpServerOptions): Promise<voi
       return
     }
     if (!authorised(req.headers.authorization, token)) {
-      res.writeHead(401, { 'WWW-Authenticate': 'Bearer realm="perfagent", error="invalid_token", error_description="Set Authorization: Bearer <PERFAGENT_MCP_TOKEN>"', 'content-type': 'application/json' })
+      res.writeHead(401, {
+        'WWW-Authenticate':
+          'Bearer realm="perfagent", error="invalid_token", error_description="Set Authorization: Bearer <PERFAGENT_MCP_TOKEN>"',
+        'content-type': 'application/json',
+      })
       res.end(JSON.stringify({ error: 'unauthorized' }))
       return
     }
@@ -46,21 +51,44 @@ export async function startHttpTransport(options: McpServerOptions): Promise<voi
       res.end(JSON.stringify({ error: 'Send an initialize request first' }))
       return
     }
-    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => randomUUID(), onsessioninitialized: (id) => { sessions.set(id, transport) } })
-    transport.onclose = () => { if (transport.sessionId) sessions.delete(transport.sessionId) }
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => randomUUID(),
+      onsessioninitialized: (id) => {
+        sessions.set(id, transport)
+      },
+    })
+    transport.onclose = () => {
+      if (transport.sessionId) sessions.delete(transport.sessionId)
+    }
     await buildMcpServer(options).connect(transport)
     await transport.handleRequest(req, res, body)
   }
 
-  const server = createServer((req, res) => { void handle(req, res).catch(() => { if (!res.headersSent) res.writeHead(500); res.end() }) })
+  const server = createServer((req, res) => {
+    void handle(req, res).catch(() => {
+      if (!res.headersSent) res.writeHead(500)
+      res.end()
+    })
+  })
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject)
     server.listen(port, host, resolve)
   })
-  process.stderr.write(`PerfAgent MCP server ready at http://${host}:${port}/mcp (${options.allowWrites ? 'writes enabled' : 'read-only'})\n`)
-  process.stderr.write(process.env.PERFAGENT_MCP_TOKEN ? 'Token: from PERFAGENT_MCP_TOKEN\n' : `Token (send as "Authorization: Bearer …"): ${token}\n`)
-  if (host !== '127.0.0.1') process.stderr.write('Warning: listening on all interfaces; anyone with the token can read your reports.\n')
-  await new Promise<void>((resolve) => { server.once('close', resolve) })
+  process.stderr.write(
+    `PerfAgent MCP server ready at http://${host}:${port}/mcp (${options.allowWrites ? 'writes enabled' : 'read-only'})\n`,
+  )
+  process.stderr.write(
+    process.env.PERFAGENT_MCP_TOKEN
+      ? 'Token: from PERFAGENT_MCP_TOKEN\n'
+      : `Token (send as "Authorization: Bearer …"): ${token}\n`,
+  )
+  if (host !== '127.0.0.1')
+    process.stderr.write(
+      'Warning: listening on all interfaces; anyone with the token can read your reports.\n',
+    )
+  await new Promise<void>((resolve) => {
+    server.once('close', resolve)
+  })
 }
 
 function authorised(header: string | undefined, token: string): boolean {

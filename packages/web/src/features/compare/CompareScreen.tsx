@@ -1,4 +1,11 @@
-import { METRICS, compareReports, type Comparison, type HistoryPoint, type MetricDiff, type Report } from '@perfagent/core'
+import {
+  METRICS,
+  compareReports,
+  type Comparison,
+  type HistoryPoint,
+  type MetricDiff,
+  type Report,
+} from '@perfagent/core'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 
@@ -26,7 +33,16 @@ import { MODES, type CompareMode, type SourceSpec } from './types'
 import './compare.css'
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E']
-const BUDGET_KEYS: Partial<Record<MetricDiff['metric'], string>> = { lcp: 'lcp', inp: 'inp', cls: 'cls', ttfb: 'ttfb', tbt: 'tbt', score: 'score', jsKb: 'js', aiFirstTokenMs: 'aiFirstTokenMs' }
+const BUDGET_KEYS: Partial<Record<MetricDiff['metric'], string>> = {
+  lcp: 'lcp',
+  inp: 'inp',
+  cls: 'cls',
+  ttfb: 'ttfb',
+  tbt: 'tbt',
+  score: 'score',
+  jsKb: 'js',
+  aiFirstTokenMs: 'aiFirstTokenMs',
+}
 
 export default function CompareScreen() {
   const { a, b } = useParams()
@@ -45,18 +61,32 @@ export default function CompareScreen() {
 
   useEffect(() => {
     if (IS_STATIC) setScans(listStaticReports())
-    else api.get<HistoryPoint[]>('/api/scans').then(setScans).catch(() => setScans([]))
+    else
+      api
+        .get<HistoryPoint[]>('/api/scans')
+        .then(setScans)
+        .catch(() => setScans([]))
   }, [])
 
   useEffect(() => {
-    if (a && b) setSources([{ kind: 'report', reportId: a, title: a }, { kind: 'report', reportId: b, title: b }])
+    if (a && b)
+      setSources([
+        { kind: 'report', reportId: a, title: a },
+        { kind: 'report', reportId: b, title: b },
+      ])
   }, [a, b])
 
   const palette = useMemo(() => readPalette(), [theme])
   const pagesOf = (index: number): string[] => {
     const source = sources[index]
     if (source?.kind === 'file') return source.result.report.pages.map((p) => p.route)
-    if (source?.kind === 'report') return (IS_STATIC ? getStaticReport(source.reportId) : result?.reports.find((r) => r.id === source.reportId))?.pages.map((p) => p.route) ?? []
+    if (source?.kind === 'report')
+      return (
+        (IS_STATIC
+          ? getStaticReport(source.reportId)
+          : result?.reports.find((r) => r.id === source.reportId)
+        )?.pages.map((p) => p.route) ?? []
+      )
     return []
   }
 
@@ -67,15 +97,23 @@ export default function CompareScreen() {
     try {
       const ready = sources.filter((s) => s.kind !== 'empty')
       if (ready.length < 2) throw new Error('Pick at least two things to compare')
-      const options = mode === 'page-vs-page' ? { routeA: routes.a || undefined, routeB: routes.b || undefined } : {}
+      const options =
+        mode === 'page-vs-page'
+          ? { routeA: routes.a || undefined, routeB: routes.b || undefined }
+          : {}
       if (IS_STATIC) {
         const reports = await Promise.all(ready.map(resolveStatic))
         const [first, second] = reports
         if (!first || !second) throw new Error('Two sources are needed')
         setResult({ comparison: compareReports(first, second, options), reports })
       } else {
-        const response = await api.post<CompareResponse>('/api/compare', { sources: ready.map(toServerSource), ...options })
-        const reports = await Promise.all(response.reports.map((r) => api.get<Report>(`/api/scans/${r.id}`)))
+        const response = await api.post<CompareResponse>('/api/compare', {
+          sources: ready.map(toServerSource),
+          ...options,
+        })
+        const reports = await Promise.all(
+          response.reports.map((r) => api.get<Report>(`/api/scans/${r.id}`)),
+        )
         setResult({ comparison: response.comparison, reports })
       }
     } catch (err) {
@@ -86,8 +124,13 @@ export default function CompareScreen() {
   }
 
   const reportB = result?.reports[1]
-  const ctx: ChartContext | undefined = reportB ? { report: reportB, page: reportB.pages[0], history: [], expert: false, palette } : undefined
-  const lowConfidence = sources.find((s): s is Extract<SourceSpec, { kind: 'file' }> => s.kind === 'file' && !s.result.exact && Boolean(s.result.detected?.length))
+  const ctx: ChartContext | undefined = reportB
+    ? { report: reportB, page: reportB.pages[0], history: [], expert: false, palette }
+    : undefined
+  const lowConfidence = sources.find(
+    (s): s is Extract<SourceSpec, { kind: 'file' }> =>
+      s.kind === 'file' && !s.result.exact && Boolean(s.result.detected?.length),
+  )
 
   return (
     <div className="page">
@@ -95,11 +138,17 @@ export default function CompareScreen() {
         <div>
           <h1>Compare performance</h1>
           <div className="muted" style={{ fontSize: 13 }}>
-            Before vs after a change, one page vs another, or many pages at once. Any source: scans, dashboard links, URLs or files.
+            Before vs after a change, one page vs another, or many pages at once. Any source: scans,
+            dashboard links, URLs or files.
           </div>
         </div>
       </div>
-      <Tabs label="Comparison type" active={mode} items={MODES} onChange={(id) => setMode(id as CompareMode)} />
+      <Tabs
+        label="Comparison type"
+        active={mode}
+        items={MODES}
+        onChange={(id) => setMode(id as CompareMode)}
+      />
       <div className="sources-row" data-tour="sources">
         {sources.map((source, index) => (
           <SourceCard
@@ -108,24 +157,50 @@ export default function CompareScreen() {
             source={source}
             scans={scans}
             onChange={(next) => setSources(sources.map((s, i) => (i === index ? next : s)))}
-            onRemove={index >= 2 ? () => setSources(sources.filter((_, i) => i !== index)) : undefined}
+            onRemove={
+              index >= 2 ? () => setSources(sources.filter((_, i) => i !== index)) : undefined
+            }
           />
         ))}
         {sources.length < 5 ? (
-          <Button onClick={() => setSources([...sources, { kind: 'empty' }])} style={{ alignSelf: 'center' }}>
+          <Button
+            onClick={() => setSources([...sources, { kind: 'empty' }])}
+            style={{ alignSelf: 'center' }}
+          >
             + Add {LETTERS[sources.length]}
           </Button>
         ) : null}
       </div>
       {mode === 'page-vs-page' ? (
         <div className="page-pickers" style={{ margin: '12px 0' }}>
-          <Select label="Page from A" value={routes.a} options={[{ value: '', label: 'First page' }, ...pagesOf(0).map((r) => ({ value: r, label: r }))]} onChange={(v) => setRoutes({ ...routes, a: v })} />
-          <Select label="Page from B" value={routes.b} options={[{ value: '', label: 'First page' }, ...pagesOf(1).map((r) => ({ value: r, label: r }))]} onChange={(v) => setRoutes({ ...routes, b: v })} />
+          <Select
+            label="Page from A"
+            value={routes.a}
+            options={[
+              { value: '', label: 'First page' },
+              ...pagesOf(0).map((r) => ({ value: r, label: r })),
+            ]}
+            onChange={(v) => setRoutes({ ...routes, a: v })}
+          />
+          <Select
+            label="Page from B"
+            value={routes.b}
+            options={[
+              { value: '', label: 'First page' },
+              ...pagesOf(1).map((r) => ({ value: r, label: r })),
+            ]}
+            onChange={(v) => setRoutes({ ...routes, b: v })}
+          />
         </div>
       ) : null}
       {lowConfidence ? (
         <div style={{ margin: '12px 0' }}>
-          <DetectedValues result={lowConfidence.result} onCorrected={(fixed) => setSources(sources.map((s) => (s === lowConfidence ? { ...s, result: fixed } : s)))} />
+          <DetectedValues
+            result={lowConfidence.result}
+            onCorrected={(fixed) =>
+              setSources(sources.map((s) => (s === lowConfidence ? { ...s, result: fixed } : s)))
+            }
+          />
         </div>
       ) : null}
       <div className="row" style={{ margin: '12px 0' }}>
@@ -142,11 +217,14 @@ export default function CompareScreen() {
           ctx={ctx}
           canFix={Boolean(status?.capabilities.applyFixes)}
           onFixWorse={() => {
-            const ids = result.comparison.impact.filter((i) => i.kind === 'new' && i.issue).map((i) => i.issue?.id ?? '')
+            const ids = result.comparison.impact
+              .filter((i) => i.kind === 'new' && i.issue)
+              .map((i) => i.issue?.id ?? '')
             void startFix(reportB?.id ?? '', { kind: 'issue', issueIds: ids }, { review: true })
           }}
           onBaseline={() => {
-            if (IS_STATIC || !reportB) return setNotice('Baselines are saved by the installed tool.')
+            if (IS_STATIC || !reportB)
+              return setNotice('Baselines are saved by the installed tool.')
             api
               .post(`/api/scans/${reportB.id}/annotate`, { annotation: 'baseline' })
               .then(() => setNotice('Saved as the new baseline'))
@@ -158,10 +236,18 @@ export default function CompareScreen() {
             for (const d of diffs) {
               const key = BUDGET_KEYS[d.metric]
               if (!key || d.from === undefined) continue
-              budgets[d.route] = { ...budgets[d.route], [key]: d.metric === 'jsKb' ? `${Math.round(d.from)}kb` : Math.round(d.from * 100) / 100 }
+              budgets[d.route] = {
+                ...budgets[d.route],
+                [key]:
+                  d.metric === 'jsKb' ? `${Math.round(d.from)}kb` : Math.round(d.from * 100) / 100,
+              }
             }
             save({ budgets })
-              .then(() => setNotice(`Budgets added for ${diffs.map((d) => METRICS[d.metric].short).join(', ')}`))
+              .then(() =>
+                setNotice(
+                  `Budgets added for ${diffs.map((d) => METRICS[d.metric].short).join(', ')}`,
+                ),
+              )
               .catch((err: unknown) => setError(describeError(err)))
           }}
         />

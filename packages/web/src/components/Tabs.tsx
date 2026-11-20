@@ -19,11 +19,24 @@ export function Tabs({ items, active, onChange, label }: TabsProps) {
     <nav className="tabs" role="tablist" aria-label={label}>
       {items.map((item) =>
         item.to ? (
-          <NavLink key={item.id} to={item.to} role="tab" className={({ isActive }) => `tab ${isActive ? 'active' : ''}`} aria-selected={active === item.id}>
+          <NavLink
+            key={item.id}
+            to={item.to}
+            role="tab"
+            className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}
+            aria-selected={active === item.id}
+          >
             {item.label}
           </NavLink>
         ) : (
-          <button key={item.id} type="button" role="tab" className="tab" aria-selected={active === item.id} onClick={() => onChange?.(item.id)}>
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            className="tab"
+            aria-selected={active === item.id}
+            onClick={() => onChange?.(item.id)}
+          >
             {item.label}
           </button>
         ),

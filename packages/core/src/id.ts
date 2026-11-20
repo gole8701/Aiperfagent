@@ -5,7 +5,12 @@ export function shortId(prefix = ''): string {
   return prefix ? `${prefix}_${time}${rand}` : `${time}${rand}`
 }
 
-export function issueId(ruleId: string, file: string | undefined, line: number | undefined, route?: string): string {
+export function issueId(
+  ruleId: string,
+  file: string | undefined,
+  line: number | undefined,
+  route?: string,
+): string {
   const where = file ? `${file}:${line ?? 0}` : (route ?? 'page')
   return `${ruleId}@${where}`.replace(/[^a-zA-Z0-9@:/._-]/g, '_')
 }

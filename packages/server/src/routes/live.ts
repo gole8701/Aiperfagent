@@ -8,7 +8,8 @@ import type { Router } from '../router.js'
 /** Live mode B: a browser we control streams CDP data over the WebSocket hub. */
 export function liveRoutes(router: Router, ctx: AppContext): void {
   router.post('/api/live/start', async ({ json }) => {
-    if (ctx.staticBuild) throw new PerfAgentError('NOT_LOCAL_MODE', 'Live mode needs the installed tool')
+    if (ctx.staticBuild)
+      throw new PerfAgentError('NOT_LOCAL_MODE', 'Live mode needs the installed tool')
     const { url } = await json<{ url: string }>()
     await assertUrlAllowed(url, { allowLoopback: ctx.mode.mode === 'local' })
     if (ctx.live.session) await ctx.live.session.stop().catch(() => undefined)
@@ -18,7 +19,16 @@ export function liveRoutes(router: Router, ctx: AppContext): void {
       peakThresholdP95Ms: ctx.config.live.peakThresholdP95Ms,
       onTick: (tick) => ctx.hub.broadcast({ type: 'live:tick', tick }),
     })
-    ctx.live = { session: { stop: async () => { const stats = await session.stop(); await browser.close().catch(() => undefined); return stats } }, url }
+    ctx.live = {
+      session: {
+        stop: async () => {
+          const stats = await session.stop()
+          await browser.close().catch(() => undefined)
+          return stats
+        },
+      },
+      url,
+    }
     return { started: true, url }
   })
 
@@ -29,7 +39,13 @@ export function liveRoutes(router: Router, ctx: AppContext): void {
     ctx.live = {}
     // Save the recording as a report so it can be compared later.
     const latest = await ctx.store.latest()
-    const report = { ...(latest ?? emptyLiveReport()), id: shortId('live'), createdAt: new Date().toISOString(), label: `Live session ${new Date().toLocaleTimeString()}`, live: stats }
+    const report = {
+      ...(latest ?? emptyLiveReport()),
+      id: shortId('live'),
+      createdAt: new Date().toISOString(),
+      label: `Live session ${new Date().toLocaleTimeString()}`,
+      live: stats,
+    }
     await ctx.store.save(report)
     ctx.hub.broadcast({ type: 'live:stopped', reportId: report.id })
     return { stopped: true, reportId: report.id, stats }
@@ -39,5 +55,13 @@ export function liveRoutes(router: Router, ctx: AppContext): void {
 }
 
 function emptyLiveReport(): import('@perfagent/core').Report {
-  return { schemaVersion: 1, tool: { name: 'perfagent', version: 'live' }, id: '', createdAt: '', environment: { name: 'live', device: 'desktop', browser: 'chromium', mode: 'local' }, pages: [], issues: [] }
+  return {
+    schemaVersion: 1,
+    tool: { name: 'perfagent', version: 'live' },
+    id: '',
+    createdAt: '',
+    environment: { name: 'live', device: 'desktop', browser: 'chromium', mode: 'local' },
+    pages: [],
+    issues: [],
+  }
 }

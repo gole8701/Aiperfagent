@@ -12,7 +12,8 @@ export interface UrlPolicy {
 
 export async function assertUrlAllowed(raw: string, policy: UrlPolicy): Promise<URL> {
   const url = new URL(raw)
-  if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Only http and https URLs can be scanned')
+  if (!['http:', 'https:'].includes(url.protocol))
+    throw new Error('Only http and https URLs can be scanned')
   const host = url.hostname.replace(/^\[|\]$/g, '')
   const addresses = isIP(host) ? [host] : (await lookup(host, { all: true })).map((a) => a.address)
   for (const address of addresses) {
@@ -32,7 +33,12 @@ export function isLoopback(ip: string): boolean {
 export function isPrivate(ip: string): boolean {
   if (ip.includes(':')) {
     const lower = ip.toLowerCase()
-    return lower.startsWith('fc') || lower.startsWith('fd') || lower.startsWith('fe80') || lower.startsWith('::ffff:') && isPrivate(lower.slice(7))
+    return (
+      lower.startsWith('fc') ||
+      lower.startsWith('fd') ||
+      lower.startsWith('fe80') ||
+      (lower.startsWith('::ffff:') && isPrivate(lower.slice(7)))
+    )
   }
   const [a = 0, b = 0] = ip.split('.').map(Number)
   if (a === 10 || a === 0) return true

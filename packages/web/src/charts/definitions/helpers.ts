@@ -18,12 +18,22 @@ export function baseOption(palette: Palette): EChartsOption {
   return {
     color: palette.series,
     textStyle: { color: palette.text, fontFamily: 'Inter, system-ui, sans-serif' },
-    tooltip: { trigger: 'item', backgroundColor: palette.panel, borderColor: palette.border, textStyle: { color: palette.text } },
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: palette.panel,
+      borderColor: palette.border,
+      textStyle: { color: palette.text },
+    },
     grid: { left: 12, right: 16, top: 16, bottom: 8, containLabel: true },
   }
 }
 
-export function axisStyle(palette: Palette): { axisLine: object; axisLabel: object; splitLine: object; axisTick: object } {
+export function axisStyle(palette: Palette): {
+  axisLine: object
+  axisLabel: object
+  splitLine: object
+  axisTick: object
+} {
   return {
     axisLine: { lineStyle: { color: palette.border } },
     axisTick: { show: false },
@@ -32,26 +42,65 @@ export function axisStyle(palette: Palette): { axisLine: object; axisLabel: obje
   }
 }
 
-export function horizontalBars(ctx: ChartContext, labels: string[], values: number[], options: { colors?: string[]; unit?: string; markValue?: number; markLabel?: string } = {}): EChartsOption {
+export function horizontalBars(
+  ctx: ChartContext,
+  labels: string[],
+  values: number[],
+  options: { colors?: string[]; unit?: string; markValue?: number; markLabel?: string } = {},
+): EChartsOption {
   const p = ctx.palette
   return {
     ...baseOption(p),
     grid: { left: 12, right: 50, top: 8, bottom: 8, containLabel: true },
-    xAxis: { type: 'value', ...axisStyle(p), axisLabel: { color: p.muted, formatter: (v: number) => `${v}${options.unit ?? ''}` } },
-    yAxis: { type: 'category', data: labels, inverse: true, ...axisStyle(p), axisLabel: { color: p.text, width: 220, overflow: 'truncate' } },
+    xAxis: {
+      type: 'value',
+      ...axisStyle(p),
+      axisLabel: { color: p.muted, formatter: (v: number) => `${v}${options.unit ?? ''}` },
+    },
+    yAxis: {
+      type: 'category',
+      data: labels,
+      inverse: true,
+      ...axisStyle(p),
+      axisLabel: { color: p.text, width: 220, overflow: 'truncate' },
+    },
     series: [
       {
         type: 'bar',
-        data: values.map((v, i) => ({ value: round(v), itemStyle: { color: options.colors?.[i] ?? p.series[0] } })),
-        label: { show: true, position: 'right', color: p.text, formatter: (d: FormatterParams) => `${num(d.value)}${options.unit ?? ''}` },
+        data: values.map((v, i) => ({
+          value: round(v),
+          itemStyle: { color: options.colors?.[i] ?? p.series[0] },
+        })),
+        label: {
+          show: true,
+          position: 'right',
+          color: p.text,
+          formatter: (d: FormatterParams) => `${num(d.value)}${options.unit ?? ''}`,
+        },
         barMaxWidth: 26,
-        markLine: options.markValue !== undefined ? { symbol: 'none', data: [{ xAxis: options.markValue, label: { formatter: options.markLabel ?? '', color: p.muted }, lineStyle: { color: p.good, type: 'dashed' } }] } : undefined,
+        markLine:
+          options.markValue !== undefined
+            ? {
+                symbol: 'none',
+                data: [
+                  {
+                    xAxis: options.markValue,
+                    label: { formatter: options.markLabel ?? '', color: p.muted },
+                    lineStyle: { color: p.good, type: 'dashed' },
+                  },
+                ],
+              }
+            : undefined,
       },
     ],
   }
 }
 
-export function donut(ctx: ChartContext, data: { name: string; value: number }[], centreText?: string): EChartsOption {
+export function donut(
+  ctx: ChartContext,
+  data: { name: string; value: number }[],
+  centreText?: string,
+): EChartsOption {
   const p = ctx.palette
   return {
     ...baseOption(p),
@@ -66,14 +115,35 @@ export function donut(ctx: ChartContext, data: { name: string; value: number }[]
         itemStyle: { borderColor: p.panel, borderWidth: 2 },
       },
     ],
-    title: centreText ? { text: centreText, left: 'center', top: '38%', textStyle: { color: p.text, fontSize: 22, fontWeight: 600 } } : undefined,
+    title: centreText
+      ? {
+          text: centreText,
+          left: 'center',
+          top: '38%',
+          textStyle: { color: p.text, fontSize: 22, fontWeight: 600 },
+        }
+      : undefined,
   }
 }
 
-export function gauge(ctx: ChartContext, value: number, options: { max?: number; unit?: string; target?: number; label: string; invert?: boolean }): EChartsOption {
+export function gauge(
+  ctx: ChartContext,
+  value: number,
+  options: { max?: number; unit?: string; target?: number; label: string; invert?: boolean },
+): EChartsOption {
   const p = ctx.palette
   const max = options.max ?? 100
-  const zones: [number, string][] = options.invert ? [[0.3, p.good], [0.7, p.warning], [1, p.critical]] : [[0.3, p.critical], [0.7, p.warning], [1, p.good]]
+  const zones: [number, string][] = options.invert
+    ? [
+        [0.3, p.good],
+        [0.7, p.warning],
+        [1, p.critical],
+      ]
+    : [
+        [0.3, p.critical],
+        [0.7, p.warning],
+        [1, p.good],
+      ]
   return {
     ...baseOption(p),
     series: [
@@ -89,9 +159,23 @@ export function gauge(ctx: ChartContext, value: number, options: { max?: number;
         splitLine: { show: false },
         axisLabel: { show: false },
         pointer: { show: false },
-        detail: { valueAnimation: true, formatter: (v: number) => `${Math.round(v)}${options.unit ?? ''}`, color: p.text, fontSize: 28, offsetCenter: [0, '0%'] },
+        detail: {
+          valueAnimation: true,
+          formatter: (v: number) => `${Math.round(v)}${options.unit ?? ''}`,
+          color: p.text,
+          fontSize: 28,
+          offsetCenter: [0, '0%'],
+        },
         title: { color: p.muted, offsetCenter: [0, '40%'], fontSize: 12 },
-        data: [{ value, name: options.target !== undefined ? `${options.label} · target ${options.target}${options.unit ?? ''}` : options.label }],
+        data: [
+          {
+            value,
+            name:
+              options.target !== undefined
+                ? `${options.label} · target ${options.target}${options.unit ?? ''}`
+                : options.label,
+          },
+        ],
       },
     ],
   }

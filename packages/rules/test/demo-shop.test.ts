@@ -6,7 +6,10 @@ import { describe, expect, it } from 'vitest'
 
 import { detectIssues, packsFor } from '../src/index.js'
 
-const demoShop = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../fixtures/demo-shop')
+const demoShop = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../../fixtures/demo-shop',
+)
 
 /** The 12 seeded problems and where each one lives. */
 const SEEDED: { rule: string; file: string }[] = [
@@ -34,7 +37,15 @@ describe('rule packs on demo-shop', async () => {
 
   it.each(SEEDED)('finds $rule in $file', ({ rule, file }) => {
     const hit = issues.find((i) => i.ruleId === rule && i.location?.file === file)
-    expect(hit, `${rule} missing; found: ${issues.filter((i) => i.ruleId === rule).map((i) => i.location?.file).join(', ') || 'nothing'}`).toBeDefined()
+    expect(
+      hit,
+      `${rule} missing; found: ${
+        issues
+          .filter((i) => i.ruleId === rule)
+          .map((i) => i.location?.file)
+          .join(', ') || 'nothing'
+      }`,
+    ).toBeDefined()
     expect(hit?.location?.line).toBeGreaterThan(0)
     expect(hit?.chain.length).toBeGreaterThanOrEqual(2)
     expect(hit?.fix.steps.length).toBeGreaterThan(0)
@@ -42,7 +53,11 @@ describe('rule packs on demo-shop', async () => {
   })
 
   it('also catches the uncached system prompt in the RAG route', () => {
-    expect(issues.some((i) => i.ruleId === 'ai/no-prompt-cache' && i.location?.file === 'src/server/rag.ts')).toBe(true)
+    expect(
+      issues.some(
+        (i) => i.ruleId === 'ai/no-prompt-cache' && i.location?.file === 'src/server/rag.ts',
+      ),
+    ).toBe(true)
   })
 
   it('gives every issue a unique id and plain-language text', () => {
@@ -61,7 +76,10 @@ describe('rule packs on demo-shop', async () => {
   })
 })
 
-function findByPath(node: { path: string; kind: string; children: typeof node[] }, p: string): typeof node | undefined {
+function findByPath(
+  node: { path: string; kind: string; children: (typeof node)[] },
+  p: string,
+): typeof node | undefined {
   if (node.path === p && node.kind === 'file') return node
   for (const child of node.children) {
     const hit = findByPath(child, p)

@@ -14,7 +14,12 @@ export interface GlobePoint {
   folder: number
   position: [number, number, number]
   /** Orbit around the folder: unit vectors `u`, `v`, radius and start angle. Folders do not orbit. */
-  orbit?: { u: [number, number, number]; v: [number, number, number]; radius: number; angle: number }
+  orbit?: {
+    u: [number, number, number]
+    v: [number, number, number]
+    radius: number
+    angle: number
+  }
   severity?: Severity
   issueIds: string[]
   /** Direct children count (folders only), shown on the info card as "4 files · 2 issues". */
@@ -30,8 +35,14 @@ type Vec = [number, number, number]
 
 export const GLOBE_RADIUS = 1
 
-export function layoutGlobe(input: { tree?: TreeNode; page?: PageResult; issues: Issue[] }): GlobeLayout {
-  const groups = input.tree ? groupsFromTree(input.tree, input.issues) : groupsFromPage(input.page, input.issues)
+export function layoutGlobe(input: {
+  tree?: TreeNode
+  page?: PageResult
+  issues: Issue[]
+}): GlobeLayout {
+  const groups = input.tree
+    ? groupsFromTree(input.tree, input.issues)
+    : groupsFromPage(input.page, input.issues)
   const points: GlobePoint[] = []
   const directions = fibonacciSphere(groups.length)
   groups.forEach((group, index) => {
@@ -73,7 +84,11 @@ export function layoutGlobe(input: { tree?: TreeNode; page?: PageResult; issues:
 export function orbitPosition(center: Vec, u: Vec, v: Vec, radius: number, angle: number): Vec {
   const c = Math.cos(angle) * radius
   const s = Math.sin(angle) * radius
-  const raw: Vec = [center[0] + u[0] * c + v[0] * s, center[1] + u[1] * c + v[1] * s, center[2] + u[2] * c + v[2] * s]
+  const raw: Vec = [
+    center[0] + u[0] * c + v[0] * s,
+    center[1] + u[1] * c + v[1] * s,
+    center[2] + u[2] * c + v[2] * s,
+  ]
   return scale(normalise(raw), GLOBE_RADIUS * 1.02)
 }
 
@@ -101,7 +116,13 @@ function groupsFromTree(root: TreeNode, issues: Issue[]): Group[] {
         issueIds: collectIssueIds(node),
         files: files.map((f) => {
           const ids = collectIssueIds(f)
-          return { id: f.id, label: f.name, path: f.path, severity: worstOf(ids.map((id) => severityOf.get(id))), issueIds: ids }
+          return {
+            id: f.id,
+            label: f.name,
+            path: f.path,
+            severity: worstOf(ids.map((id) => severityOf.get(id))),
+            issueIds: ids,
+          }
         }),
       })
     }
@@ -119,12 +140,28 @@ function groupsFromPage(page: PageResult | undefined, issues: Issue[]): Group[] 
     const host = hostOf(request.url) || 'other'
     let group = byHost.get(host)
     if (!group) {
-      group = { id: `host:${host}`, label: host === pageHost ? `${host} (your site)` : host, path: host, issueIds: [], files: [] }
+      group = {
+        id: `host:${host}`,
+        label: host === pageHost ? `${host} (your site)` : host,
+        path: host,
+        issueIds: [],
+        files: [],
+      }
       byHost.set(host, group)
     }
-    const related = issues.filter((i) => i.chain.some((step) => step.kind === 'request' && request.url.endsWith(step.label))).map((i) => i.id)
+    const related = issues
+      .filter((i) =>
+        i.chain.some((step) => step.kind === 'request' && request.url.endsWith(step.label)),
+      )
+      .map((i) => i.id)
     const severity = worstOf(related.map((id) => issues.find((i) => i.id === id)?.severity))
-    group.files.push({ id: `req:${index}`, label: fileName(request.url), path: request.url, severity, issueIds: related })
+    group.files.push({
+      id: `req:${index}`,
+      label: fileName(request.url),
+      path: request.url,
+      severity,
+      issueIds: related,
+    })
     group.issueIds.push(...related)
   })
   for (const group of byHost.values()) group.severity = worstOf(group.files.map((f) => f.severity))

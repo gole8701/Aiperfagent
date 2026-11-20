@@ -4,19 +4,48 @@
   "description": "PerfAgent finds, explains and fixes web and AI performance problems down to the exact file and line. Run `npx perfagent` in your project.",
   "license": "MIT",
   "type": "module",
-  "bin": { "perfagent": "./dist/bin.js" },
+  "bin": {
+    "perfagent": "./dist/bin.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
-    "./ai": { "types": "./dist/ai.d.ts", "import": "./dist/ai.js" }
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./ai": {
+      "types": "./dist/ai.d.ts",
+      "import": "./dist/ai.js"
+    }
   },
-  "files": ["dist", "dashboard", "guides", "README.md"],
-  "keywords": ["performance", "web-vitals", "lighthouse", "lcp", "inp", "cls", "ai", "mcp", "dashboard", "fix"],
-  "repository": { "type": "git", "url": "https://github.com/gole8701/perfagent" },
+  "files": [
+    "dist",
+    "dashboard",
+    "guides",
+    "README.md"
+  ],
+  "keywords": [
+    "performance",
+    "web-vitals",
+    "lighthouse",
+    "lcp",
+    "inp",
+    "cls",
+    "ai",
+    "mcp",
+    "dashboard",
+    "fix"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gole8701/perfagent"
+  },
   "homepage": "https://github.com/gole8701/perfagent#readme",
   "bugs": "https://github.com/gole8701/perfagent/issues",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "tsc -b",
     "typecheck": "tsc --noEmit -p tsconfig.json",

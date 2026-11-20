@@ -3,8 +3,17 @@
  * itself; the only remote connections are the ones the dashboard needs
  * (local server, local Ollama, and provider APIs the user configures).
  */
-export function securityHeaders(options: { connectSrc?: string[]; dev?: boolean } = {}): Record<string, string> {
-  const connect = ["'self'", 'ws://127.0.0.1:*', 'ws://localhost:*', 'http://127.0.0.1:*', 'http://localhost:*', ...(options.connectSrc ?? [])]
+export function securityHeaders(
+  options: { connectSrc?: string[]; dev?: boolean } = {},
+): Record<string, string> {
+  const connect = [
+    "'self'",
+    'ws://127.0.0.1:*',
+    'ws://localhost:*',
+    'http://127.0.0.1:*',
+    'http://localhost:*',
+    ...(options.connectSrc ?? []),
+  ]
   const script = options.dev ? ["'self'", "'unsafe-inline'"] : ["'self'", "'wasm-unsafe-eval'"]
   const csp = [
     "default-src 'self'",

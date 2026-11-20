@@ -2,7 +2,20 @@ import { readFile } from 'node:fs/promises'
 
 import type { PerfAgentConfig } from '@perfagent/config'
 import { PerfAgentError, metricValue, shortId, type Issue, type Report } from '@perfagent/core'
-import { gatherContext, git as engineGit, isGitRepo, isWorkingTreeDirty, retestIssue, type AiService, type FixEvent, type FixRun, type FixService, type FixSummary, type ProposedChange, type ReportStore } from '@perfagent/engine'
+import {
+  gatherContext,
+  git as engineGit,
+  isGitRepo,
+  isWorkingTreeDirty,
+  retestIssue,
+  type AiService,
+  type FixEvent,
+  type FixRun,
+  type FixService,
+  type FixSummary,
+  type ProposedChange,
+  type ReportStore,
+} from '@perfagent/engine'
 
 import { runChecks } from './checks.js'
 import { applyChange, isRejected, restore, vetChange, type Backups } from './files.js'
@@ -58,7 +71,12 @@ export function createFixService(options: FixServiceOptions): FixService {
   }
 
   function persist(): Promise<void> {
-    return store.writeJson(RUNS_FILE, [...states.values()].map((s) => s.run)).catch(() => undefined)
+    return store
+      .writeJson(
+        RUNS_FILE,
+        [...states.values()].map((s) => s.run),
+      )
+      .catch(() => undefined)
   }
 
   function settle(state: RunState, status: FixRun['status']): void {
@@ -73,12 +91,19 @@ export function createFixService(options: FixServiceOptions): FixService {
 
   async function preflight(state: RunState): Promise<boolean> {
     if (!(await isGitRepo(root))) {
-      emit(state, { type: 'error', message: `${root} is not a git repository. Fixes need git so every change can be undone.` })
+      emit(state, {
+        type: 'error',
+        message: `${root} is not a git repository. Fixes need git so every change can be undone.`,
+      })
       return false
     }
     if (await isWorkingTreeDirty(root)) {
       if (!state.run.request.stashFirst) {
-        emit(state, { type: 'error', message: 'Working tree has uncommitted changes. Commit or stash them first, or start the run with stashFirst.' })
+        emit(state, {
+          type: 'error',
+          message:
+            'Working tree has uncommitted changes. Commit or stash them first, or start the run with stashFirst.',
+        })
         return false
       }
       await git(root, ['stash', 'push', '-m', 'perfagent'])
@@ -91,7 +116,9 @@ export function createFixService(options: FixServiceOptions): FixService {
 
   async function createFixBranch(): Promise<string> {
     const base = `perfagent/fix-${new Date().toISOString().slice(0, 10)}`
-    const existing = (await git(root, ['branch', '--list', `${base}*`])).split('\n').map((b) => b.replace(/^[*+ ]+/, '').trim())
+    const existing = (await git(root, ['branch', '--list', `${base}*`]))
+      .split('\n')
+      .map((b) => b.replace(/^[*+ ]+/, '').trim())
     let name = base
     for (let n = 2; existing.includes(name); n++) name = `${base}-${n}`
     await git(root, ['switch', '-c', name])
@@ -101,12 +128,18 @@ export function createFixService(options: FixServiceOptions): FixService {
   async function proposalsFor(state: RunState, issue: Issue): Promise<ProposedChange[]> {
     const builtIn = issue.fix.changes.filter((c) => c.before)
     if (issue.fix.automatic && builtIn.length) {
-      const applicable = await Promise.all(builtIn.map(async (c) => ({ c, ok: await containsBefore(c.file, c.before) })))
-      if (applicable.every((a) => a.ok)) return builtIn.map((c) => ({ ...c, explanation: issue.fix.steps[0] ?? issue.title }))
+      const applicable = await Promise.all(
+        builtIn.map(async (c) => ({ c, ok: await containsBefore(c.file, c.before) })),
+      )
+      if (applicable.every((a) => a.ok))
+        return builtIn.map((c) => ({ ...c, explanation: issue.fix.steps[0] ?? issue.title }))
     }
     if ((await ai.activeProvider()) === 'rules') return []
     if ((await spentUsd(state)) >= config.fix.maxCostUsd) {
-      emit(state, { type: 'error', message: `AI cost limit of $${config.fix.maxCostUsd} reached; stopping.` })
+      emit(state, {
+        type: 'error',
+        message: `AI cost limit of $${config.fix.maxCostUsd} reached; stopping.`,
+      })
       state.queue.length = 0
       return []
     }
@@ -127,10 +160,20 @@ export function createFixService(options: FixServiceOptions): FixService {
     try {
       while (run.status === 'running') {
         const rounds = run.events.filter((e) => e.type === 'round').length
-        if (rounds >= limits.maxRounds || state.touched.size >= limits.maxFiles || targetReached(state)) break
+        if (
+          rounds >= limits.maxRounds ||
+          state.touched.size >= limits.maxFiles ||
+          targetReached(state)
+        )
+          break
         const issue = state.queue.shift()
         if (!issue) break
-        emit(state, { type: 'round', round: rounds + 1, issueId: issue.id, message: `Fixing: ${issue.title}` })
+        emit(state, {
+          type: 'round',
+          round: rounds + 1,
+          issueId: issue.id,
+          message: `Fixing: ${issue.title}`,
+        })
         const proposals = await proposalsFor(state, issue)
         const pending: Pending[] = []
         for (const change of proposals) {
@@ -156,7 +199,10 @@ export function createFixService(options: FixServiceOptions): FixService {
       }
       finish(state)
     } catch (error) {
-      emit(state, { type: 'error', message: error instanceof Error ? error.message : String(error) })
+      emit(state, {
+        type: 'error',
+        message: error instanceof Error ? error.message : String(error),
+      })
       settle(state, 'failed')
     }
   }
@@ -169,7 +215,11 @@ export function createFixService(options: FixServiceOptions): FixService {
       try {
         await applyChange(vetted.absolute, vetted.relative, change, state.backups)
       } catch (error) {
-        emit(state, { type: 'rolled-back', changeId, reason: error instanceof Error ? error.message : 'could not apply' })
+        emit(state, {
+          type: 'rolled-back',
+          changeId,
+          reason: error instanceof Error ? error.message : 'could not apply',
+        })
         state.counts.rolledBack++
         continue
       }
@@ -182,14 +232,20 @@ export function createFixService(options: FixServiceOptions): FixService {
     if (!ok) ok = await repair(state, issue, roundFiles)
     if (!ok) {
       await restore(root, state.backups, roundFiles)
-      for (const { changeId } of pending) emit(state, { type: 'rolled-back', changeId, reason: 'Project checks failed after the change' })
+      for (const { changeId } of pending)
+        emit(state, {
+          type: 'rolled-back',
+          changeId,
+          reason: 'Project checks failed after the change',
+        })
       for (const f of roundFiles) state.touched.delete(f)
       state.counts.rolledBack += pending.length
       return
     }
     state.counts.applied += pending.length
     const verified = await retest(state, issue)
-    if (verified) await store.updateIssue(state.report.id, issue.id, { status: 'fixed' }).catch(() => undefined)
+    if (verified)
+      await store.updateIssue(state.report.id, issue.id, { status: 'fixed' }).catch(() => undefined)
     if (state.run.request.autoCommit ?? config.fix.autoCommit) {
       await git(root, ['add', '--', ...roundFiles])
       await git(root, ['commit', '-m', `perf: ${issue.title} (perfagent)`])
@@ -198,22 +254,37 @@ export function createFixService(options: FixServiceOptions): FixService {
 
   async function checks(state: RunState): Promise<boolean> {
     const results = await runChecks(root, config.fix)
-    for (const r of results) emit(state, { type: 'check', name: r.name, ok: r.ok, output: r.output })
+    for (const r of results)
+      emit(state, { type: 'check', name: r.name, ok: r.ok, output: r.output })
     return results.every((r) => r.ok)
   }
 
   /** One AI repair attempt with the failing output; falls back to rollback. */
   async function repair(state: RunState, issue: Issue, files: Set<string>): Promise<boolean> {
-    if ((await ai.activeProvider()) === 'rules' || (await spentUsd(state)) >= config.fix.maxCostUsd) return false
+    if ((await ai.activeProvider()) === 'rules' || (await spentUsd(state)) >= config.fix.maxCostUsd)
+      return false
     const failed = [...state.run.events].reverse().find((e) => e.type === 'check' && !e.ok)
     const output = failed?.type === 'check' ? failed.output : ''
-    const context = await gatherContext(root, [...files].map((file) => ({ ...issue, location: { file, line: 1 } })), 'files')
-    const changes = await ai.proposeFix([issue], context, `The project checks failed after your change. Repair it. Output:\n${output}`).catch(() => [])
+    const context = await gatherContext(
+      root,
+      [...files].map((file) => ({ ...issue, location: { file, line: 1 } })),
+      'files',
+    )
+    const changes = await ai
+      .proposeFix(
+        [issue],
+        context,
+        `The project checks failed after your change. Repair it. Output:\n${output}`,
+      )
+      .catch(() => [])
     const applied: string[] = []
     for (const change of changes) {
       const vetted = await vetChange(root, change, config.fix.protected)
       if (isRejected(vetted)) continue
-      await applyChange(vetted.absolute, vetted.relative, change, state.backups).then(() => applied.push(vetted.relative), () => undefined)
+      await applyChange(vetted.absolute, vetted.relative, change, state.backups).then(
+        () => applied.push(vetted.relative),
+        () => undefined,
+      )
       files.add(vetted.relative)
       state.touched.add(vetted.relative)
     }
@@ -243,7 +314,14 @@ export function createFixService(options: FixServiceOptions): FixService {
 
   function finish(state: RunState): void {
     const before = averageScore(state.report)
-    const summary: FixSummary = { branch: state.run.branch, rounds: state.run.events.filter((e) => e.type === 'round').length, ...state.counts, costUsd: 0, before, after: state.after ?? before }
+    const summary: FixSummary = {
+      branch: state.run.branch,
+      rounds: state.run.events.filter((e) => e.type === 'round').length,
+      ...state.counts,
+      costUsd: 0,
+      before,
+      after: state.after ?? before,
+    }
     void spentUsd(state).then((cost) => {
       summary.costUsd = cost
       emit(state, { type: 'done', summary })
@@ -259,12 +337,40 @@ export function createFixService(options: FixServiceOptions): FixService {
 
   return {
     async start(request, onEvent) {
-      const run: FixRun = { id: shortId('fix'), request, branch: '', status: 'running', events: [], pending: [], startedAt: new Date().toISOString() }
+      const run: FixRun = {
+        id: shortId('fix'),
+        request,
+        branch: '',
+        status: 'running',
+        events: [],
+        pending: [],
+        startedAt: new Date().toISOString(),
+      }
       const report = await store.get(request.reportId)
-      const state: RunState = { run, report, queue: selectIssues(report, request.scope), backups: new Map(), touched: new Set(), stashed: false, onEvent, counts: { applied: 0, skipped: 0, rolledBack: 0 }, costStartUsd: (await ai.usage()).monthUsd, waiters: [] }
+      const state: RunState = {
+        run,
+        report,
+        queue: selectIssues(report, request.scope),
+        backups: new Map(),
+        touched: new Set(),
+        stashed: false,
+        onEvent,
+        counts: { applied: 0, skipped: 0, rolledBack: 0 },
+        costStartUsd: (await ai.usage()).monthUsd,
+        waiters: [],
+      }
       states.set(run.id, state)
-      for (const old of [...states.keys()].slice(0, Math.max(0, states.size - MAX_RUNS))) states.delete(old)
-      if (!(await preflight(state).catch((error: unknown) => { emit(state, { type: 'error', message: error instanceof Error ? error.message : String(error) }); return false }))) {
+      for (const old of [...states.keys()].slice(0, Math.max(0, states.size - MAX_RUNS)))
+        states.delete(old)
+      if (
+        !(await preflight(state).catch((error: unknown) => {
+          emit(state, {
+            type: 'error',
+            message: error instanceof Error ? error.message : String(error),
+          })
+          return false
+        }))
+      ) {
         settle(state, 'failed')
         return run
       }
@@ -276,8 +382,11 @@ export function createFixService(options: FixServiceOptions): FixService {
     list: () => [...states.values()].map((s) => s.run),
     async accept(id, changeIds, edits = {}) {
       const state = stateOf(id)
-      if (state.run.status !== 'waiting-review') throw new PerfAgentError('FIX_REJECTED', 'This run is not waiting for review')
-      const chosen = state.run.pending.filter((p) => changeIds.includes(p.changeId)).map((p) => ({ ...p, change: { ...p.change, after: edits[p.changeId] ?? p.change.after } }))
+      if (state.run.status !== 'waiting-review')
+        throw new PerfAgentError('FIX_REJECTED', 'This run is not waiting for review')
+      const chosen = state.run.pending
+        .filter((p) => changeIds.includes(p.changeId))
+        .map((p) => ({ ...p, change: { ...p.change, after: edits[p.changeId] ?? p.change.after } }))
       state.run.pending = state.run.pending.filter((p) => !changeIds.includes(p.changeId))
       const issue = state.report.issues.find((i) => i.id === chosen[0]?.issueId)
       if (issue && chosen.length) await applyRound(state, issue, chosen)

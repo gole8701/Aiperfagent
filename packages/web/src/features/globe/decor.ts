@@ -36,24 +36,55 @@ export class GlobeDecor {
   private link?: Line
   private readonly disposables: { dispose: () => void }[] = []
 
-  constructor(private accent: string, starColour: string) {
+  constructor(
+    private accent: string,
+    starColour: string,
+  ) {
     this.core = new Mesh(new SphereGeometry(0.16, 32, 32), new MeshBasicMaterial({ color: accent }))
-    this.glow = new Sprite(new SpriteMaterial({ map: glowTexture(accent), transparent: true, blending: AdditiveBlending, depthWrite: false }))
+    this.glow = new Sprite(
+      new SpriteMaterial({
+        map: glowTexture(accent),
+        transparent: true,
+        blending: AdditiveBlending,
+        depthWrite: false,
+      }),
+    )
     this.glow.scale.set(1.1, 1.1, 1)
     this.rings = [this.ring(1.35, 0.42, 0.1), this.ring(1.55, -0.35, 0.5)]
     // Depth is not written, so the shell tints what is behind it instead of hiding it; the points shader fades the far side.
-    this.shell = new Mesh(new SphereGeometry(0.995, 64, 48), new MeshBasicMaterial({ color: accent, transparent: true, opacity: 0.07, depthWrite: false }))
-    this.grid = new LineSegments(graticule(1, 12, 6), new LineBasicMaterial({ color: accent, transparent: true, opacity: 0.16, depthWrite: false }))
+    this.shell = new Mesh(
+      new SphereGeometry(0.995, 64, 48),
+      new MeshBasicMaterial({ color: accent, transparent: true, opacity: 0.07, depthWrite: false }),
+    )
+    this.grid = new LineSegments(
+      graticule(1, 12, 6),
+      new LineBasicMaterial({ color: accent, transparent: true, opacity: 0.16, depthWrite: false }),
+    )
     this.atmosphere = new Mesh(new SphereGeometry(1.08, 64, 48), atmosphereMaterial(accent))
     this.shell.renderOrder = -2
     this.grid.renderOrder = -1
     this.group.add(this.atmosphere, this.shell, this.grid, this.core, this.glow, ...this.rings)
     this.stars = starfield(starColour)
-    this.disposables.push(this.core.geometry, this.core.material as MeshBasicMaterial, this.glow.material, this.stars.geometry, this.stars.material as PointsMaterial, this.shell.geometry, this.shell.material as MeshBasicMaterial, this.grid.geometry, this.grid.material as LineBasicMaterial, this.atmosphere.geometry, this.atmosphere.material as ShaderMaterial)
+    this.disposables.push(
+      this.core.geometry,
+      this.core.material as MeshBasicMaterial,
+      this.glow.material,
+      this.stars.geometry,
+      this.stars.material as PointsMaterial,
+      this.shell.geometry,
+      this.shell.material as MeshBasicMaterial,
+      this.grid.geometry,
+      this.grid.material as LineBasicMaterial,
+      this.atmosphere.geometry,
+      this.atmosphere.material as ShaderMaterial,
+    )
   }
 
   private ring(radius: number, tiltX: number, tiltZ: number): Mesh {
-    const mesh = new Mesh(new RingGeometry(radius, radius + 0.006, 128), new MeshBasicMaterial({ color: this.accent, transparent: true, opacity: 0.35, side: 2 }))
+    const mesh = new Mesh(
+      new RingGeometry(radius, radius + 0.006, 128),
+      new MeshBasicMaterial({ color: this.accent, transparent: true, opacity: 0.35, side: 2 }),
+    )
     mesh.rotation.set(Math.PI / 2 + tiltX, 0, tiltZ)
     this.disposables.push(mesh.geometry, mesh.material)
     return mesh
@@ -67,7 +98,9 @@ export class GlobeDecor {
     for (const r of this.rings) (r.material as MeshBasicMaterial).color.set(accent)
     ;(this.shell.material as MeshBasicMaterial).color.set(accent)
     ;(this.grid.material as LineBasicMaterial).color.set(accent)
-    ;((this.atmosphere.material as ShaderMaterial).uniforms.uColor?.value as Color | undefined)?.set(accent)
+    ;(
+      (this.atmosphere.material as ShaderMaterial).uniforms.uColor?.value as Color | undefined
+    )?.set(accent)
     ;(this.stars.material as PointsMaterial).color.set(starColour)
     if (this.link) (this.link.material as LineDashedMaterial).color = new Color(accent)
   }
@@ -81,10 +114,22 @@ export class GlobeDecor {
       this.link = undefined
     }
     if (!target) return
-    const mid = target.clone().multiplyScalar(0.75).add(new Vector3(0, 0.25, 0))
+    const mid = target
+      .clone()
+      .multiplyScalar(0.75)
+      .add(new Vector3(0, 0.25, 0))
     const curve = new QuadraticBezierCurve3(new Vector3(0, 0, 0), mid, target)
     const geometry = new BufferGeometry().setFromPoints(curve.getPoints(40))
-    const line = new Line(geometry, new LineDashedMaterial({ color: colour, dashSize: 0.05, gapSize: 0.04, transparent: true, opacity: 0.9 }))
+    const line = new Line(
+      geometry,
+      new LineDashedMaterial({
+        color: colour,
+        dashSize: 0.05,
+        gapSize: 0.04,
+        transparent: true,
+        opacity: 0.9,
+      }),
+    )
     line.computeLineDistances()
     this.linkDistances = Float32Array.from(line.geometry.getAttribute('lineDistance').array)
     this.link = line
@@ -99,7 +144,8 @@ export class GlobeDecor {
     // Shifting the dash distances makes the dashes flow from the core to the point.
     if (this.link && this.linkDistances && dt !== 0) {
       const attr = this.link.geometry.getAttribute('lineDistance')
-      for (let i = 0; i < this.linkDistances.length; i++) attr.setX(i, (this.linkDistances[i] ?? 0) + time * 0.3)
+      for (let i = 0; i < this.linkDistances.length; i++)
+        attr.setX(i, (this.linkDistances[i] ?? 0) + time * 0.3)
       attr.needsUpdate = true
     }
     this.rings[0].rotation.z += dt * 0.05
@@ -116,16 +162,31 @@ export class GlobeDecor {
 function graticule(radius: number, meridians: number, parallels: number): BufferGeometry {
   const segments = 96
   const vertices: number[] = []
-  const at = (lat: number, lon: number): number[] => [radius * Math.cos(lat) * Math.sin(lon), radius * Math.sin(lat), radius * Math.cos(lat) * Math.cos(lon)]
+  const at = (lat: number, lon: number): number[] => [
+    radius * Math.cos(lat) * Math.sin(lon),
+    radius * Math.sin(lat),
+    radius * Math.cos(lat) * Math.cos(lon),
+  ]
   for (let m = 0; m < meridians; m++) {
     const lon = (m / meridians) * Math.PI * 2
-    for (let i = 0; i < segments; i++) vertices.push(...at(-Math.PI / 2 + (i / segments) * Math.PI, lon), ...at(-Math.PI / 2 + ((i + 1) / segments) * Math.PI, lon))
+    for (let i = 0; i < segments; i++)
+      vertices.push(
+        ...at(-Math.PI / 2 + (i / segments) * Math.PI, lon),
+        ...at(-Math.PI / 2 + ((i + 1) / segments) * Math.PI, lon),
+      )
   }
   for (let p = 1; p < parallels; p++) {
     const lat = -Math.PI / 2 + (p / parallels) * Math.PI
-    for (let i = 0; i < segments; i++) vertices.push(...at(lat, (i / segments) * Math.PI * 2), ...at(lat, ((i + 1) / segments) * Math.PI * 2))
+    for (let i = 0; i < segments; i++)
+      vertices.push(
+        ...at(lat, (i / segments) * Math.PI * 2),
+        ...at(lat, ((i + 1) / segments) * Math.PI * 2),
+      )
   }
-  return new BufferGeometry().setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3))
+  return new BufferGeometry().setAttribute(
+    'position',
+    new BufferAttribute(new Float32Array(vertices), 3),
+  )
 }
 
 /** Fresnel rim on the back faces of a slightly larger sphere: the soft atmosphere around the globe. */
@@ -182,9 +243,21 @@ function starfield(colour: string): Points {
     const r = 8 + Math.random() * 12
     const theta = Math.random() * Math.PI * 2
     const phi = Math.acos(2 * Math.random() - 1)
-    positions.set([r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi)], i * 3)
+    positions.set(
+      [r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi)],
+      i * 3,
+    )
   }
   const geometry = new BufferGeometry()
   geometry.setAttribute('position', new BufferAttribute(positions, 3))
-  return new Points(geometry, new PointsMaterial({ color: colour, size: 0.035, transparent: true, opacity: 0.6, sizeAttenuation: true }))
+  return new Points(
+    geometry,
+    new PointsMaterial({
+      color: colour,
+      size: 0.035,
+      transparent: true,
+      opacity: 0.6,
+      sizeAttenuation: true,
+    }),
+  )
 }

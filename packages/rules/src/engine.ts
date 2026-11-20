@@ -1,4 +1,17 @@
-import { buildRootCauseChain, issueId, metricValue, type Area, type ChainInput, type CodeChange, type DocLink, type Issue, type MetricId, type PageResult, type Severity, type SourceLocation } from '@perfagent/core'
+import {
+  buildRootCauseChain,
+  issueId,
+  metricValue,
+  type Area,
+  type ChainInput,
+  type CodeChange,
+  type DocLink,
+  type Issue,
+  type MetricId,
+  type PageResult,
+  type Severity,
+  type SourceLocation,
+} from '@perfagent/core'
 import type { ProjectScan, SourceFile } from '@perfagent/scanner'
 
 /**
@@ -51,7 +64,10 @@ export function runRules(rules: Rule[], ctx: RuleContext, disabled: string[] = [
     if (disabled.includes(rule.id) || !ctx.packs.includes(rule.pack)) continue
     for (const f of safeDetect(rule, ctx)) issues.push(toIssue(rule, f))
   }
-  return dedupe(issues).sort((a, b) => severityRank(a.severity) - severityRank(b.severity) || b.gain.scoreDelta - a.gain.scoreDelta)
+  return dedupe(issues).sort(
+    (a, b) =>
+      severityRank(a.severity) - severityRank(b.severity) || b.gain.scoreDelta - a.gain.scoreDelta,
+  )
 }
 
 function safeDetect(rule: Rule, ctx: RuleContext): Finding[] {
@@ -79,7 +95,11 @@ function toIssue(rule: Rule, f: Finding): Issue {
     why: f.why ?? rule.why,
     frameworkRule: rule.frameworkRule,
     gain: { metric: f.chain.metric, ...f.gain },
-    fix: { steps: f.steps ?? rule.steps, changes: f.changes ?? [], automatic: f.automatic ?? false },
+    fix: {
+      steps: f.steps ?? rule.steps,
+      changes: f.changes ?? [],
+      automatic: f.automatic ?? false,
+    },
     prevent: f.prevent ? { route: route ?? '/', ...f.prevent } : undefined,
     docs: rule.docs,
     status: 'open',
@@ -102,7 +122,12 @@ export function severityRank(s: Severity): number {
 
 /* ---------- helpers shared by rule packs ---------- */
 
-export function loc(file: SourceFile, line: number, symbol?: string, column?: number): SourceLocation {
+export function loc(
+  file: SourceFile,
+  line: number,
+  symbol?: string,
+  column?: number,
+): SourceLocation {
   return { file: file.path, line, column, symbol }
 }
 

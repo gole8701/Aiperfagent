@@ -17,7 +17,11 @@ export function describeConfig(): OptionDoc[] {
   return rows
 }
 
-function unwrap(schema: z.ZodTypeAny): { inner: z.ZodTypeAny; defaultValue: unknown; description?: string } {
+function unwrap(schema: z.ZodTypeAny): {
+  inner: z.ZodTypeAny
+  defaultValue: unknown
+  description?: string
+} {
   let inner = schema
   let defaultValue: unknown
   let description = schema.description
@@ -37,10 +41,16 @@ function walk(schema: z.ZodTypeAny, prefix: string, rows: OptionDoc[]): void {
   const { inner, defaultValue, description } = unwrap(schema)
   if (inner instanceof z.ZodObject) {
     const shape = inner.shape as Record<string, z.ZodTypeAny>
-    for (const [key, child] of Object.entries(shape)) walk(child, prefix ? `${prefix}.${key}` : key, rows)
+    for (const [key, child] of Object.entries(shape))
+      walk(child, prefix ? `${prefix}.${key}` : key, rows)
     return
   }
-  const row: OptionDoc = { path: prefix, type: typeName(inner), default: defaultValue, description: description ?? '' }
+  const row: OptionDoc = {
+    path: prefix,
+    type: typeName(inner),
+    default: defaultValue,
+    description: description ?? '',
+  }
   if (inner instanceof z.ZodEnum) row.choices = inner.options as string[]
   rows.push(row)
 }

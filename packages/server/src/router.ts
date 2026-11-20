@@ -33,15 +33,28 @@ export class Router {
 
   add(method: Method, path: string, handler: Handler): this {
     const keys: string[] = []
-    const pattern = new RegExp(`^${path.replace(/\/:([a-zA-Z]+)/g, (_m, key: string) => { keys.push(key); return '/([^/]+)' })}/?$`)
+    const pattern = new RegExp(
+      `^${path.replace(/\/:([a-zA-Z]+)/g, (_m, key: string) => {
+        keys.push(key)
+        return '/([^/]+)'
+      })}/?$`,
+    )
     this.routes.push({ method, pattern, keys, handler })
     return this
   }
 
-  get(path: string, handler: Handler): this { return this.add('GET', path, handler) }
-  post(path: string, handler: Handler): this { return this.add('POST', path, handler) }
-  put(path: string, handler: Handler): this { return this.add('PUT', path, handler) }
-  delete(path: string, handler: Handler): this { return this.add('DELETE', path, handler) }
+  get(path: string, handler: Handler): this {
+    return this.add('GET', path, handler)
+  }
+  post(path: string, handler: Handler): this {
+    return this.add('POST', path, handler)
+  }
+  put(path: string, handler: Handler): this {
+    return this.add('PUT', path, handler)
+  }
+  delete(path: string, handler: Handler): this {
+    return this.add('DELETE', path, handler)
+  }
 
   /** Returns false when no route matched. */
   async handle(req: IncomingMessage, res: ServerResponse): Promise<boolean> {
@@ -51,8 +64,17 @@ export class Router {
       const match = route.pattern.exec(url.pathname)
       if (!match) continue
       const params: Record<string, string> = {}
-      route.keys.forEach((k, i) => { params[k] = decodeURIComponent(match[i + 1] ?? '') })
-      const ctx: RequestContext = { req, res, params, query: url.searchParams, json: () => readJson(req), raw: () => readBody(req, MAX_RAW_BYTES) }
+      route.keys.forEach((k, i) => {
+        params[k] = decodeURIComponent(match[i + 1] ?? '')
+      })
+      const ctx: RequestContext = {
+        req,
+        res,
+        params,
+        query: url.searchParams,
+        json: () => readJson(req),
+        raw: () => readBody(req, MAX_RAW_BYTES),
+      }
       try {
         const result = await route.handler(ctx)
         if (!res.headersSent && !res.writableEnded) sendJson(res, 200, result ?? { ok: true })
@@ -67,18 +89,32 @@ export class Router {
 
 export function sendJson(res: ServerResponse, status: number, body: unknown): void {
   const text = JSON.stringify(body)
-  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(text) })
+  res.writeHead(status, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Content-Length': Buffer.byteLength(text),
+  })
   res.end(text)
 }
 
 export function sendError(res: ServerResponse, error: unknown): void {
-  const status = isPerfAgentError(error) ? STATUS[error.code] ?? 400 : 500
-  const body = isPerfAgentError(error) ? { error: error.message, code: error.code, hint: error.hint } : { error: errorMessage(error), code: 'INTERNAL' }
+  const status = isPerfAgentError(error) ? (STATUS[error.code] ?? 400) : 500
+  const body = isPerfAgentError(error)
+    ? { error: error.message, code: error.code, hint: error.hint }
+    : { error: errorMessage(error), code: 'INTERNAL' }
   if (!res.headersSent) sendJson(res, status, body)
   else res.end()
 }
 
-const STATUS: Partial<Record<PerfAgentError['code'], number>> = { NOT_FOUND: 404, UNAUTHORIZED: 401, ORIGIN_REJECTED: 403, PATH_OUTSIDE_ROOT: 403, NOT_LOCAL_MODE: 403, IMPORT_TOO_LARGE: 413, BROWSER_MISSING: 503, AI_NOT_CONFIGURED: 409 }
+const STATUS: Partial<Record<PerfAgentError['code'], number>> = {
+  NOT_FOUND: 404,
+  UNAUTHORIZED: 401,
+  ORIGIN_REJECTED: 403,
+  PATH_OUTSIDE_ROOT: 403,
+  NOT_LOCAL_MODE: 403,
+  IMPORT_TOO_LARGE: 413,
+  BROWSER_MISSING: 503,
+  AI_NOT_CONFIGURED: 409,
+}
 
 async function readJson<T>(req: IncomingMessage): Promise<T> {
   const body = await readBody(req, MAX_JSON_BYTES)
@@ -98,12 +134,19 @@ function readBody(req: IncomingMessage, limit: number): Promise<Buffer> {
       size += chunk.length
       if (size > limit) {
         req.destroy()
-        reject(new PerfAgentError('IMPORT_TOO_LARGE', `Request body is over ${Math.round(limit / 1_048_576)} MB`))
+        reject(
+          new PerfAgentError(
+            'IMPORT_TOO_LARGE',
+            `Request body is over ${Math.round(limit / 1_048_576)} MB`,
+          ),
+        )
         return
       }
       chunks.push(chunk)
     })
-    req.on('end', () => { resolve(Buffer.concat(chunks)) })
+    req.on('end', () => {
+      resolve(Buffer.concat(chunks))
+    })
     req.on('error', reject)
   })
 }

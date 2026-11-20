@@ -1,4 +1,13 @@
-import { PerfAgentError, countChips, matchesChip, summarise, type Area, type ChipFilter, type IssueStatus, type MetricId } from '@perfagent/core'
+import {
+  PerfAgentError,
+  countChips,
+  matchesChip,
+  summarise,
+  type Area,
+  type ChipFilter,
+  type IssueStatus,
+  type MetricId,
+} from '@perfagent/core'
 
 import type { AppContext } from '../app.js'
 import type { Router } from '../router.js'
@@ -12,14 +21,17 @@ export function parseChip(raw: string | null): ChipFilter {
 }
 
 export function issueRoutes(router: Router, ctx: AppContext): void {
-  const reportFor = async (id: string | null) => (id && id !== 'latest' ? ctx.store.get(id) : ctx.store.latest())
+  const reportFor = async (id: string | null) =>
+    id && id !== 'latest' ? ctx.store.get(id) : ctx.store.latest()
 
   router.get('/api/issues', async ({ query }) => {
     const report = await reportFor(query.get('reportId'))
     if (!report) return { issues: [], chips: countChips([]), reportId: undefined }
     const filter = parseChip(query.get('filter'))
     const route = query.get('route')
-    const issues = report.issues.filter((i) => matchesChip(i, filter) && (!route || !i.route || i.route === route))
+    const issues = report.issues.filter(
+      (i) => matchesChip(i, filter) && (!route || !i.route || i.route === route),
+    )
     return { reportId: report.id, issues, chips: countChips(report.issues) }
   })
 
@@ -32,7 +44,8 @@ export function issueRoutes(router: Router, ctx: AppContext): void {
 
   router.post('/api/issues/:id/status', async ({ params, query, json }) => {
     const { status } = await json<{ status: IssueStatus }>()
-    if (!['open', 'fixed', 'ignored'].includes(status)) throw new PerfAgentError('IMPORT_INVALID', 'Status must be open, fixed or ignored')
+    if (!['open', 'fixed', 'ignored'].includes(status))
+      throw new PerfAgentError('IMPORT_INVALID', 'Status must be open, fixed or ignored')
     const report = await reportFor(query.get('reportId'))
     if (!report) throw new PerfAgentError('NOT_FOUND', 'No report')
     return ctx.store.setIssueStatus(report.id, params.id ?? '', status)
@@ -40,7 +53,12 @@ export function issueRoutes(router: Router, ctx: AppContext): void {
 
   router.get('/api/tree', async ({ query }) => {
     const report = await reportFor(query.get('reportId'))
-    if (!report?.tree) throw new PerfAgentError('NOT_FOUND', 'No project tree in this report', 'Scan a local project to see its files.')
+    if (!report?.tree)
+      throw new PerfAgentError(
+        'NOT_FOUND',
+        'No project tree in this report',
+        'Scan a local project to see its files.',
+      )
     return report.tree
   })
 

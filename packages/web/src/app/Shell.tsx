@@ -42,7 +42,9 @@ export function Shell({ children }: { children: ReactNode }) {
   useServerEvents()
 
   const topic = GUIDE_BY_ROUTE.find(([pattern]) => pattern.test(location.pathname))?.[1] ?? 'globe'
-  const framework = status?.project.framework ? `${status.project.framework}${status.project.frameworkVersion ? ` ${status.project.frameworkVersion}` : ''}` : undefined
+  const framework = status?.project.framework
+    ? `${status.project.framework}${status.project.frameworkVersion ? ` ${status.project.frameworkVersion}` : ''}`
+    : undefined
 
   return (
     <>
@@ -70,7 +72,10 @@ export function Shell({ children }: { children: ReactNode }) {
           label="Theme"
           hideLabel
           value={theme}
-          options={(Object.keys(THEME_LABELS) as Theme[]).map((t) => ({ value: t, label: THEME_LABELS[t] }))}
+          options={(Object.keys(THEME_LABELS) as Theme[]).map((t) => ({
+            value: t,
+            label: THEME_LABELS[t],
+          }))}
           onChange={(value) => setTheme(value as Theme)}
         />
         <ExportMenu />
@@ -82,12 +87,17 @@ export function Shell({ children }: { children: ReactNode }) {
       ) : null}
       {IS_STATIC ? (
         <div className="banner no-print" role="status">
-          Website demo: sample data from a real scan. Run <code>npx perfagent</code> in your project to scan, open files and fix.
+          Website demo: sample data from a real scan. Run <code>npx perfagent</code> in your project
+          to scan, open files and fix.
         </div>
       ) : null}
       <main id="main">{children}</main>
       {topic ? (
-        <Link to={`/guide/${topic}`} className="guide-fab no-print" aria-label="Open the guide for this screen">
+        <Link
+          to={`/guide/${topic}`}
+          className="guide-fab no-print"
+          aria-label="Open the guide for this screen"
+        >
           ? Guide
         </Link>
       ) : null}
@@ -102,12 +112,25 @@ function useServerEvents(): void {
   useEffect(
     () =>
       onWsMessage((message) => {
-        if (message.type === 'scan:progress') setScan({ jobId: message.jobId, phase: message.phase, message: message.message, fraction: message.fraction })
+        if (message.type === 'scan:progress')
+          setScan({
+            jobId: message.jobId,
+            phase: message.phase,
+            message: message.message,
+            fraction: message.fraction,
+          })
         if (message.type === 'scan:done') {
           setScan(undefined)
           void loadReport(message.reportId)
         }
-        if (message.type === 'scan:error') setScan({ jobId: message.jobId, phase: 'error', message: message.message, fraction: 1, error: message.message })
+        if (message.type === 'scan:error')
+          setScan({
+            jobId: message.jobId,
+            phase: 'error',
+            message: message.message,
+            fraction: 1,
+            error: message.message,
+          })
       }),
     [setScan, loadReport],
   )

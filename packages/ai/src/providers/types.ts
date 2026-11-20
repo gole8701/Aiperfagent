@@ -38,19 +38,42 @@ export interface Provider {
   defaultModel: string
   chat(request: ChatRequest, auth: ProviderAuth): Promise<ChatResult>
   listModels(auth: ProviderAuth): Promise<string[]>
-  test(auth: ProviderAuth, model?: string): Promise<{ ok: boolean; message: string; latencyMs: number }>
+  test(
+    auth: ProviderAuth,
+    model?: string,
+  ): Promise<{ ok: boolean; message: string; latencyMs: number }>
 }
 
 export const CHAT_TIMEOUT_MS = 120_000
 export const LIST_TIMEOUT_MS = 8_000
 
 /** Shared "say hi" check: one tiny completion proves key, endpoint and model at once. */
-export async function pingProvider(provider: Provider, auth: ProviderAuth, model: string): Promise<{ ok: boolean; message: string; latencyMs: number }> {
+export async function pingProvider(
+  provider: Provider,
+  auth: ProviderAuth,
+  model: string,
+): Promise<{ ok: boolean; message: string; latencyMs: number }> {
   const started = Date.now()
   try {
-    const result = await provider.chat({ system: 'Reply with the single word OK.', messages: [{ role: 'user', content: 'ping' }], maxTokens: 8, model }, auth)
-    return { ok: true, message: `${provider.label} answered with ${result.model} in ${result.totalMs} ms`, latencyMs: Date.now() - started }
+    const result = await provider.chat(
+      {
+        system: 'Reply with the single word OK.',
+        messages: [{ role: 'user', content: 'ping' }],
+        maxTokens: 8,
+        model,
+      },
+      auth,
+    )
+    return {
+      ok: true,
+      message: `${provider.label} answered with ${result.model} in ${result.totalMs} ms`,
+      latencyMs: Date.now() - started,
+    }
   } catch (error) {
-    return { ok: false, message: error instanceof Error ? error.message : String(error), latencyMs: Date.now() - started }
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : String(error),
+      latencyMs: Date.now() - started,
+    }
   }
 }

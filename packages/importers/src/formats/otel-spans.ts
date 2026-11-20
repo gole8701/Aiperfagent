@@ -11,8 +11,16 @@ export interface Span {
 
 type Attr = string | number | boolean
 
-interface OtlpValue { stringValue?: string; intValue?: string | number; doubleValue?: number; boolValue?: boolean }
-interface OtlpKeyValue { key?: string; value?: OtlpValue }
+interface OtlpValue {
+  stringValue?: string
+  intValue?: string | number
+  doubleValue?: number
+  boolValue?: boolean
+}
+interface OtlpKeyValue {
+  key?: string
+  value?: OtlpValue
+}
 interface OtlpSpan {
   name?: string
   kind?: number | string
@@ -33,7 +41,19 @@ interface ConsoleSpan {
   status?: { code?: number | string; message?: string }
 }
 
-const KINDS: Record<string, Span['kind']> = { 0: 'internal', 1: 'internal', 2: 'server', 3: 'client', 4: 'producer', 5: 'consumer', SPAN_KIND_SERVER: 'server', SPAN_KIND_CLIENT: 'client', SPAN_KIND_INTERNAL: 'internal', SPAN_KIND_PRODUCER: 'producer', SPAN_KIND_CONSUMER: 'consumer' }
+const KINDS: Record<string, Span['kind']> = {
+  0: 'internal',
+  1: 'internal',
+  2: 'server',
+  3: 'client',
+  4: 'producer',
+  5: 'consumer',
+  SPAN_KIND_SERVER: 'server',
+  SPAN_KIND_CLIENT: 'client',
+  SPAN_KIND_INTERNAL: 'internal',
+  SPAN_KIND_PRODUCER: 'producer',
+  SPAN_KIND_CONSUMER: 'consumer',
+}
 
 /** OTLP attribute lists are `[{key, value: {stringValue}}]`; the console exporter uses plain objects. */
 export function readAttributes(raw: unknown): Record<string, Attr> {
@@ -42,11 +62,16 @@ export function readAttributes(raw: unknown): Record<string, Attr> {
     for (const kv of raw as OtlpKeyValue[]) {
       if (!kv.key) continue
       const v = kv.value ?? {}
-      const value = v.stringValue ?? v.doubleValue ?? v.boolValue ?? (v.intValue !== undefined ? Number(v.intValue) : undefined)
+      const value =
+        v.stringValue ??
+        v.doubleValue ??
+        v.boolValue ??
+        (v.intValue !== undefined ? Number(v.intValue) : undefined)
       if (value !== undefined) out[kv.key] = value
     }
   } else if (typeof raw === 'object' && raw !== null) {
-    for (const [k, v] of Object.entries(raw)) if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') out[k] = v
+    for (const [k, v] of Object.entries(raw))
+      if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') out[k] = v
   }
   return out
 }
@@ -54,9 +79,15 @@ export function readAttributes(raw: unknown): Record<string, Attr> {
 const nanoToMs = (nano: string | number | undefined): number => Number(nano ?? 0) / 1e6
 const hrToMs = (hr: [number, number] | undefined): number => (hr ? hr[0] * 1000 + hr[1] / 1e6 : 0)
 
-function errorOf(status: { code?: number | string; message?: string } | undefined): string | undefined {
+function errorOf(
+  status: { code?: number | string; message?: string } | undefined,
+): string | undefined {
   if (!status) return undefined
-  return status.code === 2 || status.code === 'STATUS_CODE_ERROR' || status.code === 'ERROR' ? (status.message?.trim() ? status.message : 'error') : undefined
+  return status.code === 2 || status.code === 'STATUS_CODE_ERROR' || status.code === 'ERROR'
+    ? status.message?.trim()
+      ? status.message
+      : 'error'
+    : undefined
 }
 
 function fromOtlp(s: OtlpSpan): Span {
@@ -87,8 +118,13 @@ function fromConsole(s: ConsoleSpan): Span {
 }
 
 export function normaliseSpans(json: unknown): Span[] {
-  if (Array.isArray(json)) return (json as ConsoleSpan[]).filter((s) => typeof s === 'object').map(fromConsole)
-  const resourceSpans = (json as { resourceSpans?: { scopeSpans?: { spans?: OtlpSpan[] }[] }[] } | null)?.resourceSpans
+  if (Array.isArray(json))
+    return (json as ConsoleSpan[]).filter((s) => typeof s === 'object').map(fromConsole)
+  const resourceSpans = (
+    json as { resourceSpans?: { scopeSpans?: { spans?: OtlpSpan[] }[] }[] } | null
+  )?.resourceSpans
   if (!Array.isArray(resourceSpans)) return []
-  return resourceSpans.flatMap((r) => (r.scopeSpans ?? []).flatMap((sc) => (sc.spans ?? []).map(fromOtlp)))
+  return resourceSpans.flatMap((r) =>
+    (r.scopeSpans ?? []).flatMap((sc) => (sc.spans ?? []).map(fromOtlp)),
+  )
 }

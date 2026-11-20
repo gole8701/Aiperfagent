@@ -15,7 +15,10 @@ export function checkBudgets(report: Report, budgets: PerfAgentConfig['budgets']
   const results: BudgetResult[] = []
   for (const [route, budget] of Object.entries(budgets)) {
     const page = report.pages.find((p) => p.route === route || p.url.endsWith(route))
-    for (const [key, raw] of Object.entries(budget) as [keyof BudgetConfig, number | string | undefined][]) {
+    for (const [key, raw] of Object.entries(budget) as [
+      keyof BudgetConfig,
+      number | string | undefined,
+    ][]) {
       if (raw === undefined) continue
       const metric: MetricId = key === 'js' ? 'jsKb' : key
       const limit = typeof raw === 'string' ? parseSize(raw) : raw
@@ -48,13 +51,22 @@ function parseSize(value: string): number {
 /** Markdown for a GitHub pull-request comment. */
 export function budgetsMarkdown(report: Report, results: BudgetResult[]): string {
   const failed = results.filter((r) => !r.passed)
-  const lines = [`## PerfAgent: ${failed.length ? `${failed.length} budget${failed.length > 1 ? 's' : ''} over limit` : 'all budgets within limits'}`, '']
+  const lines = [
+    `## PerfAgent: ${failed.length ? `${failed.length} budget${failed.length > 1 ? 's' : ''} over limit` : 'all budgets within limits'}`,
+    '',
+  ]
   lines.push('| Page | Metric | Actual | Budget | |', '|---|---|---|---|---|')
-  for (const r of results) lines.push(`| ${r.route} | ${METRICS[r.metric].short} | ${r.actual === undefined ? '—' : formatMetric(r.metric, r.actual)} | ${formatMetric(r.metric, r.limit)} | ${r.passed ? '✅' : '❌'} |`)
+  for (const r of results)
+    lines.push(
+      `| ${r.route} | ${METRICS[r.metric].short} | ${r.actual === undefined ? '—' : formatMetric(r.metric, r.actual)} | ${formatMetric(r.metric, r.limit)} | ${r.passed ? '✅' : '❌'} |`,
+    )
   const top = report.issues.filter((i) => i.status === 'open').slice(0, 5)
   if (top.length) {
     lines.push('', '### Top problems', '')
-    for (const i of top) lines.push(`- **${i.plain}** ${i.location ? `(\`${i.location.file}:${i.location.line}\`)` : ''}: ${i.fix.steps[0] ?? ''}`)
+    for (const i of top)
+      lines.push(
+        `- **${i.plain}** ${i.location ? `(\`${i.location.file}:${i.location.line}\`)` : ''}: ${i.fix.steps[0] ?? ''}`,
+      )
   }
   return lines.join('\n')
 }

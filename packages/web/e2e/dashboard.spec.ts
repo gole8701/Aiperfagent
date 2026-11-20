@@ -90,7 +90,10 @@ test('themes switch', async ({ page }) => {
 
 test('keyboard: Tab reaches the first chip', async ({ page }) => {
   await openHome(page)
-  await page.getByRole('heading', { name: 'Performance score' }).focus().catch(() => undefined)
+  await page
+    .getByRole('heading', { name: 'Performance score' })
+    .focus()
+    .catch(() => undefined)
   const chip = page.getByRole('group', { name: 'Filter by metric' }).getByRole('button').first()
   await chip.focus()
   await expect(chip).toBeFocused()

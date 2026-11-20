@@ -27,11 +27,16 @@ export default function FlowScreen() {
     if (!tree) return
     const target = pathParam ? idsOnPathTo(tree, pathParam) : [tree.id]
     if (target.length === 0) return
-    setExpanded((prev) => new Set([...prev, ...target.slice(0, -1), ...(pathParam ? [] : [tree.id])]))
+    setExpanded(
+      (prev) => new Set([...prev, ...target.slice(0, -1), ...(pathParam ? [] : [tree.id])]),
+    )
     if (pathParam) setSelectedId(target[target.length - 1])
   }, [tree, pathParam])
 
-  const graph = useMemo(() => (tree ? visibleGraph(tree, { expanded, problemsOnly, query }) : undefined), [tree, expanded, problemsOnly, query])
+  const graph = useMemo(
+    () => (tree ? visibleGraph(tree, { expanded, problemsOnly, query }) : undefined),
+    [tree, expanded, problemsOnly, query],
+  )
   const selected = tree && selectedId ? findNode(tree, selectedId) : undefined
   const trail = tree && selectedId ? pathTo(tree, selectedId) : tree ? [tree] : []
 
@@ -72,7 +77,10 @@ export default function FlowScreen() {
       <div className="page">
         <Empty>
           <h2>No project tree in this report</h2>
-          <p>Scan a local project to see its folders, files, components and functions here. URL-only scans have no source files.</p>
+          <p>
+            Scan a local project to see its folders, files, components and functions here. URL-only
+            scans have no source files.
+          </p>
         </Empty>
       </div>
     )
@@ -82,7 +90,14 @@ export default function FlowScreen() {
     <div className="flow-screen">
       <div className="flow-main">
         <div className="flow-toolbar" data-tour="header">
-          <input className="input" type="search" placeholder="Find a file or component" aria-label="Find a file or component" value={query} onChange={(event) => setQuery(event.target.value)} />
+          <input
+            className="input"
+            type="search"
+            placeholder="Find a file or component"
+            aria-label="Find a file or component"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
           <Button onClick={() => setExpanded(allBranchIds(tree))}>Expand all</Button>
           <Button onClick={() => setExpanded(new Set([tree.id]))}>Collapse all</Button>
           <Toggle label="Problems only" checked={problemsOnly} onChange={setProblemsOnly} />
@@ -95,7 +110,11 @@ export default function FlowScreen() {
           {trail.map((node, index) => (
             <span key={node.id}>
               {index > 0 ? <span className="muted"> › </span> : null}
-              <button type="button" onClick={() => select(node)} aria-current={index === trail.length - 1}>
+              <button
+                type="button"
+                onClick={() => select(node)}
+                aria-current={index === trail.length - 1}
+              >
                 {node.name || 'root'}
               </button>
             </span>

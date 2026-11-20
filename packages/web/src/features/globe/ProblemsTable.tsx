@@ -18,17 +18,44 @@ export function gainLabel(issue: Issue): string {
 }
 
 export function whereLabel(issue: Issue): string {
-  if (issue.location) return `${issue.location.file}:${issue.location.line}${issue.location.symbol ? ` · ${issue.location.symbol}` : ''}`
+  if (issue.location)
+    return `${issue.location.file}:${issue.location.line}${issue.location.symbol ? ` · ${issue.location.symbol}` : ''}`
   return issue.route ? `page ${issue.route}` : 'whole page'
 }
 
 const columns: Column<Issue>[] = [
-  { key: 'severity', header: 'Severity', render: (i) => <SeverityDot severity={i.severity} />, width: '110px' },
+  {
+    key: 'severity',
+    header: 'Severity',
+    render: (i) => <SeverityDot severity={i.severity} />,
+    width: '110px',
+  },
   { key: 'title', header: 'Problem', render: (i) => <span>{i.plain}</span> },
   { key: 'where', header: 'Where', render: (i) => <span className="mono">{whereLabel(i)}</span> },
-  { key: 'tags', header: 'Tags', render: (i) => <span className="row">{[...i.metrics.map((m) => METRICS[m].short), ...i.areas].slice(0, 4).map((t) => <span key={t} className="badge">{t}</span>)}</span> },
+  {
+    key: 'tags',
+    header: 'Tags',
+    render: (i) => (
+      <span className="row">
+        {[...i.metrics.map((m) => METRICS[m].short), ...i.areas].slice(0, 4).map((t) => (
+          <span key={t} className="badge">
+            {t}
+          </span>
+        ))}
+      </span>
+    ),
+  },
   { key: 'gain', header: 'Estimated gain', render: (i) => <span>{gainLabel(i)}</span> },
-  { key: 'status', header: 'Status', render: (i) => <span className={i.status === 'fixed' ? 'rating-good' : 'muted'}>{STATUS_LABEL[i.status]}</span>, width: '80px' },
+  {
+    key: 'status',
+    header: 'Status',
+    render: (i) => (
+      <span className={i.status === 'fixed' ? 'rating-good' : 'muted'}>
+        {STATUS_LABEL[i.status]}
+      </span>
+    ),
+    width: '80px',
+  },
 ]
 
 export function ProblemsTable({ issues, selectedId, onSelect, filterLabel }: ProblemsTableProps) {
@@ -39,7 +66,15 @@ export function ProblemsTable({ issues, selectedId, onSelect, filterLabel }: Pro
           All problems ({filterLabel}) · {issues.length} · click one to fly to it on the globe
         </h3>
       </div>
-      <Table columns={columns} rows={issues} rowKey={(i) => i.id} onRowClick={onSelect} selectedKey={selectedId} caption="All performance problems sorted by estimated gain" empty="No problems match this filter." />
+      <Table
+        columns={columns}
+        rows={issues}
+        rowKey={(i) => i.id}
+        onRowClick={onSelect}
+        selectedKey={selectedId}
+        caption="All performance problems sorted by estimated gain"
+        empty="No problems match this filter."
+      />
     </section>
   )
 }

@@ -11,17 +11,17 @@ npx perfagent mcp --http --host 0.0.0.0 --port 4546   # reachable from other mac
 
 ## Tools (read-only)
 
-| Tool | What it does |
-|---|---|
-| `scan_url {url, device?, runs?}` | Measure any public URL and list the problems found |
-| `scan_project {urls?}` | Scan the project source and configured pages; saves a report |
-| `list_issues {reportId?, filter?, route?}` | Problems, filtered by chip (`metric:lcp`, `area:bundle`) or route |
+| Tool                                         | What it does                                                           |
+| -------------------------------------------- | ---------------------------------------------------------------------- |
+| `scan_url {url, device?, runs?}`             | Measure any public URL and list the problems found                     |
+| `scan_project {urls?}`                       | Scan the project source and configured pages; saves a report           |
+| `list_issues {reportId?, filter?, route?}`   | Problems, filtered by chip (`metric:lcp`, `area:bundle`) or route      |
 | `explain_issue {issueId, reportId?, useAi?}` | Root-cause chain, why, framework rule, gain, steps, before/after, docs |
-| `get_file_context {file, line?, radius?}` | A redacted window of a project file (path-guarded) |
-| `suggest_fix {issueIds, reportId?}` | Proposed code changes from your configured AI; nothing is applied |
-| `compare_runs {a, b}` | Before/after comparison of two reports |
-| `ai_report {}` | AI performance measured by `watchAI` / the proxy |
-| `open_dashboard {}` | URL of the running local dashboard |
+| `get_file_context {file, line?, radius?}`    | A redacted window of a project file (path-guarded)                     |
+| `suggest_fix {issueIds, reportId?}`          | Proposed code changes from your configured AI; nothing is applied      |
+| `compare_runs {a, b}`                        | Before/after comparison of two reports                                 |
+| `ai_report {}`                               | AI performance measured by `watchAI` / the proxy                       |
+| `open_dashboard {}`                          | URL of the running local dashboard                                     |
 
 Resources: `perfagent://report/latest` (JSON) and `perfagent://guide/<topic>` (Markdown guide pages such as `lcp`, `inp`, `bundle`).
 

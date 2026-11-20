@@ -4,15 +4,37 @@ import { emptyReport, pageFromMetrics } from '../report-builder.js'
 import type { Importer } from '../types.js'
 
 /** `web-vitals` library / RUM export: `[{name: 'LCP', value, rating?, id?, url?}]` or `{metrics: [...]}`. */
-interface VitalSample { name?: string; value?: number; url?: string; route?: string; page?: string; navigationType?: string }
+interface VitalSample {
+  name?: string
+  value?: number
+  url?: string
+  route?: string
+  page?: string
+  navigationType?: string
+}
 
-const NAMES: Record<string, MetricId> = { LCP: 'lcp', INP: 'inp', CLS: 'cls', TTFB: 'ttfb', FCP: 'fcp', FID: 'inp' }
+const NAMES: Record<string, MetricId> = {
+  LCP: 'lcp',
+  INP: 'inp',
+  CLS: 'cls',
+  TTFB: 'ttfb',
+  FCP: 'fcp',
+  FID: 'inp',
+}
 
 function samplesOf(json: unknown): VitalSample[] | undefined {
   const list = Array.isArray(json) ? json : (json as { metrics?: unknown } | null)?.metrics
   if (!Array.isArray(list) || list.length === 0) return undefined
-  const samples = list.filter((s): s is VitalSample => typeof s === 'object' && s !== null && typeof (s as VitalSample).name === 'string' && typeof (s as VitalSample).value === 'number')
-  return samples.length && samples.every((s) => s.name !== undefined && s.name in NAMES) ? samples : undefined
+  const samples = list.filter(
+    (s): s is VitalSample =>
+      typeof s === 'object' &&
+      s !== null &&
+      typeof (s as VitalSample).name === 'string' &&
+      typeof (s as VitalSample).value === 'number',
+  )
+  return samples.length && samples.every((s) => s.name !== undefined && s.name in NAMES)
+    ? samples
+    : undefined
 }
 
 export const webVitalsImporter: Importer = {
@@ -29,7 +51,9 @@ export const webVitalsImporter: Importer = {
       byUrl.set(url, metrics)
     }
     const pages: PageResult[] = [...byUrl].slice(0, 200).map(([url, metrics]) => {
-      const p75 = Object.fromEntries([...metrics].map(([id, values]) => [id, round(percentile(values, 75))])) as Partial<Record<MetricId, number>>
+      const p75 = Object.fromEntries(
+        [...metrics].map(([id, values]) => [id, round(percentile(values, 75))]),
+      ) as Partial<Record<MetricId, number>>
       const page = pageFromMetrics(url, p75, 'mobile')
       for (const m of page.metrics) {
         const values = metrics.get(m.id)
@@ -37,8 +61,17 @@ export const webVitalsImporter: Importer = {
       }
       return page
     })
-    const report = emptyReport(input.filename ?? 'web-vitals export', { environment: { name: 'rum', device: 'mobile', browser: 'chromium', mode: 'imported' }, pages })
-    return Promise.resolve({ format: 'web-vitals', report, detected: [], warnings: [], exact: true })
+    const report = emptyReport(input.filename ?? 'web-vitals export', {
+      environment: { name: 'rum', device: 'mobile', browser: 'chromium', mode: 'imported' },
+      pages,
+    })
+    return Promise.resolve({
+      format: 'web-vitals',
+      report,
+      detected: [],
+      warnings: [],
+      exact: true,
+    })
   },
 }
 

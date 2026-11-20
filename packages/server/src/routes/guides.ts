@@ -22,7 +22,9 @@ export function guideRoutes(router: Router, ctx: AppContext): void {
   router.get('/api/guides/:topic', async ({ params }) => {
     const topic = (params.topic ?? '').replace(/[^a-z0-9-]/gi, '')
     if (!ctx.guidesDir || !topic) throw new PerfAgentError('NOT_FOUND', 'Guide not found')
-    const text = await readFile(path.join(ctx.guidesDir, `${topic}.md`), 'utf8').catch(() => undefined)
+    const text = await readFile(path.join(ctx.guidesDir, `${topic}.md`), 'utf8').catch(
+      () => undefined,
+    )
     if (text === undefined) throw new PerfAgentError('NOT_FOUND', `No guide called "${topic}"`)
     const { meta, body } = parseFrontMatter(text, topic)
     return { ...meta, body }
@@ -42,13 +44,26 @@ export async function listGuides(dir: string): Promise<GuideMeta[]> {
 export function parseFrontMatter(text: string, topic: string): { meta: GuideMeta; body: string } {
   const match = /^---\n([\s\S]*?)\n---\n?/.exec(text)
   const fields: Record<string, string> = {}
-  if (match) for (const line of (match[1] ?? '').split('\n')) {
-    const [key, ...rest] = line.split(':')
-    if (key && rest.length) fields[key.trim()] = rest.join(':').trim().replace(/^["']|["']$/g, '')
-  }
+  if (match)
+    for (const line of (match[1] ?? '').split('\n')) {
+      const [key, ...rest] = line.split(':')
+      if (key && rest.length)
+        fields[key.trim()] = rest
+          .join(':')
+          .trim()
+          .replace(/^["']|["']$/g, '')
+    }
   const body = match ? text.slice(match[0].length) : text
   return {
-    meta: { topic, title: fields.title ?? topic, group: fields.group ?? 'Other', summary: fields.summary ?? '', order: Number(fields.order ?? 999), tryIt: fields.tryIt, metric: fields.metric },
+    meta: {
+      topic,
+      title: fields.title ?? topic,
+      group: fields.group ?? 'Other',
+      summary: fields.summary ?? '',
+      order: Number(fields.order ?? 999),
+      tryIt: fields.tryIt,
+      metric: fields.metric,
+    },
     body,
   }
 }

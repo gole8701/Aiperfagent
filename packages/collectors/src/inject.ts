@@ -56,7 +56,14 @@ export interface InjectedState {
   shifts: { value: number; timeMs: number; element?: string }[]
   fcp: number
   longTasks: { startMs: number; durationMs: number; script?: string }[]
-  loaf: { startMs: number; durationMs: number; blockingMs: number; script?: string; fn?: string; line?: number }[]
+  loaf: {
+    startMs: number
+    durationMs: number
+    blockingMs: number
+    script?: string
+    fn?: string
+    line?: number
+  }[]
   interactions: { name: string; durationMs: number; target: string; at: number }[]
   marks: { name: string; at: number }[]
   softNav: number

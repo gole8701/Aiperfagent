@@ -6,7 +6,12 @@ import { describe, expect, it } from 'vitest'
 
 import { comparisonToMarkdown } from './markdown'
 
-const before = JSON.parse(readFileSync(path.resolve(__dirname, '../../../../../fixtures/reports/demo-shop-before.json'), 'utf8')) as Report
+const before = JSON.parse(
+  readFileSync(
+    path.resolve(__dirname, '../../../../../fixtures/reports/demo-shop-before.json'),
+    'utf8',
+  ),
+) as Report
 
 function improved(): Report {
   const page = before.pages[0]
@@ -15,7 +20,14 @@ function improved(): Report {
     ...before,
     id: 'after',
     label: 'after fixes',
-    pages: [{ ...page, metrics: page.metrics.map((m) => (m.id === 'lcp' ? { ...m, value: 2400 } : m.id === 'score' ? { ...m, value: 81 } : m)) }],
+    pages: [
+      {
+        ...page,
+        metrics: page.metrics.map((m) =>
+          m.id === 'lcp' ? { ...m, value: 2400 } : m.id === 'score' ? { ...m, value: 81 } : m,
+        ),
+      },
+    ],
     issues: before.issues.filter((i) => i.ruleId !== 'general/lcp-image-lazy'),
   }
 }
@@ -32,7 +44,10 @@ describe('comparisonToMarkdown', () => {
   })
 
   it('shows fairness warnings as quotes', () => {
-    const desktop = { ...improved(), environment: { ...before.environment, device: 'desktop' as const } }
+    const desktop = {
+      ...improved(),
+      environment: { ...before.environment, device: 'desktop' as const },
+    }
     const md = comparisonToMarkdown(compareReports(before, desktop))
     expect(md).toContain('> ⚠️ A is mobile, B is desktop')
   })

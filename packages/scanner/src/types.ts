@@ -73,4 +73,13 @@ export interface ProjectScan {
   stats: { files: number; components: number; elements: number; durationMs: number }
 }
 
-export type Framework = 'next' | 'react' | 'vue' | 'nuxt' | 'svelte' | 'angular' | 'astro' | 'remix' | 'plain'
+export type Framework =
+  | 'next'
+  | 'react'
+  | 'vue'
+  | 'nuxt'
+  | 'svelte'
+  | 'angular'
+  | 'astro'
+  | 'remix'
+  | 'plain'

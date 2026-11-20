@@ -47,13 +47,20 @@ export interface ModelComparison {
 
 export interface AiService {
   providers(): Promise<ProviderStatus[]>
-  testConnection(provider: ProviderStatus['id'], options?: { model?: string; baseUrl?: string }): Promise<{ ok: boolean; message: string; latencyMs: number }>
+  testConnection(
+    provider: ProviderStatus['id'],
+    options?: { model?: string; baseUrl?: string },
+  ): Promise<{ ok: boolean; message: string; latencyMs: number }>
   storeKey(provider: ProviderStatus['id'], key: string): Promise<void>
   removeKey(provider: ProviderStatus['id']): Promise<void>
   /** Plain-language explanation of one problem using the configured AI. */
   explain(issue: Issue, files: AiContextFile[]): Promise<string>
   /** Proposed code changes for one or more problems. The AI only ever returns text; nothing is applied here. */
-  proposeFix(issues: Issue[], files: AiContextFile[], instructions?: string): Promise<ProposedChange[]>
+  proposeFix(
+    issues: Issue[],
+    files: AiContextFile[],
+    instructions?: string,
+  ): Promise<ProposedChange[]>
   summarise(report: Report): Promise<string>
   usage(): Promise<AiUsage>
   /** Which free option is active when no key is configured. */
@@ -61,10 +68,18 @@ export interface AiService {
   /** Aggregates of the AI calls measured by watchAI / the proxy. */
   report(): Promise<AiReport>
   /** Runs the same questions through several configured models with the user's own keys. */
-  compareModels(questions: string[], models: { provider: ProviderStatus['id']; model: string }[]): Promise<ModelComparison[]>
+  compareModels(
+    questions: string[],
+    models: { provider: ProviderStatus['id']; model: string }[],
+  ): Promise<ModelComparison[]>
 }
 
-export type FixScope = { kind: 'issue'; issueIds: string[] } | { kind: 'file'; file: string } | { kind: 'chip'; chip: string } | { kind: 'route'; route: string } | { kind: 'site' }
+export type FixScope =
+  | { kind: 'issue'; issueIds: string[] }
+  | { kind: 'file'; file: string }
+  | { kind: 'chip'; chip: string }
+  | { kind: 'route'; route: string }
+  | { kind: 'site' }
 
 export interface FixRunRequest {
   reportId: string

@@ -16,7 +16,8 @@ export function attachIssues(root: TreeNode, issues: Issue[]): TreeNode {
   }
   const assign = (node: TreeNode): void => {
     if (node.kind === 'file') {
-      for (const issue of byFile.get(node.path) ?? []) (deepestOwner(node, issue.location?.line ?? 0) ?? node).issueIds.push(issue.id)
+      for (const issue of byFile.get(node.path) ?? [])
+        (deepestOwner(node, issue.location?.line ?? 0) ?? node).issueIds.push(issue.id)
     }
     node.children.forEach(assign)
   }
@@ -45,7 +46,11 @@ function deepestOwner(file: TreeNode, line: number): TreeNode | undefined {
   let best: TreeNode | undefined
   const walk = (node: TreeNode): void => {
     for (const child of node.children) {
-      if (child.line !== undefined && child.line <= line && (!best || (child.line >= (best.line ?? 0)))) {
+      if (
+        child.line !== undefined &&
+        child.line <= line &&
+        (!best || child.line >= (best.line ?? 0))
+      ) {
         best = child
       }
       walk(child)

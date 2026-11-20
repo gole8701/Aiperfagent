@@ -27,9 +27,12 @@ export async function detectMode(input: ModeInput): Promise<ModeCheck> {
   const reasons: string[] = []
   const hasGit = await insideGitRepo(path.resolve(input.root))
   if (input.staticBuild) reasons.push('This is the hosted/static build')
-  if (!['127.0.0.1', 'localhost', '::1'].includes(input.bindHost)) reasons.push('Server is not bound to the loopback address')
-  if (env.NODE_ENV === 'production' && env.PERFAGENT_FORCE_LOCAL !== 'true') reasons.push('NODE_ENV is "production"')
-  if (!hasGit) reasons.push('Project folder is not a git repository (needed for the safe fix branch)')
+  if (!['127.0.0.1', 'localhost', '::1'].includes(input.bindHost))
+    reasons.push('Server is not bound to the loopback address')
+  if (env.NODE_ENV === 'production' && env.PERFAGENT_FORCE_LOCAL !== 'true')
+    reasons.push('NODE_ENV is "production"')
+  if (!hasGit)
+    reasons.push('Project folder is not a git repository (needed for the safe fix branch)')
   return { mode: reasons.length ? 'deployed' : 'local', reasons, hasGit }
 }
 

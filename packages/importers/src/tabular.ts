@@ -20,7 +20,15 @@ const HEADER_UNIT = /\((ms|s|kb|mb|%)\)/i
 export function splitCells(line: string): string[] | undefined {
   const trimmed = line.trim()
   if (!trimmed) return undefined
-  const delimiter = trimmed.includes('|') ? '|' : trimmed.includes('\t') ? '\t' : trimmed.includes(',') ? ',' : /\s{2,}/.test(trimmed) ? /\s{2,}/ : undefined
+  const delimiter = trimmed.includes('|')
+    ? '|'
+    : trimmed.includes('\t')
+      ? '\t'
+      : trimmed.includes(',')
+        ? ','
+        : /\s{2,}/.test(trimmed)
+          ? /\s{2,}/
+          : undefined
   if (!delimiter) return undefined
   const cells = trimmed.split(delimiter).map((c) => c.trim())
   if (delimiter === '|') {
@@ -30,14 +38,25 @@ export function splitCells(line: string): string[] | undefined {
   return cells.length >= 2 ? cells : undefined
 }
 
-interface Column { index: number; metric: MetricId; exact: boolean; unit: string }
+interface Column {
+  index: number
+  metric: MetricId
+  exact: boolean
+  unit: string
+}
 
 export function detectedFromRows(rows: string[][], source: string): RowsResult {
   const header = rows[0] ?? []
   const columns: Column[] = []
   header.forEach((cell, index) => {
     const match = metricForLabel(cell)
-    if (match) columns.push({ index, metric: match.metric, exact: match.exact, unit: HEADER_UNIT.exec(cell)?.[1] ?? '' })
+    if (match)
+      columns.push({
+        index,
+        metric: match.metric,
+        exact: match.exact,
+        unit: HEADER_UNIT.exec(cell)?.[1] ?? '',
+      })
   })
   const isMetricCol = (i: number): boolean => columns.some((c) => c.index === i)
   const findCol = (re: RegExp): number => header.findIndex((h, i) => !isMetricCol(i) && re.test(h))
@@ -62,7 +81,12 @@ export function detectedFromRows(rows: string[][], source: string): RowsResult {
   return { detected, exact: columns.every((c) => c.exact), createdAt }
 }
 
-function routeFor(row: string[], routeCol: number, labelCol: number, fallback: string | undefined): string | undefined {
+function routeFor(
+  row: string[],
+  routeCol: number,
+  labelCol: number,
+  fallback: string | undefined,
+): string | undefined {
   const cell = routeCol >= 0 ? row[routeCol] : labelCol >= 0 ? row[labelCol] : undefined
   if (cell?.trim()) return routeInText(cell) ?? cell.trim()
   return row.map((c) => routeInText(c)).find(Boolean) ?? fallback

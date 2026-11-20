@@ -14,7 +14,8 @@ function expectCheckout(r: ImportResult, confidence: number): void {
   expect(metric(page, 'ttfb')).toBeCloseTo(820, 0)
   expect(metric(page, 'score')).toBe(72)
   expect(r.report.detected?.length).toBeGreaterThan(0)
-  for (const d of r.detected.filter((d) => d.route === '/checkout')) expect(d.confidence, `${d.metric} confidence`).toBeGreaterThanOrEqual(confidence)
+  for (const d of r.detected.filter((d) => d.route === '/checkout'))
+    expect(d.confidence, `${d.metric} confidence`).toBeGreaterThanOrEqual(confidence)
   expect(r.report.createdAt).toBe('2026-11-18T00:00:00.000Z')
   expect(r.report.environment.device).toBe('mobile')
 }
@@ -94,6 +95,8 @@ describe('pasted text', () => {
 
   it('rejects text without any metric', async () => {
     const { importReport } = await import('../src/index.js')
-    await expect(importReport({ text: 'Hello, nothing to see here.' })).rejects.toMatchObject({ code: 'IMPORT_INVALID' })
+    await expect(importReport({ text: 'Hello, nothing to see here.' })).rejects.toMatchObject({
+      code: 'IMPORT_INVALID',
+    })
   })
 })

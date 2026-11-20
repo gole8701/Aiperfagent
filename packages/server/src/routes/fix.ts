@@ -7,18 +7,28 @@ import type { Router } from '../router.js'
 /** AI fix loop. Local mode only; the fixer writes to a new git branch and never pushes. */
 export function fixRoutes(router: Router, ctx: AppContext): void {
   const fix = (): NonNullable<AppContext['fix']> => {
-    if (!ctx.fix) throw new PerfAgentError('NOT_LOCAL_MODE', 'Fixing is only available in the installed tool on a git project')
+    if (!ctx.fix)
+      throw new PerfAgentError(
+        'NOT_LOCAL_MODE',
+        'Fixing is only available in the installed tool on a git project',
+      )
     return ctx.fix
   }
 
   router.post('/api/fix/runs', async ({ json }) => {
     const body = await json<Partial<FixRunRequest>>()
-    if (!body.reportId || !body.scope) throw new PerfAgentError('IMPORT_INVALID', 'reportId and scope are required')
+    if (!body.reportId || !body.scope)
+      throw new PerfAgentError('IMPORT_INVALID', 'reportId and scope are required')
     const request: FixRunRequest = { ...body, reportId: body.reportId, scope: body.scope }
     let runId = ''
-    const run = await fix().start(request, (event) => ctx.hub.broadcast({ type: 'fix:event', runId, event }))
+    const run = await fix().start(request, (event) =>
+      ctx.hub.broadcast({ type: 'fix:event', runId, event }),
+    )
     runId = run.id
-    await ctx.store.appendLog('audit.log', `fix run ${run.id} scope=${body.scope.kind} branch=${run.branch}`)
+    await ctx.store.appendLog(
+      'audit.log',
+      `fix run ${run.id} scope=${body.scope.kind} branch=${run.branch}`,
+    )
     return run
   })
   router.get('/api/fix/runs', () => fix().list())
@@ -28,7 +38,10 @@ export function fixRoutes(router: Router, ctx: AppContext): void {
     return run
   })
   router.post('/api/fix/runs/:id/accept', async ({ params, json }) => {
-    const { changeIds, edits } = await json<{ changeIds: string[]; edits?: Record<string, string> }>()
+    const { changeIds, edits } = await json<{
+      changeIds: string[]
+      edits?: Record<string, string>
+    }>()
     return fix().accept(params.id ?? '', changeIds, edits)
   })
   router.post('/api/fix/runs/:id/skip', async ({ params, json }) => {

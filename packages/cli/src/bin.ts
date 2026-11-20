@@ -33,15 +33,26 @@ async function main(): Promise<void> {
   }
   // Heavy modules load only for the command that needs them, so `--help` stays fast.
   switch (args.command) {
-    case 'start': case 'serve': case 'dashboard': return (await import('./commands/start.js')).start(args)
-    case 'init': return (await import('./commands/init.js')).init(args)
-    case 'scan': return (await import('./commands/scan.js')).scan(args)
-    case 'ci': return (await import('./commands/scan.js')).scan(args, true)
-    case 'import': return (await import('./commands/tools.js')).importCommand(args)
-    case 'export': return (await import('./commands/tools.js')).exportCommand(args)
-    case 'compare': return (await import('./commands/tools.js')).compareCommand(args)
-    case 'mcp': return (await import('./commands/tools.js')).mcpCommand(args)
-    case 'ai-proxy': return (await import('./commands/tools.js')).aiProxyCommand(args)
+    case 'start':
+    case 'serve':
+    case 'dashboard':
+      return (await import('./commands/start.js')).start(args)
+    case 'init':
+      return (await import('./commands/init.js')).init(args)
+    case 'scan':
+      return (await import('./commands/scan.js')).scan(args)
+    case 'ci':
+      return (await import('./commands/scan.js')).scan(args, true)
+    case 'import':
+      return (await import('./commands/tools.js')).importCommand(args)
+    case 'export':
+      return (await import('./commands/tools.js')).exportCommand(args)
+    case 'compare':
+      return (await import('./commands/tools.js')).compareCommand(args)
+    case 'mcp':
+      return (await import('./commands/tools.js')).mcpCommand(args)
+    case 'ai-proxy':
+      return (await import('./commands/tools.js')).aiProxyCommand(args)
     default:
       printError(`Unknown command "${args.command}"`, 'Run "perfagent --help" to see the commands.')
       process.exitCode = 1

@@ -4,7 +4,13 @@ import path from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
-import { DEFAULT_CONFIG, configSchema, describeConfig, envOverrides, loadConfig } from '../src/index.js'
+import {
+  DEFAULT_CONFIG,
+  configSchema,
+  describeConfig,
+  envOverrides,
+  loadConfig,
+} from '../src/index.js'
 
 describe('config', () => {
   it('has sensible defaults', () => {
@@ -20,18 +26,38 @@ describe('config', () => {
     expect(configSchema.safeParse({ runs: 50 }).success).toBe(false)
     expect(configSchema.safeParse({ unknownOption: 1 }).success).toBe(false)
     expect(configSchema.safeParse({ budgets: { '/': { js: '200 bananas' } } }).success).toBe(false)
-    expect(configSchema.safeParse({ budgets: { '/': { js: '200kb', lcp: 2500 } } }).success).toBe(true)
+    expect(configSchema.safeParse({ budgets: { '/': { js: '200kb', lcp: 2500 } } }).success).toBe(
+      true,
+    )
   })
 
   it('maps PERFAGENT_* environment variables onto the schema', () => {
-    const env = { PERFAGENT_SERVER_PORT: '5000', PERFAGENT_AI_PROVIDER: 'ollama', PERFAGENT_FIX_AUTOACCEPT: 'true', PERFAGENT_URLS: 'http://a.test,http://b.test', OTHER: 'x' }
-    expect(envOverrides(env)).toEqual({ server: { port: 5000 }, ai: { provider: 'ollama' }, fix: { autoAccept: true }, urls: ['http://a.test', 'http://b.test'] })
+    const env = {
+      PERFAGENT_SERVER_PORT: '5000',
+      PERFAGENT_AI_PROVIDER: 'ollama',
+      PERFAGENT_FIX_AUTOACCEPT: 'true',
+      PERFAGENT_URLS: 'http://a.test,http://b.test',
+      OTHER: 'x',
+    }
+    expect(envOverrides(env)).toEqual({
+      server: { port: 5000 },
+      ai: { provider: 'ollama' },
+      fix: { autoAccept: true },
+      urls: ['http://a.test', 'http://b.test'],
+    })
   })
 
   it('loads defaults → file → env → flags in that order', async () => {
     const dir = await mkdtemp(path.join(os.tmpdir(), 'perfagent-config-'))
-    await writeFile(path.join(dir, 'perfagent.config.json'), JSON.stringify({ runs: 5, device: 'desktop', server: { port: 4600 } }))
-    const { config, file } = await loadConfig({ cwd: dir, env: { PERFAGENT_RUNS: '7' }, overrides: { device: 'mobile' } })
+    await writeFile(
+      path.join(dir, 'perfagent.config.json'),
+      JSON.stringify({ runs: 5, device: 'desktop', server: { port: 4600 } }),
+    )
+    const { config, file } = await loadConfig({
+      cwd: dir,
+      env: { PERFAGENT_RUNS: '7' },
+      overrides: { device: 'mobile' },
+    })
     expect(file).toContain('perfagent.config.json')
     expect(config.runs).toBe(7)
     expect(config.device).toBe('mobile')
@@ -42,7 +68,9 @@ describe('config', () => {
   it('explains an invalid file in plain words', async () => {
     const dir = await mkdtemp(path.join(os.tmpdir(), 'perfagent-config-'))
     await writeFile(path.join(dir, 'perfagent.config.json'), JSON.stringify({ runs: 'many' }))
-    await expect(loadConfig({ cwd: dir, env: {} })).rejects.toMatchObject({ code: 'CONFIG_INVALID' })
+    await expect(loadConfig({ cwd: dir, env: {} })).rejects.toMatchObject({
+      code: 'CONFIG_INVALID',
+    })
   })
 
   it('describes every option for the settings UI and docs', () => {

@@ -8,7 +8,11 @@ import type { ProviderId } from './providers/types.js'
 
 const run = promisify(execFile)
 const SERVICE = 'perfagent'
-const ENV_NAMES: Partial<Record<ProviderId, string>> = { anthropic: 'ANTHROPIC_API_KEY', openai: 'OPENAI_API_KEY', gemini: 'GEMINI_API_KEY' }
+const ENV_NAMES: Partial<Record<ProviderId, string>> = {
+  anthropic: 'ANTHROPIC_API_KEY',
+  openai: 'OPENAI_API_KEY',
+  gemini: 'GEMINI_API_KEY',
+}
 
 export type KeySource = 'keychain' | 'file' | 'env'
 
@@ -72,7 +76,10 @@ export function createKeyStore(options: KeyStoreOptions = {}): KeyStore {
     },
     async store(provider, key) {
       if (keychain) {
-        const ok = await keychain.store(provider, key).then(() => true, () => false)
+        const ok = await keychain.store(provider, key).then(
+          () => true,
+          () => false,
+        )
         if (ok) return 'keychain'
       }
       await writeFileStore({ ...(await readFileStore()), [provider]: key })
@@ -96,23 +103,45 @@ function keychainFor(platform: NodeJS.Platform): Keychain | undefined {
   const opts = { timeout: 10_000 }
   if (platform === 'darwin') {
     return {
-      read: async (p) => (await run('security', ['find-generic-password', '-s', SERVICE, '-a', p, '-w'], opts)).stdout.trim() || undefined,
+      read: async (p) =>
+        (
+          await run('security', ['find-generic-password', '-s', SERVICE, '-a', p, '-w'], opts)
+        ).stdout.trim() || undefined,
       // `security -i` reads the command from stdin, so the key never appears in the process list.
       store: async (p, key) => {
-        if (/["\\\s]/.test(key)) throw new Error('Key has characters the keychain command cannot take')
-        await runWithStdin('security', ['-i'], `add-generic-password -U -s "${SERVICE}" -a "${p}" -w "${key}"\n`)
+        if (/["\\\s]/.test(key))
+          throw new Error('Key has characters the keychain command cannot take')
+        await runWithStdin(
+          'security',
+          ['-i'],
+          `add-generic-password -U -s "${SERVICE}" -a "${p}" -w "${key}"\n`,
+        )
         // `security -i` exits 0 even when the command fails, so read the key back.
-        const saved = (await run('security', ['find-generic-password', '-s', SERVICE, '-a', p, '-w'], opts)).stdout.trim()
+        const saved = (
+          await run('security', ['find-generic-password', '-s', SERVICE, '-a', p, '-w'], opts)
+        ).stdout.trim()
         if (saved !== key) throw new Error('Keychain did not store the key')
       },
-      remove: async (p) => { await run('security', ['delete-generic-password', '-s', SERVICE, '-a', p], opts) },
+      remove: async (p) => {
+        await run('security', ['delete-generic-password', '-s', SERVICE, '-a', p], opts)
+      },
     }
   }
   if (platform === 'linux') {
     return {
-      read: async (p) => (await run('secret-tool', ['lookup', 'service', SERVICE, 'account', p], opts)).stdout.trim() || undefined,
-      store: (p, key) => runWithStdin('secret-tool', ['store', '--label', `PerfAgent ${p}`, 'service', SERVICE, 'account', p], key),
-      remove: async (p) => { await run('secret-tool', ['clear', 'service', SERVICE, 'account', p], opts) },
+      read: async (p) =>
+        (
+          await run('secret-tool', ['lookup', 'service', SERVICE, 'account', p], opts)
+        ).stdout.trim() || undefined,
+      store: (p, key) =>
+        runWithStdin(
+          'secret-tool',
+          ['store', '--label', `PerfAgent ${p}`, 'service', SERVICE, 'account', p],
+          key,
+        ),
+      remove: async (p) => {
+        await run('secret-tool', ['clear', 'service', SERVICE, 'account', p], opts)
+      },
     }
   }
   // Windows: cmdkey cannot read secrets back without extra modules, so the 0600 file is used.

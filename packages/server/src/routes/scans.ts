@@ -7,7 +7,12 @@ import type { Router } from '../router.js'
 export function scanRoutes(router: Router, ctx: AppContext): void {
   router.post('/api/scans', async ({ json }) => {
     const body = await json<Partial<ScanRequest> & { routes?: string[] }>()
-    if (ctx.staticBuild) throw new PerfAgentError('NOT_LOCAL_MODE', 'Scans run only in the installed tool.', 'Run "npx perfagent" in your project.')
+    if (ctx.staticBuild)
+      throw new PerfAgentError(
+        'NOT_LOCAL_MODE',
+        'Scans run only in the installed tool.',
+        'Run "npx perfagent" in your project.',
+      )
     const request: ScanRequest = {
       urls: body.urls?.length ? body.urls : ctx.config.urls,
       project: body.project ?? ctx.mode.mode === 'local',
@@ -21,13 +26,25 @@ export function scanRoutes(router: Router, ctx: AppContext): void {
     const job = ctx.jobs.enqueue<Report>(
       'scan',
       async (report) => {
-        const result = await runScan(request, { config: ctx.config, onProgress: (p) => { report(p); ctx.hub.broadcast({ type: 'scan:progress', jobId: job.id, ...p }) } })
+        const result = await runScan(request, {
+          config: ctx.config,
+          onProgress: (p) => {
+            report(p)
+            ctx.hub.broadcast({ type: 'scan:progress', jobId: job.id, ...p })
+          },
+        })
         await ctx.store.save(result)
         return result
       },
       (done) => {
-        if (done.status === 'done' && done.result) ctx.hub.broadcast({ type: 'scan:done', jobId: done.id, reportId: done.result.id })
-        else ctx.hub.broadcast({ type: 'scan:error', jobId: done.id, message: done.error ?? 'Scan failed' })
+        if (done.status === 'done' && done.result)
+          ctx.hub.broadcast({ type: 'scan:done', jobId: done.id, reportId: done.result.id })
+        else
+          ctx.hub.broadcast({
+            type: 'scan:error',
+            jobId: done.id,
+            message: done.error ?? 'Scan failed',
+          })
       },
     )
     return { jobId: job.id }
@@ -37,17 +54,23 @@ export function scanRoutes(router: Router, ctx: AppContext): void {
     const job = ctx.jobs.get(params.id ?? '')
     if (!job) throw new PerfAgentError('NOT_FOUND', 'Job not found')
     const { result: _r, ...rest } = job
-    return { ...rest, reportId: job.status === 'done' ? (job.result as Report | undefined)?.id : undefined }
+    return {
+      ...rest,
+      reportId: job.status === 'done' ? (job.result as Report | undefined)?.id : undefined,
+    }
   })
 
   router.get('/api/scans', () => ctx.store.list())
   router.get('/api/scans/latest', async () => {
     const report = await ctx.store.latest()
-    if (!report) throw new PerfAgentError('NOT_FOUND', 'No scans yet', 'Click Scan to measure your project.')
+    if (!report)
+      throw new PerfAgentError('NOT_FOUND', 'No scans yet', 'Click Scan to measure your project.')
     return report
   })
   router.get('/api/scans/:id', ({ params }) => ctx.store.get(params.id ?? ''))
-  router.delete('/api/scans/:id', async ({ params }) => { await ctx.store.delete(params.id ?? '') })
+  router.delete('/api/scans/:id', async ({ params }) => {
+    await ctx.store.delete(params.id ?? '')
+  })
   router.post('/api/scans/:id/annotate', async ({ params, json }) => {
     const { annotation } = await json<{ annotation: string }>()
     await ctx.store.annotate(params.id ?? '', annotation.slice(0, 200))

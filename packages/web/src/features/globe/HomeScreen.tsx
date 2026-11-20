@@ -1,4 +1,11 @@
-import { AREAS, METRICS, formatMetric, metricValue, type ChipFilter, type Issue } from '@perfagent/core'
+import {
+  AREAS,
+  METRICS,
+  formatMetric,
+  metricValue,
+  type ChipFilter,
+  type Issue,
+} from '@perfagent/core'
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 
@@ -32,15 +39,29 @@ export function HomeScreen() {
   }, [urlFilter])
 
   const issues = visibleIssues({ report, filter, route })
-  const selectedIssue = issueParam ? report?.issues.find((i) => i.id === decodeURIComponent(issueParam)) : undefined
-  const layout = useMemo(() => (report ? layoutGlobe({ tree: report.tree, page: report.pages[0], issues: report.issues }) : undefined), [report])
+  const selectedIssue = issueParam
+    ? report?.issues.find((i) => i.id === decodeURIComponent(issueParam))
+    : undefined
+  const layout = useMemo(
+    () =>
+      report
+        ? layoutGlobe({ tree: report.tree, page: report.pages[0], issues: report.issues })
+        : undefined,
+    [report],
+  )
   const pointByIssue = useMemo(() => {
     const map = new Map<string, string>()
-    for (const p of layout?.points ?? []) if (p.kind === 'file') for (const id of p.issueIds) map.set(id, p.id)
-    for (const p of layout?.points ?? []) if (p.kind === 'folder') for (const id of p.issueIds) if (!map.has(id)) map.set(id, p.id)
+    for (const p of layout?.points ?? [])
+      if (p.kind === 'file') for (const id of p.issueIds) map.set(id, p.id)
+    for (const p of layout?.points ?? [])
+      if (p.kind === 'folder') for (const id of p.issueIds) if (!map.has(id)) map.set(id, p.id)
     return map
   }, [layout])
-  const highlighted = useMemo(() => new Set(issues.map((i) => pointByIssue.get(i.id)).filter((id): id is string => Boolean(id))), [issues, pointByIssue])
+  const highlighted = useMemo(
+    () =>
+      new Set(issues.map((i) => pointByIssue.get(i.id)).filter((id): id is string => Boolean(id))),
+    [issues, pointByIssue],
+  )
 
   const changeFilter = useCallback(
     (next: ChipFilter) => {
@@ -52,7 +73,11 @@ export function HomeScreen() {
 
   const openIssue = useCallback(
     (issue: Issue | undefined) => {
-      void navigate(issue ? `/issues/${encodeURIComponent(issue.id)}${params.toString() ? `?${params}` : ''}` : `/${params.toString() ? `?${params}` : ''}`)
+      void navigate(
+        issue
+          ? `/issues/${encodeURIComponent(issue.id)}${params.toString() ? `?${params}` : ''}`
+          : `/${params.toString() ? `?${params}` : ''}`,
+      )
     },
     [navigate, params],
   )
@@ -61,7 +86,9 @@ export function HomeScreen() {
     (point: GlobePoint | undefined) => {
       setSelectedPoint(point)
       if (!point) return openIssue(undefined)
-      const first = issues.find((i) => point.issueIds.includes(i.id)) ?? report?.issues.find((i) => point.issueIds.includes(i.id))
+      const first =
+        issues.find((i) => point.issueIds.includes(i.id)) ??
+        report?.issues.find((i) => point.issueIds.includes(i.id))
       openIssue(first)
     },
     [issues, openIssue, report],
@@ -85,7 +112,12 @@ export function HomeScreen() {
 
   const page = report.pages[0]
   const score = page ? (metricValue(page.metrics, 'score') ?? 0) : 0
-  const filterLabel = filter.kind === 'all' ? 'all' : filter.kind === 'metric' ? METRICS[filter.id].short : (AREAS.find((a) => a.id === filter.id)?.label ?? filter.id)
+  const filterLabel =
+    filter.kind === 'all'
+      ? 'all'
+      : filter.kind === 'metric'
+        ? METRICS[filter.id].short
+        : (AREAS.find((a) => a.id === filter.id)?.label ?? filter.id)
   const selectedPointId = selectedIssue ? pointByIssue.get(selectedIssue.id) : selectedPoint?.id
 
   return (
@@ -94,7 +126,9 @@ export function HomeScreen() {
       <div className="home-centre">
         <div className="row muted" style={{ justifyContent: 'space-between', fontSize: 12 }}>
           <span>
-            {layout.points.length} points · {report.issues.filter((i) => i.status === 'open').length} problems · showing: {filterLabel}
+            {layout.points.length} points ·{' '}
+            {report.issues.filter((i) => i.status === 'open').length} problems · showing:{' '}
+            {filterLabel}
             {report.tree ? '' : ' · URL scan: domains and requests'}
           </span>
           <span>Drag to rotate · click a glowing point to go deep</span>
@@ -107,7 +141,23 @@ export function HomeScreen() {
             filtering={filter.kind !== 'all'}
             onSelect={onPoint}
             scoreLabel={`score ${score}`}
-            infoCard={selectedIssue ? { title: selectedIssue.plain, metric: `${METRICS[selectedIssue.gain.metric].short} ${formatMetric(selectedIssue.gain.metric, selectedIssue.gain.from)}`, where: whereLabel(selectedIssue) } : selectedPoint ? { title: selectedPoint.label, metric: selectedPoint.issueIds.length ? `${selectedPoint.issueIds.length} problems inside` : 'No problems found here', where: selectedPoint.path } : undefined}
+            infoCard={
+              selectedIssue
+                ? {
+                    title: selectedIssue.plain,
+                    metric: `${METRICS[selectedIssue.gain.metric].short} ${formatMetric(selectedIssue.gain.metric, selectedIssue.gain.from)}`,
+                    where: whereLabel(selectedIssue),
+                  }
+                : selectedPoint
+                  ? {
+                      title: selectedPoint.label,
+                      metric: selectedPoint.issueIds.length
+                        ? `${selectedPoint.issueIds.length} problems inside`
+                        : 'No problems found here',
+                      where: selectedPoint.path,
+                    }
+                  : undefined
+            }
           />
         </Suspense>
         <CornerCards report={report} />
@@ -115,7 +165,8 @@ export function HomeScreen() {
           <div>
             <strong>See all metrics as simple charts</strong>
             <div className="muted" style={{ fontSize: 13 }}>
-              Every problem and metric explained with easy charts in plain language. No technical knowledge needed.
+              Every problem and metric explained with easy charts in plain language. No technical
+              knowledge needed.
             </div>
           </div>
           <div className="row">
@@ -128,9 +179,19 @@ export function HomeScreen() {
         </Card>
       </div>
       <div className="home-right" data-tour="right">
-        <DeepDive issue={selectedIssue} point={selectedPoint} status={status} onClose={() => openIssue(undefined)} />
+        <DeepDive
+          issue={selectedIssue}
+          point={selectedPoint}
+          status={status}
+          onClose={() => openIssue(undefined)}
+        />
       </div>
-      <ProblemsTable issues={issues} selectedId={selectedIssue?.id} onSelect={openIssue} filterLabel={filterLabel} />
+      <ProblemsTable
+        issues={issues}
+        selectedId={selectedIssue?.id}
+        onSelect={openIssue}
+        filterLabel={filterLabel}
+      />
     </div>
   )
 }
@@ -143,7 +204,11 @@ function NoScanYet() {
       <Empty>
         <h1>Scan your project</h1>
         <p>
-          {status?.capabilities.scanProject ? 'Press Scan in the top bar to measure your pages and find every problem down to the file and line.' : IS_STATIC ? 'Drop a report below or quick-test any URL from the top bar.' : 'Paste a URL in the top bar to test it, or import a report.'}
+          {status?.capabilities.scanProject
+            ? 'Press Scan in the top bar to measure your pages and find every problem down to the file and line.'
+            : IS_STATIC
+              ? 'Drop a report below or quick-test any URL from the top bar.'
+              : 'Paste a URL in the top bar to test it, or import a report.'}
         </p>
         <div style={{ maxWidth: 520, margin: '20px auto' }}>
           <ImportDrop onImported={(result) => useAsReport(result.report)} />

@@ -2,7 +2,15 @@ import { PerfAgentError } from '@perfagent/core'
 
 import { fetchWithRetry, failedResponse, readJson, readLines } from '../http.js'
 
-import { CHAT_TIMEOUT_MS, LIST_TIMEOUT_MS, pingProvider, type ChatRequest, type ChatResult, type Provider, type ProviderAuth } from './types.js'
+import {
+  CHAT_TIMEOUT_MS,
+  LIST_TIMEOUT_MS,
+  pingProvider,
+  type ChatRequest,
+  type ChatResult,
+  type Provider,
+  type ProviderAuth,
+} from './types.js'
 
 const DEFAULT_URL = 'https://api.anthropic.com'
 const VERSION = '2023-06-01'
@@ -20,8 +28,17 @@ interface MessageResponse {
 }
 
 function headers(auth: ProviderAuth): Record<string, string> {
-  if (!auth.apiKey) throw new PerfAgentError('AI_NOT_CONFIGURED', 'No Anthropic key', 'Add it in Profile → AI connections or set ANTHROPIC_API_KEY.')
-  return { 'content-type': 'application/json', 'x-api-key': auth.apiKey, 'anthropic-version': VERSION }
+  if (!auth.apiKey)
+    throw new PerfAgentError(
+      'AI_NOT_CONFIGURED',
+      'No Anthropic key',
+      'Add it in Profile → AI connections or set ANTHROPIC_API_KEY.',
+    )
+  return {
+    'content-type': 'application/json',
+    'x-api-key': auth.apiKey,
+    'anthropic-version': VERSION,
+  }
 }
 
 function body(request: ChatRequest): string {
@@ -38,11 +55,21 @@ function body(request: ChatRequest): string {
 async function chat(request: ChatRequest, auth: ProviderAuth): Promise<ChatResult> {
   const started = Date.now()
   const base = auth.baseUrl ?? DEFAULT_URL
-  const response = await fetchWithRetry(`${base}/v1/messages`, { method: 'POST', headers: headers(auth), body: body(request) }, CHAT_TIMEOUT_MS)
+  const response = await fetchWithRetry(
+    `${base}/v1/messages`,
+    { method: 'POST', headers: headers(auth), body: body(request) },
+    CHAT_TIMEOUT_MS,
+  )
   if (!request.stream) {
     const data = await readJson<MessageResponse>(response, 'Anthropic')
     const totalMs = Date.now() - started
-    return { text: data.content.map((c) => c.text ?? '').join(''), ...tokens(data.usage), firstTokenMs: totalMs, totalMs, model: data.model }
+    return {
+      text: data.content.map((c) => c.text ?? '').join(''),
+      ...tokens(data.usage),
+      firstTokenMs: totalMs,
+      totalMs,
+      model: data.model,
+    }
   }
   if (!response.ok) throw await failedResponse(response, 'Anthropic')
   let text = ''
@@ -51,7 +78,12 @@ async function chat(request: ChatRequest, auth: ProviderAuth): Promise<ChatResul
   let usage: Usage = {}
   for await (const line of readLines(response)) {
     if (!line.startsWith('data:')) continue
-    const event = JSON.parse(line.slice(5)) as { type: string; message?: { model: string; usage: Usage }; delta?: { text?: string }; usage?: Usage }
+    const event = JSON.parse(line.slice(5)) as {
+      type: string
+      message?: { model: string; usage: Usage }
+      delta?: { text?: string }
+      usage?: Usage
+    }
     if (event.type === 'message_start' && event.message) {
       model = event.message.model
       usage = event.message.usage
@@ -65,11 +97,19 @@ async function chat(request: ChatRequest, auth: ProviderAuth): Promise<ChatResul
 }
 
 function tokens(usage: Usage): Pick<ChatResult, 'inputTokens' | 'outputTokens' | 'cachedTokens'> {
-  return { inputTokens: usage.input_tokens ?? 0, outputTokens: usage.output_tokens ?? 0, cachedTokens: usage.cache_read_input_tokens ?? 0 }
+  return {
+    inputTokens: usage.input_tokens ?? 0,
+    outputTokens: usage.output_tokens ?? 0,
+    cachedTokens: usage.cache_read_input_tokens ?? 0,
+  }
 }
 
 async function listModels(auth: ProviderAuth): Promise<string[]> {
-  const response = await fetchWithRetry(`${auth.baseUrl ?? DEFAULT_URL}/v1/models?limit=100`, { headers: headers(auth) }, LIST_TIMEOUT_MS)
+  const response = await fetchWithRetry(
+    `${auth.baseUrl ?? DEFAULT_URL}/v1/models?limit=100`,
+    { headers: headers(auth) },
+    LIST_TIMEOUT_MS,
+  )
   const data = await readJson<{ data: { id: string }[] }>(response, 'Anthropic')
   return data.data.map((m) => m.id)
 }

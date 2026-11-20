@@ -22,7 +22,9 @@ let timer: number | undefined
 function connect(): void {
   if (IS_STATIC || socket) return
   const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
-  socket = new WebSocket(`${protocol}://${window.location.host}/ws?token=${encodeURIComponent(sessionToken())}`)
+  socket = new WebSocket(
+    `${protocol}://${window.location.host}/ws?token=${encodeURIComponent(sessionToken())}`,
+  )
   socket.onopen = () => {
     attempts = 0
   }

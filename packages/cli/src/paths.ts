@@ -9,15 +9,24 @@ const here = path.dirname(fileURLToPath(import.meta.url))
  * dist/. Monorepo: in the web package and docs folder.
  */
 export async function dashboardDir(): Promise<string | undefined> {
-  return firstExisting([path.join(here, '..', 'dashboard'), path.join(here, '..', '..', 'web', 'dist')])
+  return firstExisting([
+    path.join(here, '..', 'dashboard'),
+    path.join(here, '..', '..', 'web', 'dist'),
+  ])
 }
 
 export async function guidesDir(): Promise<string | undefined> {
-  return firstExisting([path.join(here, '..', 'guides'), path.join(here, '..', '..', '..', 'docs', 'guides')])
+  return firstExisting([
+    path.join(here, '..', 'guides'),
+    path.join(here, '..', '..', '..', 'docs', 'guides'),
+  ])
 }
 
 export async function agentScriptPath(): Promise<string | undefined> {
-  return firstExisting([path.join(here, '..', 'dashboard', 'perfagent.js'), path.join(here, '..', '..', 'agent', 'dist', 'perfagent.js')])
+  return firstExisting([
+    path.join(here, '..', 'dashboard', 'perfagent.js'),
+    path.join(here, '..', '..', 'agent', 'dist', 'perfagent.js'),
+  ])
 }
 
 async function firstExisting(candidates: string[]): Promise<string | undefined> {

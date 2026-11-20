@@ -14,7 +14,9 @@ export async function quickTest(url: string): Promise<Report> {
   const response = await fetch(target.toString())
   const data: unknown = await response.json()
   if (!response.ok) {
-    const message = (data as { error?: { message?: string } }).error?.message ?? `PageSpeed Insights failed (${response.status})`
+    const message =
+      (data as { error?: { message?: string } }).error?.message ??
+      `PageSpeed Insights failed (${response.status})`
     throw new Error(message)
   }
   if (!isLighthouseJson(data)) throw new Error('PageSpeed Insights returned no Lighthouse result')

@@ -1,13 +1,26 @@
 import { createReadStream } from 'node:fs'
 import { rm, stat } from 'node:fs/promises'
-import { createServer as createHttpServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http'
+import {
+  createServer as createHttpServer,
+  type IncomingMessage,
+  type Server,
+  type ServerResponse,
+} from 'node:http'
 import path from 'node:path'
 
 import { startLiveSession, launchBrowser, type LiveSession } from '@perfagent/collectors'
 import type { PerfAgentConfig } from '@perfagent/config'
 import { PerfAgentError } from '@perfagent/core'
 import { ReportStore, type AiService, type FixService } from '@perfagent/engine'
-import { createSessionToken, detectMode, extractToken, requestRejection, securityHeaders, tokenMatches, type ModeCheck } from '@perfagent/security'
+import {
+  createSessionToken,
+  detectMode,
+  extractToken,
+  requestRejection,
+  securityHeaders,
+  tokenMatches,
+  type ModeCheck,
+} from '@perfagent/security'
 
 import { AGENT_PATHS, handleAgentRequest } from './agent.js'
 import { JobQueue } from './jobs.js'
@@ -53,20 +66,29 @@ const HOST = '127.0.0.1'
 
 export async function createServer(options: ServerOptions): Promise<RunningServer> {
   const token = createSessionToken()
-  const mode = await detectMode({ root: options.config.root, bindHost: HOST, staticBuild: options.staticBuild })
+  const mode = await detectMode({
+    root: options.config.root,
+    bindHost: HOST,
+    staticBuild: options.staticBuild,
+  })
   const store = new ReportStore(options.config.root)
   await store.init()
   const port = options.config.server.port
   const policy = { port, extraOrigins: options.devOrigins }
   const router = new Router()
 
-  const http: Server = createHttpServer((req, res) => { void handle(req, res) })
+  const http: Server = createHttpServer((req, res) => {
+    void handle(req, res)
+  })
   const hub = new WsHub(http, token, policy, mode.mode)
   const ctx: AppContext = { ...options, mode, store, jobs: new JobQueue(), hub, token, live: {} }
   registerRoutes(router, ctx)
 
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    for (const [k, v] of Object.entries(securityHeaders({ dev: Boolean(options.devOrigins?.length) }))) res.setHeader(k, v)
+    for (const [k, v] of Object.entries(
+      securityHeaders({ dev: Boolean(options.devOrigins?.length) }),
+    ))
+      res.setHeader(k, v)
     const pathname = new URL(req.url ?? '/', 'http://127.0.0.1').pathname
     // The only exception to the Host/Origin rejection: the public snippet and its collector, which are called from the user's own site (see agent.ts).
     if (AGENT_PATHS.includes(pathname)) {
@@ -81,7 +103,14 @@ export async function createServer(options: ServerOptions): Promise<RunningServe
     const url = req.url ?? '/'
     if (url.startsWith('/api/')) {
       if (!tokenMatches(token, extractToken(req.headers, url))) {
-        sendError(res, new PerfAgentError('UNAUTHORIZED', 'Missing or wrong token.', 'Open the dashboard from the URL printed in the terminal.'))
+        sendError(
+          res,
+          new PerfAgentError(
+            'UNAUTHORIZED',
+            'Missing or wrong token.',
+            'Open the dashboard from the URL printed in the terminal.',
+          ),
+        )
         return
       }
       const handled = await router.handle(req, res)
@@ -98,7 +127,9 @@ export async function createServer(options: ServerOptions): Promise<RunningServe
 
   const url = `http://${HOST}:${port}/?token=${token}`
   // Lets `perfagent mcp` (open_dashboard) find the running dashboard.
-  await store.writeJson('server.json', { url, port, pid: process.pid, startedAt: new Date().toISOString() }).catch(() => undefined)
+  await store
+    .writeJson('server.json', { url, port, pid: process.pid, startedAt: new Date().toISOString() })
+    .catch(() => undefined)
 
   return {
     url,
@@ -115,10 +146,17 @@ export async function createServer(options: ServerOptions): Promise<RunningServe
 }
 
 /** Serves the built dashboard. Unknown paths fall back to index.html (client-side routing). */
-async function serveDashboard(req: IncomingMessage, res: ServerResponse, url: string, dir: string | undefined): Promise<void> {
+async function serveDashboard(
+  req: IncomingMessage,
+  res: ServerResponse,
+  url: string,
+  dir: string | undefined,
+): Promise<void> {
   if (!dir) {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
-    res.end('<!doctype html><title>PerfAgent</title><p style="font:16px system-ui;padding:40px">PerfAgent server is running. The dashboard is not built yet; run <code>pnpm --filter @perfagent/web build</code>.</p>')
+    res.end(
+      '<!doctype html><title>PerfAgent</title><p style="font:16px system-ui;padding:40px">PerfAgent server is running. The dashboard is not built yet; run <code>pnpm --filter @perfagent/web build</code>.</p>',
+    )
     return
   }
   const pathname = decodeURIComponent(new URL(url, 'http://127.0.0.1').pathname)
@@ -134,6 +172,19 @@ async function serveDashboard(req: IncomingMessage, res: ServerResponse, url: st
   createReadStream(file).pipe(res)
 }
 
-const MIME: Record<string, string> = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.woff2': 'font/woff2', '.woff': 'font/woff', '.map': 'application/json', '.wasm': 'application/wasm', '.md': 'text/markdown; charset=utf-8' }
+const MIME: Record<string, string> = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
+  '.map': 'application/json',
+  '.wasm': 'application/wasm',
+  '.md': 'text/markdown; charset=utf-8',
+}
 
 export { startLiveSession, launchBrowser }

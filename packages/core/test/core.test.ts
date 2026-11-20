@@ -4,9 +4,31 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
-import { attachIssues, compareReports, computeScore, countChips, countNodes, diffMetric, formatMetric, matchesChip, median, metricScore, pathTo, percentile, projectedScore, rateMetric, summarise, type Issue, type Report, type TreeNode } from '../src/index.js'
+import {
+  attachIssues,
+  compareReports,
+  computeScore,
+  countChips,
+  countNodes,
+  diffMetric,
+  formatMetric,
+  matchesChip,
+  median,
+  metricScore,
+  pathTo,
+  percentile,
+  projectedScore,
+  rateMetric,
+  summarise,
+  type Issue,
+  type Report,
+  type TreeNode,
+} from '../src/index.js'
 
-const fixture = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../fixtures/reports/demo-shop-before.json')
+const fixture = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../../fixtures/reports/demo-shop-before.json',
+)
 
 async function loadReport(): Promise<Report> {
   return JSON.parse(await readFile(fixture, 'utf8')) as Report
@@ -43,8 +65,20 @@ describe('score', () => {
   it('maps good metrics high and poor metrics low', () => {
     expect(metricScore('lcp', 1200)).toBeGreaterThanOrEqual(95)
     expect(metricScore('lcp', 4000)).toBeLessThanOrEqual(55)
-    const good = computeScore([{ id: 'lcp', value: 1500, unit: 'ms' }, { id: 'tbt', value: 50, unit: 'ms' }, { id: 'cls', value: 0.01, unit: 'ratio' }, { id: 'fcp', value: 900, unit: 'ms' }, { id: 'si', value: 1500, unit: 'ms' }])
-    const bad = computeScore([{ id: 'lcp', value: 6000, unit: 'ms' }, { id: 'tbt', value: 1200, unit: 'ms' }, { id: 'cls', value: 0.4, unit: 'ratio' }, { id: 'fcp', value: 4000, unit: 'ms' }, { id: 'si', value: 8000, unit: 'ms' }])
+    const good = computeScore([
+      { id: 'lcp', value: 1500, unit: 'ms' },
+      { id: 'tbt', value: 50, unit: 'ms' },
+      { id: 'cls', value: 0.01, unit: 'ratio' },
+      { id: 'fcp', value: 900, unit: 'ms' },
+      { id: 'si', value: 1500, unit: 'ms' },
+    ])
+    const bad = computeScore([
+      { id: 'lcp', value: 6000, unit: 'ms' },
+      { id: 'tbt', value: 1200, unit: 'ms' },
+      { id: 'cls', value: 0.4, unit: 'ratio' },
+      { id: 'fcp', value: 4000, unit: 'ms' },
+      { id: 'si', value: 8000, unit: 'ms' },
+    ])
     expect(good).toBeGreaterThanOrEqual(90)
     expect(bad).toBeLessThan(30)
   })
@@ -59,14 +93,25 @@ describe('score', () => {
 describe('compare', () => {
   it('treats small differences as no real change', () => {
     expect(diffMetric('lcp', '/', 3000, 3050).direction).toBe('same')
-    expect(diffMetric('lcp', '/', 3000, 1900)).toMatchObject({ direction: 'better', label: '37% better' })
+    expect(diffMetric('lcp', '/', 3000, 1900)).toMatchObject({
+      direction: 'better',
+      label: '37% better',
+    })
     expect(diffMetric('lcp', '/', 1900, 3000).direction).toBe('worse')
     expect(diffMetric('score', '/', 72, 96).label).toBe('+24 points')
   })
 
   it('finds fixed, new and still-open problems between two reports', async () => {
     const before = await loadReport()
-    const after: Report = { ...before, id: 'after', issues: before.issues.slice(1), pages: before.pages.map((p) => ({ ...p, metrics: p.metrics.map((m) => (m.id === 'lcp' ? { ...m, value: m.value * 0.5 } : m)) })) }
+    const after: Report = {
+      ...before,
+      id: 'after',
+      issues: before.issues.slice(1),
+      pages: before.pages.map((p) => ({
+        ...p,
+        metrics: p.metrics.map((m) => (m.id === 'lcp' ? { ...m, value: m.value * 0.5 } : m)),
+      })),
+    }
     const result = compareReports(before, after)
     expect(result.mode).toBe('before-after')
     expect(result.impact.some((i) => i.kind === 'fixed')).toBe(true)
@@ -102,9 +147,54 @@ describe('plain language and chips', () => {
 
 describe('tree', () => {
   it('attaches issues to the deepest node and counts up to parents', () => {
-    const file: TreeNode = { id: 'f', name: 'a.tsx', kind: 'file', path: 'src/a.tsx', tag: 'TSX', issueIds: [], counts: { critical: 0, warning: 0, info: 0 }, children: [{ id: 'c', name: 'A', kind: 'component', path: 'src/a.tsx', line: 3, tag: '<>', issueIds: [], counts: { critical: 0, warning: 0, info: 0 }, children: [] }] }
-    const root: TreeNode = { id: 'r', name: 'root', kind: 'root', path: '', tag: 'ROOT', issueIds: [], counts: { critical: 0, warning: 0, info: 0 }, children: [{ id: 'd', name: 'src', kind: 'dir', path: 'src', tag: 'DIR', issueIds: [], counts: { critical: 0, warning: 0, info: 0 }, children: [file] }] }
-    const issue = { id: 'x', severity: 'critical', location: { file: 'src/a.tsx', line: 10 } } as Issue
+    const file: TreeNode = {
+      id: 'f',
+      name: 'a.tsx',
+      kind: 'file',
+      path: 'src/a.tsx',
+      tag: 'TSX',
+      issueIds: [],
+      counts: { critical: 0, warning: 0, info: 0 },
+      children: [
+        {
+          id: 'c',
+          name: 'A',
+          kind: 'component',
+          path: 'src/a.tsx',
+          line: 3,
+          tag: '<>',
+          issueIds: [],
+          counts: { critical: 0, warning: 0, info: 0 },
+          children: [],
+        },
+      ],
+    }
+    const root: TreeNode = {
+      id: 'r',
+      name: 'root',
+      kind: 'root',
+      path: '',
+      tag: 'ROOT',
+      issueIds: [],
+      counts: { critical: 0, warning: 0, info: 0 },
+      children: [
+        {
+          id: 'd',
+          name: 'src',
+          kind: 'dir',
+          path: 'src',
+          tag: 'DIR',
+          issueIds: [],
+          counts: { critical: 0, warning: 0, info: 0 },
+          children: [file],
+        },
+      ],
+    }
+    const issue = {
+      id: 'x',
+      severity: 'critical',
+      location: { file: 'src/a.tsx', line: 10 },
+    } as Issue
     attachIssues(root, [issue])
     expect(file.children[0]?.issueIds).toEqual(['x'])
     expect(root.counts.critical).toBe(1)

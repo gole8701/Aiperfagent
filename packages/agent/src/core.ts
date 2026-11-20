@@ -15,7 +15,17 @@ export interface AgentOptions {
 
 export type AgentEvent = Record<string, unknown> & { t: string; at: number; route: string }
 
-const AI_HOSTS = ['api.anthropic.com', 'api.openai.com', 'generativelanguage.googleapis.com', 'openai.azure.com', 'api.groq.com', 'openrouter.ai', 'api.mistral.ai', 'api.deepseek.com', ':11434']
+const AI_HOSTS = [
+  'api.anthropic.com',
+  'api.openai.com',
+  'generativelanguage.googleapis.com',
+  'openai.azure.com',
+  'api.groq.com',
+  'openrouter.ai',
+  'api.mistral.ai',
+  'api.deepseek.com',
+  ':11434',
+]
 const DEFAULT_ENDPOINT = 'http://127.0.0.1:4545/agent/collect'
 
 export function start(options: AgentOptions = {}): void {
@@ -42,7 +52,13 @@ export function start(options: AgentOptions = {}): void {
   const selector = (el: unknown): string | undefined => {
     const e = el as Element | null
     if (!e?.tagName) return undefined
-    return e.tagName.toLowerCase() + (e.id ? `#${e.id}` : '') + (typeof e.className === 'string' && e.className ? `.${e.className.trim().split(/\s+/)[0]}` : '')
+    return (
+      e.tagName.toLowerCase() +
+      (e.id ? `#${e.id}` : '') +
+      (typeof e.className === 'string' && e.className
+        ? `.${e.className.trim().split(/\s+/)[0]}`
+        : '')
+    )
   }
 
   const flush = (): void => {
@@ -58,51 +74,152 @@ export function start(options: AgentOptions = {}): void {
     }
     if (!sent) {
       const f = w.__perfagentOriginalFetch ?? fetch
-      f(endpoint, { method: 'POST', body, keepalive: true, headers: { 'content-type': 'application/json' }, credentials: 'omit', mode: 'cors' }).then((r) => { if (!r.ok) pausedUntil = Date.now() + 60000 }, () => { pausedUntil = Date.now() + 60000 })
+      f(endpoint, {
+        method: 'POST',
+        body,
+        keepalive: true,
+        headers: { 'content-type': 'application/json' },
+        credentials: 'omit',
+        mode: 'cors',
+      }).then(
+        (r) => {
+          if (!r.ok) pausedUntil = Date.now() + 60000
+        },
+        () => {
+          pausedUntil = Date.now() + 60000
+        },
+      )
     }
   }
   setInterval(flush, options.flushMs ?? 5000)
-  addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush() })
+  addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flush()
+  })
   addEventListener('pagehide', flush)
 
   // Web Vitals, own implementation with attribution.
-  const observe = (type: string, cb: (entries: PerformanceEntry[]) => void, extra: Record<string, unknown> = {}): void => guard(() => {
-    new PerformanceObserver((list) => guard(() => cb(list.getEntries()))).observe({ type, buffered: true, ...extra })
-  })
+  const observe = (
+    type: string,
+    cb: (entries: PerformanceEntry[]) => void,
+    extra: Record<string, unknown> = {},
+  ): void =>
+    guard(() => {
+      new PerformanceObserver((list) => guard(() => cb(list.getEntries()))).observe({
+        type,
+        buffered: true,
+        ...extra,
+      })
+    })
   let cls = 0
-  observe('largest-contentful-paint', (es) => { const e = es[es.length - 1] as (PerformanceEntry & { element?: Element }) | undefined; if (e) push('vital', { name: 'lcp', value: Math.round(e.startTime), target: selector(e.element) }) })
-  observe('layout-shift', (es) => { for (const e of es as (PerformanceEntry & { value: number; hadRecentInput: boolean; sources?: { node?: Node }[] })[]) if (!e.hadRecentInput) { cls += e.value; push('vital', { name: 'cls', value: Math.round(cls * 1000) / 1000, target: selector(e.sources?.[0]?.node) }) } })
-  observe('paint', (es) => { for (const e of es) if (e.name === 'first-contentful-paint') push('vital', { name: 'fcp', value: Math.round(e.startTime) }) })
-  observe('navigation', (es) => { const e = es[0] as PerformanceNavigationTiming | undefined; if (e) push('vital', { name: 'ttfb', value: Math.round(e.responseStart) }) })
+  observe('largest-contentful-paint', (es) => {
+    const e = es[es.length - 1] as (PerformanceEntry & { element?: Element }) | undefined
+    if (e)
+      push('vital', { name: 'lcp', value: Math.round(e.startTime), target: selector(e.element) })
+  })
+  observe('layout-shift', (es) => {
+    for (const e of es as (PerformanceEntry & {
+      value: number
+      hadRecentInput: boolean
+      sources?: { node?: Node }[]
+    })[])
+      if (!e.hadRecentInput) {
+        cls += e.value
+        push('vital', {
+          name: 'cls',
+          value: Math.round(cls * 1000) / 1000,
+          target: selector(e.sources?.[0]?.node),
+        })
+      }
+  })
+  observe('paint', (es) => {
+    for (const e of es)
+      if (e.name === 'first-contentful-paint')
+        push('vital', { name: 'fcp', value: Math.round(e.startTime) })
+  })
+  observe('navigation', (es) => {
+    const e = es[0] as PerformanceNavigationTiming | undefined
+    if (e) push('vital', { name: 'ttfb', value: Math.round(e.responseStart) })
+  })
   let inp = 0
-  observe('event', (es) => { for (const e of es as (PerformanceEntry & { interactionId?: number; target?: Element })[]) if (e.interactionId && e.duration > inp) { inp = e.duration; push('vital', { name: 'inp', value: Math.round(inp), target: selector(e.target), type: e.name }) } }, { durationThreshold: 40 })
-  observe('longtask', (es) => { for (const e of es) push('task', { ms: Math.round(e.duration) }) })
+  observe(
+    'event',
+    (es) => {
+      for (const e of es as (PerformanceEntry & { interactionId?: number; target?: Element })[])
+        if (e.interactionId && e.duration > inp) {
+          inp = e.duration
+          push('vital', {
+            name: 'inp',
+            value: Math.round(inp),
+            target: selector(e.target),
+            type: e.name,
+          })
+        }
+    },
+    { durationThreshold: 40 },
+  )
+  observe('longtask', (es) => {
+    for (const e of es) push('task', { ms: Math.round(e.duration) })
+  })
 
   // fetch, with AI calls measured to the first streamed chunk.
   guard(() => {
     const original = w.fetch.bind(w)
     w.__perfagentOriginalFetch = original
     w.fetch = (input, init) => {
-      const url = clean(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url)
+      const url = clean(
+        typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
+      )
       const started = now()
       const ai = AI_HOSTS.some((h) => url.includes(h))
-      return original(input, init).then((res) => {
-        guard(() => {
-          const size = Number(res.headers.get('content-length') ?? 0)
-          if (!ai || !res.body) {
-            push(ai ? 'ai' : 'req', { url, method: (init?.method ?? 'GET').toUpperCase(), status: res.status, ms: now() - started, size })
-            return
-          }
-          const [a, b] = res.body.tee()
-          const reader = b.getReader()
-          let first = 0
-          let text = ''
-          const read = (): void => { reader.read().then(({ done, value }) => { if (done) { push('ai', { url, status: res.status, firstTokenMs: first, ms: now() - started, ...tokens(text), model: model(init?.body) }); return } if (!first) first = now() - started; if (text.length < 100000) text += new TextDecoder().decode(value); read() }, () => undefined) }
-          read()
-          Object.defineProperty(res, 'body', { value: a })
-        })
-        return res
-      }, (err: unknown) => { push(ai ? 'ai' : 'req', { url, status: 0, ms: now() - started, error: 'network' }); throw err })
+      return original(input, init).then(
+        (res) => {
+          guard(() => {
+            const size = Number(res.headers.get('content-length') ?? 0)
+            if (!ai || !res.body) {
+              push(ai ? 'ai' : 'req', {
+                url,
+                method: (init?.method ?? 'GET').toUpperCase(),
+                status: res.status,
+                ms: now() - started,
+                size,
+              })
+              return
+            }
+            const [a, b] = res.body.tee()
+            const reader = b.getReader()
+            let first = 0
+            let text = ''
+            const read = (): void => {
+              reader.read().then(
+                ({ done, value }) => {
+                  if (done) {
+                    push('ai', {
+                      url,
+                      status: res.status,
+                      firstTokenMs: first,
+                      ms: now() - started,
+                      ...tokens(text),
+                      model: model(init?.body),
+                    })
+                    return
+                  }
+                  if (!first) first = now() - started
+                  if (text.length < 100000) text += new TextDecoder().decode(value)
+                  read()
+                },
+                () => undefined,
+              )
+            }
+            read()
+            Object.defineProperty(res, 'body', { value: a })
+          })
+          return res
+        },
+        (err: unknown) => {
+          push(ai ? 'ai' : 'req', { url, status: 0, ms: now() - started, error: 'network' })
+          throw err
+        },
+      )
     }
   })
 
@@ -111,10 +228,28 @@ export function start(options: AgentOptions = {}): void {
     const proto = XMLHttpRequest.prototype
     // eslint-disable-next-line @typescript-eslint/unbound-method -- re-applied with the XHR as `this` below
     const open = proto.open
-    proto.open = function (this: XMLHttpRequest & { __pa?: [string, string, number] }, method: string, url: string | URL) {
+    proto.open = function (
+      this: XMLHttpRequest & { __pa?: [string, string, number] },
+      method: string,
+      url: string | URL,
+    ) {
       this.__pa = [method.toUpperCase(), clean(String(url)), 0]
-      this.addEventListener('loadstart', () => { if (this.__pa) this.__pa[2] = now() })
-      this.addEventListener('loadend', () => guard(() => { const p = this.__pa; if (p) push('req', { url: p[1], method: p[0], status: this.status, ms: now() - p[2], size: Number(this.getResponseHeader('content-length') ?? 0) }) }))
+      this.addEventListener('loadstart', () => {
+        if (this.__pa) this.__pa[2] = now()
+      })
+      this.addEventListener('loadend', () =>
+        guard(() => {
+          const p = this.__pa
+          if (p)
+            push('req', {
+              url: p[1],
+              method: p[0],
+              status: this.status,
+              ms: now() - p[2],
+              size: Number(this.getResponseHeader('content-length') ?? 0),
+            })
+        }),
+      )
       // eslint-disable-next-line prefer-rest-params
       return open.apply(this, arguments as unknown as Parameters<typeof open>)
     } as typeof proto.open
@@ -129,14 +264,34 @@ export function start(options: AgentOptions = {}): void {
       const u = clean(String(url))
       const started = now()
       seen[u] = (seen[u] ?? 0) + 1
-      let inN = 0, inB = 0, outN = 0, outB = 0
-      const report = (kind: string, extra: Record<string, unknown> = {}): void => push('ws', { url: u, kind, in: inN, inBytes: inB, out: outN, outBytes: outB, reconnects: (seen[u] ?? 1) - 1, ...extra })
+      let inN = 0,
+        inB = 0,
+        outN = 0,
+        outB = 0
+      const report = (kind: string, extra: Record<string, unknown> = {}): void =>
+        push('ws', {
+          url: u,
+          kind,
+          in: inN,
+          inBytes: inB,
+          out: outN,
+          outBytes: outB,
+          reconnects: (seen[u] ?? 1) - 1,
+          ...extra,
+        })
       ws.addEventListener('open', () => report('open', { ms: now() - started }))
-      ws.addEventListener('message', (e: MessageEvent) => { inN++; inB += size(e.data) })
+      ws.addEventListener('message', (e: MessageEvent) => {
+        inN++
+        inB += size(e.data)
+      })
       ws.addEventListener('close', (e: CloseEvent) => report('close', { code: e.code }))
       ws.addEventListener('error', () => report('error'))
       const send = ws.send.bind(ws)
-      ws.send = (data: Parameters<WebSocket['send']>[0]) => { outN++; outB += size(data); send(data) }
+      ws.send = (data: Parameters<WebSocket['send']>[0]) => {
+        outN++
+        outB += size(data)
+        send(data)
+      }
       return ws
     } as unknown as typeof WebSocket
     Wrapped.prototype = Native.prototype
@@ -145,13 +300,28 @@ export function start(options: AgentOptions = {}): void {
   })
 
   // Errors: message and the top stack frame only.
-  addEventListener('error', (e) => guard(() => push('err', { message: e.message.slice(0, 200), frame: frame(e.error) })))
-  addEventListener('unhandledrejection', (e) => guard(() => push('err', { message: String((e.reason as { message?: string } | undefined)?.message ?? e.reason).slice(0, 200), frame: frame(e.reason) })))
+  addEventListener('error', (e) =>
+    guard(() => push('err', { message: e.message.slice(0, 200), frame: frame(e.error) })),
+  )
+  addEventListener('unhandledrejection', (e) =>
+    guard(() =>
+      push('err', {
+        message: String((e.reason as { message?: string } | undefined)?.message ?? e.reason).slice(
+          0,
+          200,
+        ),
+        frame: frame(e.reason),
+      }),
+    ),
+  )
 
   // Soft navigations
   guard(() => {
     const ps = history.pushState.bind(history)
-    history.pushState = (...args) => { ps(...args); guard(() => push('nav', { to: clean(location.pathname) })) }
+    history.pushState = (...args) => {
+      ps(...args)
+      guard(() => push('nav', { to: clean(location.pathname) }))
+    }
   })
 }
 

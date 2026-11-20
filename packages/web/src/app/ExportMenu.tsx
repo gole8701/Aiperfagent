@@ -41,7 +41,10 @@ export function ExportMenu() {
     const { toPng } = await import('html-to-image')
     const main = document.getElementById('main')
     if (!main) return
-    const dataUrl = await toPng(main, { backgroundColor: getComputedStyle(document.body).backgroundColor, cacheBust: true })
+    const dataUrl = await toPng(main, {
+      backgroundColor: getComputedStyle(document.body).backgroundColor,
+      cacheBust: true,
+    })
     const link = document.createElement('a')
     link.href = dataUrl
     link.download = 'perfagent-screen.png'
@@ -62,8 +65,16 @@ export function ExportMenu() {
                   role="menuitem"
                   onClick={() =>
                     void run(async () => {
-                      if (IS_STATIC) saveBlob(new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' }), `perfagent-report-${report.id}.json`)
-                      else await api.download(`/api/export/${report.id}?format=${f.format}`, `perfagent-report-${report.id}.${f.format}`)
+                      if (IS_STATIC)
+                        saveBlob(
+                          new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' }),
+                          `perfagent-report-${report.id}.json`,
+                        )
+                      else
+                        await api.download(
+                          `/api/export/${report.id}?format=${f.format}`,
+                          `perfagent-report-${report.id}.${f.format}`,
+                        )
                     })
                   }
                 >

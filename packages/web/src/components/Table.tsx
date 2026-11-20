@@ -17,7 +17,15 @@ interface TableProps<T> {
   empty?: ReactNode
 }
 
-export function Table<T>({ columns, rows, rowKey, onRowClick, selectedKey, caption, empty }: TableProps<T>) {
+export function Table<T>({
+  columns,
+  rows,
+  rowKey,
+  onRowClick,
+  selectedKey,
+  caption,
+  empty,
+}: TableProps<T>) {
   return (
     <div className="table-wrap">
       <table className="table">
@@ -45,7 +53,10 @@ export function Table<T>({ columns, rows, rowKey, onRowClick, selectedKey, capti
             return (
               <tr
                 key={key}
-                className={[clickable ? 'clickable' : '', selectedKey === key ? 'selected' : ''].join(' ')}
+                className={[
+                  clickable ? 'clickable' : '',
+                  selectedKey === key ? 'selected' : '',
+                ].join(' ')}
                 tabIndex={clickable ? 0 : undefined}
                 aria-selected={selectedKey === key || undefined}
                 onClick={() => onRowClick?.(row)}

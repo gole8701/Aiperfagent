@@ -19,14 +19,26 @@ export class JobQueue {
   private readonly jobs = new Map<string, Job>()
   private chain: Promise<unknown> = Promise.resolve()
 
-  enqueue<T>(kind: string, work: (report: (progress: Job['progress']) => void) => Promise<T>, onDone?: (job: Job<T>) => void): Job<T> {
-    const job: Job<T> = { id: shortId('job'), kind, status: 'queued', startedAt: new Date().toISOString(), progress: { phase: 'queued', message: 'Waiting for a free slot', fraction: 0 } }
+  enqueue<T>(
+    kind: string,
+    work: (report: (progress: Job['progress']) => void) => Promise<T>,
+    onDone?: (job: Job<T>) => void,
+  ): Job<T> {
+    const job: Job<T> = {
+      id: shortId('job'),
+      kind,
+      status: 'queued',
+      startedAt: new Date().toISOString(),
+      progress: { phase: 'queued', message: 'Waiting for a free slot', fraction: 0 },
+    }
     this.jobs.set(job.id, job)
     this.trim()
     this.chain = this.chain.then(async () => {
       job.status = 'running'
       try {
-        job.result = await work((progress) => { job.progress = progress })
+        job.result = await work((progress) => {
+          job.progress = progress
+        })
         job.status = 'done'
       } catch (error) {
         job.status = 'failed'
@@ -47,7 +59,9 @@ export class JobQueue {
   }
 
   private trim(): void {
-    const finished = [...this.jobs.values()].filter((j) => j.status === 'done' || j.status === 'failed')
+    const finished = [...this.jobs.values()].filter(
+      (j) => j.status === 'done' || j.status === 'failed',
+    )
     while (finished.length > 50) {
       const oldest = finished.shift()
       if (oldest) this.jobs.delete(oldest.id)

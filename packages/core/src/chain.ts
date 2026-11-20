@@ -35,9 +35,14 @@ export function buildRootCauseChain(input: ChainInput): ChainStep[] {
       detail: `${formatMetric('transferKb', r.transferBytes / 1024)}, starts at ${formatMetric('lcp', r.startMs)}${r.thirdParty ? ', third party' : ''}`,
     })
   }
-  if (input.server) steps.push({ kind: 'server', label: input.server.part, detail: `${input.server.ms} ms` })
+  if (input.server)
+    steps.push({ kind: 'server', label: input.server.part, detail: `${input.server.ms} ms` })
   if (input.dependency) {
-    steps.push({ kind: 'dependency', label: input.dependency.name, detail: `${input.dependency.sizeKb} KB` })
+    steps.push({
+      kind: 'dependency',
+      label: input.dependency.name,
+      detail: `${input.dependency.sizeKb} KB`,
+    })
   }
   if (input.component) {
     const c = input.component

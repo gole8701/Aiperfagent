@@ -253,7 +253,14 @@ export interface AiReport {
   calls: AiCallSample[]
   /** Call sites found by the static scanner. */
   callSites: SourceLocation[]
-  models: { model: string; calls: number; p50FirstTokenMs: number; p95FirstTokenMs: number; costUsd: number; errorRate: number }[]
+  models: {
+    model: string
+    calls: number
+    p50FirstTokenMs: number
+    p95FirstTokenMs: number
+    costUsd: number
+    errorRate: number
+  }[]
   budgetUsdPerDay?: number
 }
 

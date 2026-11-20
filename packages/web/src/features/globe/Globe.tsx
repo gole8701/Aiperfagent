@@ -18,10 +18,27 @@ interface GlobeProps {
 }
 
 function colours(): ConstructorParameters<typeof GlobeScene>[0]['colors'] {
-  return { folder: token('--accent'), file: token('--muted'), critical: token('--critical'), warning: token('--warning'), info: token('--info'), dim: token('--border-strong'), accent: token('--accent'), star: token('--muted') }
+  return {
+    folder: token('--accent'),
+    file: token('--muted'),
+    critical: token('--critical'),
+    warning: token('--warning'),
+    info: token('--info'),
+    dim: token('--border-strong'),
+    accent: token('--accent'),
+    star: token('--muted'),
+  }
 }
 
-export default function Globe({ layout, selectedId, highlighted, filtering, onSelect, scoreLabel, infoCard }: GlobeProps) {
+export default function Globe({
+  layout,
+  selectedId,
+  highlighted,
+  filtering,
+  onSelect,
+  scoreLabel,
+  infoCard,
+}: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const coreRef = useRef<HTMLDivElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -59,7 +76,8 @@ export default function Globe({ layout, selectedId, highlighted, filtering, onSe
     const place = (): void => {
       frame = requestAnimationFrame(place)
       const core = scene.project('core')
-      if (core && coreRef.current) coreRef.current.style.transform = `translate(${core.x}px, ${core.y}px)`
+      if (core && coreRef.current)
+        coreRef.current.style.transform = `translate(${core.x}px, ${core.y}px)`
       if (cardRef.current && selectedId) {
         const p = scene.project(selectedId)
         if (p) {
@@ -127,7 +145,12 @@ export default function Globe({ layout, selectedId, highlighted, filtering, onSe
         aria-label={`Project globe with ${layout.points.length} points. Arrow keys rotate, Enter cycles through problems, Space pauses, Home resets, Escape clears the selection.`}
         onKeyDown={onKey}
       />
-      {!webgl ? <div className="globe-fallback">3D is not available in this browser. The problems list below has everything the globe shows.</div> : null}
+      {!webgl ? (
+        <div className="globe-fallback">
+          3D is not available in this browser. The problems list below has everything the globe
+          shows.
+        </div>
+      ) : null}
       <div ref={coreRef} className="globe-core-label" aria-hidden="true">
         <strong>PerfAgent</strong>
         <span>{scoreLabel}</span>
@@ -136,7 +159,9 @@ export default function Globe({ layout, selectedId, highlighted, filtering, onSe
         <div className="globe-tooltip" style={{ left: hover.x, top: hover.y }} role="tooltip">
           <strong>{hover.point.label}</strong>
           {hover.point.kind === 'folder' ? ` · ${hover.point.fileCount} files` : ''}
-          {hover.point.issueIds.length ? ` · ${hover.point.issueIds.length} issue${hover.point.issueIds.length > 1 ? 's' : ''}` : ' · healthy'}
+          {hover.point.issueIds.length
+            ? ` · ${hover.point.issueIds.length} issue${hover.point.issueIds.length > 1 ? 's' : ''}`
+            : ' · healthy'}
         </div>
       ) : null}
       {selectedId && infoCard ? (

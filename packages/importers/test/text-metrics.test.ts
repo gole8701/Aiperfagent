@@ -4,7 +4,13 @@ import { metricForLabel } from '../src/metric-aliases.js'
 import { looksLikeReportLink } from '../src/report-link.js'
 import { detectMetricsInText } from '../src/text-metrics.js'
 
-const detect = (text: string) => detectMetricsInText(text, 'test').map(({ metric, value, route, confidence }) => ({ metric, value, route, confidence }))
+const detect = (text: string) =>
+  detectMetricsInText(text, 'test').map(({ metric, value, route, confidence }) => ({
+    metric,
+    value,
+    route,
+    confidence,
+  }))
 
 describe('detectMetricsInText', () => {
   it.each([
@@ -25,21 +31,30 @@ describe('detectMetricsInText', () => {
   })
 
   it('lowers confidence when the value sits far from the name', () => {
-    const hits = detect('Largest Contentful Paint is the time the biggest element takes to show up and here it is 3.4 s')
+    const hits = detect(
+      'Largest Contentful Paint is the time the biggest element takes to show up and here it is 3.4 s',
+    )
     expect(hits).toEqual([{ metric: 'lcp', value: 3400, route: undefined, confidence: 0.55 }])
   })
 
   it('reads several metrics on one line', () => {
-    expect(detect('LCP 2.1 s, CLS 0.05, TTFB 300 ms').map((h) => [h.metric, h.value])).toEqual([['lcp', 2100], ['cls', 0.05], ['ttfb', 300]])
+    expect(detect('LCP 2.1 s, CLS 0.05, TTFB 300 ms').map((h) => [h.metric, h.value])).toEqual([
+      ['lcp', 2100],
+      ['cls', 0.05],
+      ['ttfb', 300],
+    ])
   })
 
   it('attaches the route from the same line or the line above', () => {
-    const hits = detect('Page: https://shop.example/checkout\nLCP 3.4 s\n\n/home\nLCP 1.9 s\nCLS 0.02 on /cart')
+    const hits = detect(
+      'Page: https://shop.example/checkout\nLCP 3.4 s\n\n/home\nLCP 1.9 s\nCLS 0.02 on /cart',
+    )
     expect(hits.map((h) => h.route)).toEqual(['https://shop.example/checkout', '/home', '/cart'])
   })
 
   it('reads a pipe table with a header row', () => {
-    const text = '| Page | LCP | CLS | Requests |\n|---|---|---|---|\n| /checkout | 3400 | 0.12 | 210 |\n| /home | 1900 | 0.02 | 80 |'
+    const text =
+      '| Page | LCP | CLS | Requests |\n|---|---|---|---|\n| /checkout | 3400 | 0.12 | 210 |\n| /home | 1900 | 0.02 | 80 |'
     expect(detect(text)).toEqual([
       { metric: 'lcp', value: 3400, route: '/checkout', confidence: 0.9 },
       { metric: 'cls', value: 0.12, route: '/checkout', confidence: 0.9 },
@@ -53,7 +68,9 @@ describe('detectMetricsInText', () => {
   it('ignores dates and impossible values', () => {
     expect(detect('Performance score report 2026-11-18')).toEqual([])
     expect(detect('Score 2026')).toEqual([])
-    expect(detect('CLS 12')).toEqual([{ metric: 'cls', value: 0.12, route: undefined, confidence: 0.85 }])
+    expect(detect('CLS 12')).toEqual([
+      { metric: 'cls', value: 0.12, route: undefined, confidence: 0.85 },
+    ])
   })
 
   it('is deterministic', () => {

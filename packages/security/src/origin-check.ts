@@ -23,7 +23,9 @@ export function originAllowed(origin: string | undefined, policy: OriginPolicy):
   try {
     const url = new URL(origin)
     const port = url.port ? Number(url.port) : url.protocol === 'https:' ? 443 : 80
-    return LOOPBACK_HOSTS.has(url.hostname === '::1' ? '[::1]' : url.hostname) && port === policy.port
+    return (
+      LOOPBACK_HOSTS.has(url.hostname === '::1' ? '[::1]' : url.hostname) && port === policy.port
+    )
   } catch {
     return false
   }
@@ -36,7 +38,8 @@ export function requestRejection(
 ): string | null {
   if (!hostAllowed(headers.host, policy)) return 'Host header is not the local dashboard address'
   if (!originAllowed(headers.origin, policy)) return 'Request came from another website'
-  if (headers.origin === undefined && headers['sec-fetch-site'] === 'cross-site') return 'Cross-site request'
+  if (headers.origin === undefined && headers['sec-fetch-site'] === 'cross-site')
+    return 'Cross-site request'
   return null
 }
 

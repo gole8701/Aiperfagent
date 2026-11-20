@@ -9,10 +9,31 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   busy?: boolean
 }
 
-export function Button({ variant = 'default', small, busy, className = '', children, disabled, ...rest }: ButtonProps) {
-  const classes = ['btn', variant !== 'default' ? `btn-${variant}` : '', small ? 'btn-sm' : '', className].filter(Boolean).join(' ')
+export function Button({
+  variant = 'default',
+  small,
+  busy,
+  className = '',
+  children,
+  disabled,
+  ...rest
+}: ButtonProps) {
+  const classes = [
+    'btn',
+    variant !== 'default' ? `btn-${variant}` : '',
+    small ? 'btn-sm' : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ')
   return (
-    <button type="button" className={classes} disabled={disabled || busy} aria-busy={busy || undefined} {...rest}>
+    <button
+      type="button"
+      className={classes}
+      disabled={disabled || busy}
+      aria-busy={busy || undefined}
+      {...rest}
+    >
       {busy ? <span className="spinner" aria-hidden="true" /> : null}
       {children}
     </button>
@@ -28,8 +49,22 @@ interface LinkButtonProps {
   'data-tour'?: string
 }
 
-export function LinkButton({ to, variant = 'default', small, children, className = '', ...rest }: LinkButtonProps) {
-  const classes = ['btn', variant !== 'default' ? `btn-${variant}` : '', small ? 'btn-sm' : '', className].filter(Boolean).join(' ')
+export function LinkButton({
+  to,
+  variant = 'default',
+  small,
+  children,
+  className = '',
+  ...rest
+}: LinkButtonProps) {
+  const classes = [
+    'btn',
+    variant !== 'default' ? `btn-${variant}` : '',
+    small ? 'btn-sm' : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ')
   return (
     <Link to={to} className={classes} {...rest}>
       {children}

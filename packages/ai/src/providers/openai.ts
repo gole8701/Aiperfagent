@@ -2,7 +2,16 @@ import { PerfAgentError } from '@perfagent/core'
 
 import { fetchWithRetry, failedResponse, readJson, readLines } from '../http.js'
 
-import { CHAT_TIMEOUT_MS, LIST_TIMEOUT_MS, pingProvider, type ChatRequest, type ChatResult, type Provider, type ProviderAuth, type ProviderId } from './types.js'
+import {
+  CHAT_TIMEOUT_MS,
+  LIST_TIMEOUT_MS,
+  pingProvider,
+  type ChatRequest,
+  type ChatResult,
+  type Provider,
+  type ProviderAuth,
+  type ProviderId,
+} from './types.js'
 
 const DEFAULT_URL = 'https://api.openai.com/v1'
 
@@ -20,7 +29,12 @@ interface ChatCompletion {
 
 function headers(auth: ProviderAuth, id: ProviderId): Record<string, string> {
   // Local OpenAI-compatible servers (LM Studio, vLLM) often need no key; cloud ones always do.
-  if (!auth.apiKey && id === 'openai') throw new PerfAgentError('AI_NOT_CONFIGURED', 'No OpenAI key', 'Add it in Profile → AI connections or set OPENAI_API_KEY.')
+  if (!auth.apiKey && id === 'openai')
+    throw new PerfAgentError(
+      'AI_NOT_CONFIGURED',
+      'No OpenAI key',
+      'Add it in Profile → AI connections or set OPENAI_API_KEY.',
+    )
   const out: Record<string, string> = { 'content-type': 'application/json' }
   if (auth.apiKey) {
     out.authorization = `Bearer ${auth.apiKey}`
@@ -41,11 +55,21 @@ function compatible(id: ProviderId, label: string, defaultModel: string): Provid
       stream: request.stream === true,
       ...(request.stream ? { stream_options: { include_usage: true } } : {}),
     }
-    const response = await fetchWithRetry(`${base}/chat/completions`, { method: 'POST', headers: headers(auth, id), body: JSON.stringify(payload) }, CHAT_TIMEOUT_MS)
+    const response = await fetchWithRetry(
+      `${base}/chat/completions`,
+      { method: 'POST', headers: headers(auth, id), body: JSON.stringify(payload) },
+      CHAT_TIMEOUT_MS,
+    )
     if (!request.stream) {
       const data = await readJson<ChatCompletion>(response, label)
       const totalMs = Date.now() - started
-      return { text: data.choices[0]?.message?.content ?? '', ...tokens(data.usage), firstTokenMs: totalMs, totalMs, model: data.model }
+      return {
+        text: data.choices[0]?.message?.content ?? '',
+        ...tokens(data.usage),
+        firstTokenMs: totalMs,
+        totalMs,
+        model: data.model,
+      }
     }
     if (!response.ok) throw await failedResponse(response, label)
     let text = ''
@@ -69,17 +93,35 @@ function compatible(id: ProviderId, label: string, defaultModel: string): Provid
 
   async function listModels(auth: ProviderAuth): Promise<string[]> {
     const base = (auth.baseUrl ?? DEFAULT_URL).replace(/\/$/, '')
-    const response = await fetchWithRetry(`${base}/models`, { headers: headers(auth, id) }, LIST_TIMEOUT_MS)
+    const response = await fetchWithRetry(
+      `${base}/models`,
+      { headers: headers(auth, id) },
+      LIST_TIMEOUT_MS,
+    )
     const data = await readJson<{ data: { id: string }[] }>(response, label)
     return data.data.map((m) => m.id).sort()
   }
 
-  const provider: Provider = { id, label, free: false, defaultModel, chat, listModels, test: (auth, model) => pingProvider(provider, auth, model ?? defaultModel) }
+  const provider: Provider = {
+    id,
+    label,
+    free: false,
+    defaultModel,
+    chat,
+    listModels,
+    test: (auth, model) => pingProvider(provider, auth, model ?? defaultModel),
+  }
   return provider
 }
 
-function tokens(usage: Usage | undefined): Pick<ChatResult, 'inputTokens' | 'outputTokens' | 'cachedTokens'> {
-  return { inputTokens: usage?.prompt_tokens ?? 0, outputTokens: usage?.completion_tokens ?? 0, cachedTokens: usage?.prompt_tokens_details?.cached_tokens ?? 0 }
+function tokens(
+  usage: Usage | undefined,
+): Pick<ChatResult, 'inputTokens' | 'outputTokens' | 'cachedTokens'> {
+  return {
+    inputTokens: usage?.prompt_tokens ?? 0,
+    outputTokens: usage?.completion_tokens ?? 0,
+    cachedTokens: usage?.prompt_tokens_details?.cached_tokens ?? 0,
+  }
 }
 
 export const openai = compatible('openai', 'OpenAI', 'gpt-4.1-mini')

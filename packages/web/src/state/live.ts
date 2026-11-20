@@ -34,10 +34,16 @@ export const useLive = create<LiveState>((set, get) => {
         const tick = message.tick
         if (typeof tick.requestsPerSec !== 'number') return
         const ticks = [...get().ticks, tick].slice(-MAX_TICKS)
-        const peaks = tick.peak ? [...get().peaks, { at: tick.at, metric: tick.peak.metric, value: tick.peak.value }].slice(-50) : get().peaks
+        const peaks = tick.peak
+          ? [
+              ...get().peaks,
+              { at: tick.at, metric: tick.peak.metric, value: tick.peak.value },
+            ].slice(-50)
+          : get().peaks
         set({ ticks, peaks })
       }
-      if (message.type === 'live:stopped') set({ running: false, recording: { ...get().recording, reportId: message.reportId } })
+      if (message.type === 'live:stopped')
+        set({ running: false, recording: { ...get().recording, reportId: message.reportId } })
     })
   }
 

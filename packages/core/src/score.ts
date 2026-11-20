@@ -54,7 +54,9 @@ export function computeScore(metrics: MetricValue[]): number {
 
 /** Score the page would reach if every listed issue were fixed (lab estimate). */
 export function projectedScore(current: number, issues: Issue[]): number {
-  const gain = issues.filter((i) => i.status === 'open').reduce((sum, i) => sum + i.gain.scoreDelta, 0)
+  const gain = issues
+    .filter((i) => i.status === 'open')
+    .reduce((sum, i) => sum + i.gain.scoreDelta, 0)
   // Gains overlap (two fixes to the same metric don't add up fully), so taper them.
   const tapered = gain * (1 - Math.min(0.35, issues.length * 0.03))
   return Math.min(100, Math.round(current + tapered))

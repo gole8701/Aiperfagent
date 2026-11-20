@@ -4,22 +4,22 @@
 
 Every import is untrusted: 60 MB cap (`MAX_IMPORT_BYTES`), zod validation of the resulting report, never executed, secrets redacted, rendered as text. Text inside an import is data, never instructions for the AI.
 
-| Format                                                    | Id               | How it is recognised                                                                                | Exact       |
-| --------------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------- | ----------- |
-| PerfAgent report                                          | `perfagent`      | JSON with `schemaVersion` and `tool.name === 'perfagent'`                                           | yes         |
-| PageSpeed Insights JSON                                   | `psi`            | JSON with `lighthouseResult` (lab) and optional `loadingExperience` (CrUX field data, p75)          | yes         |
-| Lighthouse JSON                                           | `lighthouse`     | JSON with `lighthouseVersion` and `audits`                                                          | yes         |
-| HAR                                                       | `har`            | JSON with `log.entries`                                                                             | yes         |
-| Chrome performance trace                                  | `trace`          | JSON with `traceEvents`, or a bare array of trace events                                            | yes         |
-| Bundle stats (webpack, rollup-plugin-visualizer, Vite / Next.js manifests) | `bundle-stats` | JSON in one of those shapes                                                           | yes         |
-| OpenTelemetry JSON (traces incl. GenAI, metrics)          | `otel`           | JSON with `resourceSpans` or `resourceMetrics`                                                      | yes         |
-| web-vitals / RUM export                                   | `web-vitals`     | JSON array (or `{ metrics: [...] }`) of `{ name, value }` with names LCP, INP, CLS, TTFB, FCP, FID   | yes         |
-| CSV of metrics                                            | `csv`            | `.csv`/`.tsv` name, or comma/tab separated text with metric names in a header                       | best-effort |
-| PDF report                                                | `pdf`            | `%PDF` header or `.pdf` name                                                                        | best-effort |
-| Excel                                                     | `xlsx`           | `.xlsx` name, or a zip with an `xl/` folder (old `.xls` is not supported; save as `.xlsx` or CSV)    | best-effort |
-| Word                                                      | `docx`           | `.docx` name, or a zip with a `word/` folder                                                        | best-effort |
-| Pasted text                                               | `text`           | any other text with metric names and numbers                                                        | best-effort |
-| Dashboard link                                            | `dashboard-link` | a URL with `?report=<id>` (a saved report) or ending in `.json` (fetched); Compare `link` source only | yes |
+| Format                                                                     | Id               | How it is recognised                                                                                  | Exact       |
+| -------------------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- | ----------- |
+| PerfAgent report                                                           | `perfagent`      | JSON with `schemaVersion` and `tool.name === 'perfagent'`                                             | yes         |
+| PageSpeed Insights JSON                                                    | `psi`            | JSON with `lighthouseResult` (lab) and optional `loadingExperience` (CrUX field data, p75)            | yes         |
+| Lighthouse JSON                                                            | `lighthouse`     | JSON with `lighthouseVersion` and `audits`                                                            | yes         |
+| HAR                                                                        | `har`            | JSON with `log.entries`                                                                               | yes         |
+| Chrome performance trace                                                   | `trace`          | JSON with `traceEvents`, or a bare array of trace events                                              | yes         |
+| Bundle stats (webpack, rollup-plugin-visualizer, Vite / Next.js manifests) | `bundle-stats`   | JSON in one of those shapes                                                                           | yes         |
+| OpenTelemetry JSON (traces incl. GenAI, metrics)                           | `otel`           | JSON with `resourceSpans` or `resourceMetrics`                                                        | yes         |
+| web-vitals / RUM export                                                    | `web-vitals`     | JSON array (or `{ metrics: [...] }`) of `{ name, value }` with names LCP, INP, CLS, TTFB, FCP, FID    | yes         |
+| CSV of metrics                                                             | `csv`            | `.csv`/`.tsv` name, or comma/tab separated text with metric names in a header                         | best-effort |
+| PDF report                                                                 | `pdf`            | `%PDF` header or `.pdf` name                                                                          | best-effort |
+| Excel                                                                      | `xlsx`           | `.xlsx` name, or a zip with an `xl/` folder (old `.xls` is not supported; save as `.xlsx` or CSV)     | best-effort |
+| Word                                                                       | `docx`           | `.docx` name, or a zip with a `word/` folder                                                          | best-effort |
+| Pasted text                                                                | `text`           | any other text with metric names and numbers                                                          | best-effort |
+| Dashboard link                                                             | `dashboard-link` | a URL with `?report=<id>` (a saved report) or ending in `.json` (fetched); Compare `link` source only | yes         |
 
 "Best-effort" means values are read from a document made for people: PerfAgent lists each metric found, its value and a confidence, flags values under 0.7 and lets you correct them (`POST /api/import/:id/correct`, or the **Detected values** step in Compare).
 

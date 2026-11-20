@@ -60,8 +60,24 @@ export function FixPanel({ issue, status }: FixPanelProps) {
     setWorking(kind)
     setError(undefined)
     try {
-      if (kind === 'explain') setExplanation((await api.post<{ text: string }>('/api/ai/explain', { reportId: report?.id, issueId: issue.id })).text)
-      else setSuggestions((await api.post<{ changes: ProposedChange[] }>('/api/ai/suggest', { reportId: report?.id, issueIds: [issue.id] })).changes)
+      if (kind === 'explain')
+        setExplanation(
+          (
+            await api.post<{ text: string }>('/api/ai/explain', {
+              reportId: report?.id,
+              issueId: issue.id,
+            })
+          ).text,
+        )
+      else
+        setSuggestions(
+          (
+            await api.post<{ changes: ProposedChange[] }>('/api/ai/suggest', {
+              reportId: report?.id,
+              issueIds: [issue.id],
+            })
+          ).changes,
+        )
     } catch (err) {
       setError(describeError(err))
     } finally {
@@ -83,32 +99,69 @@ export function FixPanel({ issue, status }: FixPanelProps) {
       ))}
       <div className="row">
         {issue.fix.automatic && canApply ? (
-          <Button variant="primary" busy={busy} disabled={Boolean(run)} onClick={() => void start(report?.id ?? '', { kind: 'issue', issueIds: [issue.id] }, { review: true })} title="Applies the rule's change on a new branch, with review">
+          <Button
+            variant="primary"
+            busy={busy}
+            disabled={Boolean(run)}
+            onClick={() =>
+              void start(
+                report?.id ?? '',
+                { kind: 'issue', issueIds: [issue.id] },
+                { review: true },
+              )
+            }
+            title="Applies the rule's change on a new branch, with review"
+          >
             Built-in fix · apply
           </Button>
         ) : (
-          <span className="badge badge-good">{issue.fix.automatic ? 'Built-in fix (free, no AI): shown above' : 'Built-in fix: follow the steps above'}</span>
+          <span className="badge badge-good">
+            {issue.fix.automatic
+              ? 'Built-in fix (free, no AI): shown above'
+              : 'Built-in fix: follow the steps above'}
+          </span>
         )}
         {canApply ? (
           <>
-            <Select label="Fix scope" hideLabel value={scope} options={SCOPES} onChange={setScope} />
-            <Button variant="ai" busy={busy} disabled={Boolean(run) || aiUnavailable} onClick={() => void start(report?.id ?? '', fixScope(), { review: true })}>
+            <Select
+              label="Fix scope"
+              hideLabel
+              value={scope}
+              options={SCOPES}
+              onChange={setScope}
+            />
+            <Button
+              variant="ai"
+              busy={busy}
+              disabled={Boolean(run) || aiUnavailable}
+              onClick={() => void start(report?.id ?? '', fixScope(), { review: true })}
+            >
               Fix with my AI
             </Button>
           </>
         ) : hasAi ? (
-          <Button variant="ai" busy={working === 'suggest'} disabled={aiUnavailable} onClick={() => void call('suggest')}>
+          <Button
+            variant="ai"
+            busy={working === 'suggest'}
+            disabled={aiUnavailable}
+            onClick={() => void call('suggest')}
+          >
             Suggest with my AI
           </Button>
         ) : null}
         {hasAi ? (
-          <Button busy={working === 'explain'} disabled={aiUnavailable} onClick={() => void call('explain')}>
+          <Button
+            busy={working === 'explain'}
+            disabled={aiUnavailable}
+            onClick={() => void call('explain')}
+          >
             Explain with AI
           </Button>
         ) : null}
         {hasAi && !aiConfigured ? (
           <span className="muted" style={{ fontSize: 12 }}>
-            No AI connected yet. <Link to="/settings/ai">Connect your AI (free options available)</Link>
+            No AI connected yet.{' '}
+            <Link to="/settings/ai">Connect your AI (free options available)</Link>
           </span>
         ) : null}
       </div>
@@ -122,7 +175,9 @@ export function FixPanel({ issue, status }: FixPanelProps) {
       {suggestions ? (
         <div className="stack">
           <div className="label">Suggested changes (nothing applied)</div>
-          {suggestions.length === 0 ? <span className="muted">The AI had no change to propose.</span> : null}
+          {suggestions.length === 0 ? (
+            <span className="muted">The AI had no change to propose.</span>
+          ) : null}
           {suggestions.map((s, index) => (
             <div key={index}>
               <p style={{ margin: '0 0 6px' }}>{s.explanation}</p>

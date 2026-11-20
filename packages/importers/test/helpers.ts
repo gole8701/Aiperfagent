@@ -7,11 +7,17 @@ import { parseReport } from '@perfagent/report-schema'
 
 import { importReport, type ImportResult } from '../src/index.js'
 
-export const fixtures = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../fixtures/reports')
+export const fixtures = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../../fixtures/reports',
+)
 
 /** Imports a fixture by name and checks the result is a valid report. */
 export async function importFixture(name: string): Promise<ImportResult> {
-  const result = await importReport({ buffer: await readFile(path.join(fixtures, name)), filename: name })
+  const result = await importReport({
+    buffer: await readFile(path.join(fixtures, name)),
+    filename: name,
+  })
   expectValid(result)
   return result
 }

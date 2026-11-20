@@ -39,7 +39,8 @@ async function plannedChecks(root: string, fix: PerfAgentConfig['fix']): Promise
   const pm = await packageManager(root)
   const checks: PlannedCheck[] = []
   const tsc = path.join(root, 'node_modules', '.bin', 'tsc')
-  if ((await exists(path.join(root, 'tsconfig.json'))) && (await exists(tsc))) checks.push({ name: 'typecheck', command: tsc, args: ['--noEmit'] })
+  if ((await exists(path.join(root, 'tsconfig.json'))) && (await exists(tsc)))
+    checks.push({ name: 'typecheck', command: tsc, args: ['--noEmit'] })
   if (scripts.lint) checks.push({ name: 'lint', command: pm, args: ['run', 'lint'] })
   if (fix.runTests) {
     if (fix.testCommand) {
@@ -53,16 +54,28 @@ async function plannedChecks(root: string, fix: PerfAgentConfig['fix']): Promise
 
 function runCheck(root: string, check: PlannedCheck): Promise<CheckResult> {
   return new Promise((resolve) => {
-    execFile(check.command, check.args, { cwd: root, timeout: CHECK_TIMEOUT_MS, maxBuffer: 20 * 1024 * 1024, env: { ...process.env, CI: '1', FORCE_COLOR: '0' } }, (error, stdout, stderr) => {
-      const output = `${stdout}\n${stderr}`.trim().slice(-MAX_OUTPUT)
-      resolve({ name: check.name, ok: !error, output: error && !output ? error.message : output })
-    })
+    execFile(
+      check.command,
+      check.args,
+      {
+        cwd: root,
+        timeout: CHECK_TIMEOUT_MS,
+        maxBuffer: 20 * 1024 * 1024,
+        env: { ...process.env, CI: '1', FORCE_COLOR: '0' },
+      },
+      (error, stdout, stderr) => {
+        const output = `${stdout}\n${stderr}`.trim().slice(-MAX_OUTPUT)
+        resolve({ name: check.name, ok: !error, output: error && !output ? error.message : output })
+      },
+    )
   })
 }
 
 async function packageScripts(root: string): Promise<Record<string, string>> {
   try {
-    const pkg = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8')) as { scripts?: Record<string, string> }
+    const pkg = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8')) as {
+      scripts?: Record<string, string>
+    }
     return pkg.scripts ?? {}
   } catch {
     return {}
@@ -72,10 +85,14 @@ async function packageScripts(root: string): Promise<Record<string, string>> {
 async function packageManager(root: string): Promise<string> {
   if (await exists(path.join(root, 'pnpm-lock.yaml'))) return 'pnpm'
   if (await exists(path.join(root, 'yarn.lock'))) return 'yarn'
-  if ((await exists(path.join(root, 'bun.lockb'))) || (await exists(path.join(root, 'bun.lock')))) return 'bun'
+  if ((await exists(path.join(root, 'bun.lockb'))) || (await exists(path.join(root, 'bun.lock'))))
+    return 'bun'
   return 'npm'
 }
 
 async function exists(file: string): Promise<boolean> {
-  return access(file).then(() => true, () => false)
+  return access(file).then(
+    () => true,
+    () => false,
+  )
 }

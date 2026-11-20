@@ -15,7 +15,8 @@ export const PROFILES: Record<'mobile' | 'desktop', DeviceProfile> = {
     viewport: { width: 412, height: 823 },
     deviceScaleFactor: 1.75,
     isMobile: true,
-    userAgent: 'Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36 PerfAgent',
+    userAgent:
+      'Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36 PerfAgent',
     cpuThrottle: 4,
     network: { downloadKbps: 1600, uploadKbps: 750, latencyMs: 150 },
   },

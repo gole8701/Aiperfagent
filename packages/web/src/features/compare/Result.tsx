@@ -23,15 +23,42 @@ interface ResultProps {
 }
 
 const DIRECTION_ICON = { better: '✅', worse: '❌', same: '➖' }
-const KIND_LABEL = { fixed: 'Fixed', new: 'New problem', 'still-open': 'Still open', request: 'New download', unknown: 'Unknown' }
+const KIND_LABEL = {
+  fixed: 'Fixed',
+  new: 'New problem',
+  'still-open': 'Still open',
+  request: 'New download',
+  unknown: 'Unknown',
+}
 
-export function Result({ comparison, mode, ctx, canFix, onFixWorse, onBaseline, onBudgets }: ResultProps) {
+export function Result({
+  comparison,
+  mode,
+  ctx,
+  canFix,
+  onFixWorse,
+  onBaseline,
+  onBudgets,
+}: ResultProps) {
   const [worseOnly, setWorseOnly] = useState(false)
   const [a, b] = comparison.sources
-  const diffs = useMemo(() => comparison.diffs.filter((d) => !worseOnly || d.direction === 'worse'), [comparison, worseOnly])
+  const diffs = useMemo(
+    () => comparison.diffs.filter((d) => !worseOnly || d.direction === 'worse'),
+    [comparison, worseOnly],
+  )
   const worse = comparison.diffs.filter((d) => d.direction === 'worse')
-  const impact = comparison.impact.filter((i) => !worseOnly || i.kind === 'new' || i.kind === 'still-open')
-  const chart = useMemo(() => pairedBars(diffs.filter((d) => mode !== 'many-pages' || d.route === comparison.diffs[0]?.route), a?.label ?? 'A', b?.label ?? 'B'), [diffs, mode, comparison, a, b])
+  const impact = comparison.impact.filter(
+    (i) => !worseOnly || i.kind === 'new' || i.kind === 'still-open',
+  )
+  const chart = useMemo(
+    () =>
+      pairedBars(
+        diffs.filter((d) => mode !== 'many-pages' || d.route === comparison.diffs[0]?.route),
+        a?.label ?? 'A',
+        b?.label ?? 'B',
+      ),
+    [diffs, mode, comparison, a, b],
+  )
   const markdown = comparisonToMarkdown(comparison)
 
   return (
@@ -43,7 +70,15 @@ export function Result({ comparison, mode, ctx, canFix, onFixWorse, onBaseline, 
             <strong>{comparison.verdict.scoreFrom}</strong>
             <span aria-hidden="true">→</span>
             <span className="muted">{b?.label}</span>
-            <strong className={comparison.verdict.scoreTo >= comparison.verdict.scoreFrom ? 'rating-good' : 'rating-poor'}>{comparison.verdict.scoreTo}</strong>
+            <strong
+              className={
+                comparison.verdict.scoreTo >= comparison.verdict.scoreFrom
+                  ? 'rating-good'
+                  : 'rating-poor'
+              }
+            >
+              {comparison.verdict.scoreTo}
+            </strong>
           </div>
           <div>
             <div className="label">In simple words</div>
@@ -55,7 +90,11 @@ export function Result({ comparison, mode, ctx, canFix, onFixWorse, onBaseline, 
           </div>
         </div>
         {comparison.warnings.map((w) => (
-          <div key={w} className="badge badge-warning" style={{ marginTop: 6, whiteSpace: 'normal' }}>
+          <div
+            key={w}
+            className="badge badge-warning"
+            style={{ marginTop: 6, whiteSpace: 'normal' }}
+          >
             Fairness: {w}
           </div>
         ))}
@@ -72,17 +111,28 @@ export function Result({ comparison, mode, ctx, canFix, onFixWorse, onBaseline, 
         <div className="muted" style={{ fontSize: 13, marginBottom: 8 }}>
           Each change that moved the numbers, the file it came from, and what to do.
         </div>
-        {impact.length === 0 ? <span className="muted">Nothing to show for this filter.</span> : null}
+        {impact.length === 0 ? (
+          <span className="muted">Nothing to show for this filter.</span>
+        ) : null}
         <div className="stack" style={{ gap: 8 }}>
           {impact.map((item, index) => (
             <div key={index} className="impact-row">
-              <span aria-hidden="true">{item.kind === 'fixed' ? '✅' : item.kind === 'unknown' ? '❔' : '❌'}</span>
+              <span aria-hidden="true">
+                {item.kind === 'fixed' ? '✅' : item.kind === 'unknown' ? '❔' : '❌'}
+              </span>
               <div style={{ flex: 1 }}>
                 <strong>{item.plain}</strong>
                 <div className="muted" style={{ fontSize: 12 }}>
-                  <span className="badge" style={{ marginRight: 6 }}>{KIND_LABEL[item.kind]}</span>
+                  <span className="badge" style={{ marginRight: 6 }}>
+                    {KIND_LABEL[item.kind]}
+                  </span>
                   {item.effect}
-                  {item.issue?.location ? <span className="mono"> · {item.issue.location.file}:{item.issue.location.line}</span> : null}
+                  {item.issue?.location ? (
+                    <span className="mono">
+                      {' '}
+                      · {item.issue.location.file}:{item.issue.location.line}
+                    </span>
+                  ) : null}
                 </div>
               </div>
               {item.issue ? (
@@ -103,7 +153,11 @@ export function Result({ comparison, mode, ctx, canFix, onFixWorse, onBaseline, 
         </ol>
         <div className="row no-print">
           {canFix ? (
-            <Button variant="ai" onClick={onFixWorse} disabled={!comparison.impact.some((i) => i.kind === 'new' && i.issue)}>
+            <Button
+              variant="ai"
+              onClick={onFixWorse}
+              disabled={!comparison.impact.some((i) => i.kind === 'new' && i.issue)}
+            >
               Fix what got worse with my AI
             </Button>
           ) : null}
@@ -145,7 +199,9 @@ export function Result({ comparison, mode, ctx, canFix, onFixWorse, onBaseline, 
 
 function PagesGrid({ diffs }: { diffs: MetricDiff[] }) {
   const routes = [...new Set(diffs.map((d) => d.route))]
-  const metrics = (['score', 'lcp', 'inp', 'cls'] as const).filter((m) => diffs.some((d) => d.metric === m))
+  const metrics = (['score', 'lcp', 'inp', 'cls'] as const).filter((m) =>
+    diffs.some((d) => d.metric === m),
+  )
   return (
     <Card title="Every page, before → after">
       <div className="muted" style={{ fontSize: 12, marginBottom: 6 }}>
@@ -171,8 +227,19 @@ function PagesGrid({ diffs }: { diffs: MetricDiff[] }) {
                   const d = diffs.find((x) => x.route === route && x.metric === m)
                   if (!d) return <td key={m}>—</td>
                   return (
-                    <td key={m} className={d.direction === 'better' ? 'rating-good' : d.direction === 'worse' ? 'rating-poor' : 'muted'}>
-                      {DIRECTION_ICON[d.direction]} {d.from === undefined ? '—' : formatMetric(m, d.from)} → {d.to === undefined ? '—' : formatMetric(m, d.to)}
+                    <td
+                      key={m}
+                      className={
+                        d.direction === 'better'
+                          ? 'rating-good'
+                          : d.direction === 'worse'
+                            ? 'rating-poor'
+                            : 'muted'
+                      }
+                    >
+                      {DIRECTION_ICON[d.direction]}{' '}
+                      {d.from === undefined ? '—' : formatMetric(m, d.from)} →{' '}
+                      {d.to === undefined ? '—' : formatMetric(m, d.to)}
                     </td>
                   )
                 })}
@@ -202,15 +269,55 @@ function pairedBars(diffs: MetricDiff[], labelA: string, labelB: string): ChartD
         legend: { bottom: 0, textStyle: { color: p.text } },
         grid: { left: 12, right: 120, top: 8, bottom: 30, containLabel: true },
         xAxis: { type: 'value', max: 1, show: false },
-        yAxis: { type: 'category', inverse: true, data: rows.map((d) => (ctx.expert ? `${METRICS[d.metric].short} · ${d.route}` : `${METRICS[d.metric].plain} (${METRICS[d.metric].short})`)), ...axisStyle(p), axisLabel: { color: p.text, width: 240, overflow: 'break' } },
+        yAxis: {
+          type: 'category',
+          inverse: true,
+          data: rows.map((d) =>
+            ctx.expert
+              ? `${METRICS[d.metric].short} · ${d.route}`
+              : `${METRICS[d.metric].plain} (${METRICS[d.metric].short})`,
+          ),
+          ...axisStyle(p),
+          axisLabel: { color: p.text, width: 240, overflow: 'break' },
+        },
         series: [
-          { name: labelA, type: 'bar', data: rows.map((d) => (d.from ?? 0) / scaleOf(d)), itemStyle: { color: p.muted }, barGap: '10%', barMaxWidth: 14, label: { show: true, position: 'right', color: p.muted, formatter: (x: { dataIndex: number }) => formatMetric(rows[x.dataIndex]?.metric ?? 'score', rows[x.dataIndex]?.from ?? 0) } },
+          {
+            name: labelA,
+            type: 'bar',
+            data: rows.map((d) => (d.from ?? 0) / scaleOf(d)),
+            itemStyle: { color: p.muted },
+            barGap: '10%',
+            barMaxWidth: 14,
+            label: {
+              show: true,
+              position: 'right',
+              color: p.muted,
+              formatter: (x: { dataIndex: number }) =>
+                formatMetric(rows[x.dataIndex]?.metric ?? 'score', rows[x.dataIndex]?.from ?? 0),
+            },
+          },
           {
             name: labelB,
             type: 'bar',
             barMaxWidth: 14,
-            data: rows.map((d) => ({ value: (d.to ?? 0) / scaleOf(d), itemStyle: { color: d.direction === 'better' ? p.good : d.direction === 'worse' ? p.critical : p.accent } })),
-            label: { show: true, position: 'right', color: p.text, formatter: (x: { dataIndex: number }) => `${formatMetric(rows[x.dataIndex]?.metric ?? 'score', rows[x.dataIndex]?.to ?? 0)} · ${rows[x.dataIndex]?.label ?? ''}` },
+            data: rows.map((d) => ({
+              value: (d.to ?? 0) / scaleOf(d),
+              itemStyle: {
+                color:
+                  d.direction === 'better'
+                    ? p.good
+                    : d.direction === 'worse'
+                      ? p.critical
+                      : p.accent,
+              },
+            })),
+            label: {
+              show: true,
+              position: 'right',
+              color: p.text,
+              formatter: (x: { dataIndex: number }) =>
+                `${formatMetric(rows[x.dataIndex]?.metric ?? 'score', rows[x.dataIndex]?.to ?? 0)} · ${rows[x.dataIndex]?.label ?? ''}`,
+            },
           },
         ],
       }

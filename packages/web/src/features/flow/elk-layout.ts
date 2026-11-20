@@ -18,20 +18,28 @@ export async function layoutGraph(graph: VisibleGraph): Promise<Positions> {
   if (graph.nodes.length > ELK_LIMIT) return tidyTree(graph)
   const elkGraph: ElkNode = {
     id: 'root',
-    layoutOptions: { 'elk.algorithm': 'layered', 'elk.direction': 'RIGHT', 'elk.layered.spacing.nodeNodeBetweenLayers': '60', 'elk.spacing.nodeNode': '14', 'elk.edgeRouting': 'SPLINES' },
+    layoutOptions: {
+      'elk.algorithm': 'layered',
+      'elk.direction': 'RIGHT',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '60',
+      'elk.spacing.nodeNode': '14',
+      'elk.edgeRouting': 'SPLINES',
+    },
     children: graph.nodes.map((n) => ({ id: n.node.id, width: NODE_WIDTH, height: NODE_HEIGHT })),
     edges: graph.edges.map((e) => ({ id: e.id, sources: [e.source], targets: [e.target] })),
   }
   const result = await elk.layout(elkGraph)
   const positions: Positions = new Map()
-  for (const child of result.children ?? []) positions.set(child.id, { x: child.x ?? 0, y: child.y ?? 0 })
+  for (const child of result.children ?? [])
+    positions.set(child.id, { x: child.x ?? 0, y: child.y ?? 0 })
   return positions
 }
 
 export function tidyTree(graph: VisibleGraph): Positions {
   const positions: Positions = new Map()
   const childrenOf = new Map<string, string[]>()
-  for (const e of graph.edges) childrenOf.set(e.source, [...(childrenOf.get(e.source) ?? []), e.target])
+  for (const e of graph.edges)
+    childrenOf.set(e.source, [...(childrenOf.get(e.source) ?? []), e.target])
   const rowHeight = NODE_HEIGHT + 12
   const columnWidth = NODE_WIDTH + 60
   let cursor = 0

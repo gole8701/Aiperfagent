@@ -17,21 +17,36 @@ interface NodePanelProps {
   reportId?: string
 }
 
-const KIND_LABEL: Record<TreeNode['kind'], string> = { root: 'Project', dir: 'Folder', file: 'File', component: 'Component', function: 'Function', element: 'Element' }
+const KIND_LABEL: Record<TreeNode['kind'], string> = {
+  root: 'Project',
+  dir: 'Folder',
+  file: 'File',
+  component: 'Component',
+  function: 'Function',
+  element: 'Element',
+}
 
 export function NodePanel({ node, issues, status, reportId }: NodePanelProps) {
   const { start, busy, run } = useFix()
   if (!node) {
     return (
       <Card title="Details">
-        <span className="muted">Click a node to see its problems, open it in your editor or fix it with your AI.</span>
+        <span className="muted">
+          Click a node to see its problems, open it in your editor or fix it with your AI.
+        </span>
       </Card>
     )
   }
   const ids = new Set(issueIdsWithin(node))
   const inside = issues.filter((i) => ids.has(i.id))
   const filePath = node.kind === 'file' ? node.path : node.path.split(':')[0]
-  const canFix = status?.capabilities.applyFixes && status.config.aiProvider !== 'none' && (node.kind === 'file' || node.kind === 'component' || node.kind === 'function' || node.kind === 'element')
+  const canFix =
+    status?.capabilities.applyFixes &&
+    status.config.aiProvider !== 'none' &&
+    (node.kind === 'file' ||
+      node.kind === 'component' ||
+      node.kind === 'function' ||
+      node.kind === 'element')
 
   return (
     <Card title={KIND_LABEL[node.kind]} className="flow-panel" data-tour="panel">
@@ -41,13 +56,25 @@ export function NodePanel({ node, issues, status, reportId }: NodePanelProps) {
         {node.line ? `:${node.line}` : ''}
         {node.sizeBytes ? ` · ${(node.sizeBytes / 1024).toFixed(1)} KB` : ''}
       </div>
-      {node.kind !== 'root' && node.kind !== 'dir' ? <EditorOpen location={{ file: filePath ?? node.path, line: node.line ?? 1 }} status={status} label={`Open in editor · line ${node.line ?? 1}`} /> : null}
-      {!status?.capabilities.openEditor ? <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>Opening and fixing files works in local mode only.</div> : null}
+      {node.kind !== 'root' && node.kind !== 'dir' ? (
+        <EditorOpen
+          location={{ file: filePath ?? node.path, line: node.line ?? 1 }}
+          status={status}
+          label={`Open in editor · line ${node.line ?? 1}`}
+        />
+      ) : null}
+      {!status?.capabilities.openEditor ? (
+        <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>
+          Opening and fixing files works in local mode only.
+        </div>
+      ) : null}
 
       <div className="label" style={{ margin: '14px 0 6px' }}>
         Problems here and inside ({inside.length})
       </div>
-      {inside.length === 0 ? <span className="muted">No performance problems found here.</span> : null}
+      {inside.length === 0 ? (
+        <span className="muted">No performance problems found here.</span>
+      ) : null}
       <div className="stack">
         {inside.map((issue) => (
           <div key={issue.id} style={{ borderTop: '1px solid var(--border)', paddingTop: 8 }}>
@@ -73,7 +100,14 @@ export function NodePanel({ node, issues, status, reportId }: NodePanelProps) {
 
       {canFix && filePath ? (
         <div style={{ marginTop: 14 }}>
-          <Button variant="ai" busy={busy} disabled={Boolean(run)} onClick={() => void start(reportId ?? '', { kind: 'file', file: filePath }, { review: true })}>
+          <Button
+            variant="ai"
+            busy={busy}
+            disabled={Boolean(run)}
+            onClick={() =>
+              void start(reportId ?? '', { kind: 'file', file: filePath }, { review: true })
+            }
+          >
             Fix everything here with my AI
           </Button>
         </div>

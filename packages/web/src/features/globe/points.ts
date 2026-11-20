@@ -1,4 +1,12 @@
-import { AdditiveBlending, BufferAttribute, BufferGeometry, Color, Points, ShaderMaterial, Vector3 } from 'three'
+import {
+  AdditiveBlending,
+  BufferAttribute,
+  BufferGeometry,
+  Color,
+  Points,
+  ShaderMaterial,
+  Vector3,
+} from 'three'
 
 import { orbitPosition, type GlobeLayout, type GlobePoint } from './layout'
 
@@ -60,7 +68,11 @@ export class GlobePoints {
   private readonly tints: Float32Array
   private readonly pulses: Float32Array
   private readonly orbitSpeed: Float32Array
-  private readonly uniforms = { uTime: { value: 0 }, uCameraDir: { value: new Vector3(0, 0, 1) }, uScale: { value: POINT_SCALE } }
+  private readonly uniforms = {
+    uTime: { value: 0 },
+    uCameraDir: { value: new Vector3(0, 0, 1) },
+    uScale: { value: POINT_SCALE },
+  }
 
   constructor(
     readonly layout: GlobeLayout,
@@ -105,12 +117,19 @@ export class GlobePoints {
     this.layout.points.forEach((p, i) => {
       const inFilter = !filtering || highlighted.has(p.id)
       const hasProblem = Boolean(p.severity) && inFilter
-      const colour = hasProblem ? severityColour(c, p.severity) : filtering ? c.dim : p.kind === 'folder' ? c.folder : c.file
+      const colour = hasProblem
+        ? severityColour(c, p.severity)
+        : filtering
+          ? c.dim
+          : p.kind === 'folder'
+            ? c.folder
+            : c.file
       tint.set(colour)
       this.tints.set([tint.r, tint.g, tint.b], i * 3)
       const base = p.kind === 'folder' ? 8 : 5
       const problemBoost = hasProblem ? (p.severity === 'critical' ? 9 : 6) : 0
-      this.sizes[i] = (p.id === selectedId ? 22 : base + problemBoost) * (filtering && !inFilter ? 0.6 : 1)
+      this.sizes[i] =
+        (p.id === selectedId ? 22 : base + problemBoost) * (filtering && !inFilter ? 0.6 : 1)
       this.pulses[i] = p.severity === 'critical' && inFilter ? 1 : p.id === selectedId ? 0.5 : 0
     })
     this.geometry.getAttribute('size').needsUpdate = true
@@ -129,13 +148,20 @@ export class GlobePoints {
       if (!p.orbit) continue
       p.orbit.angle += dt * (this.orbitSpeed[i] ?? 0.05)
       const center = points[p.folder]?.position ?? p.position
-      this.positions.set(orbitPosition(center, p.orbit.u, p.orbit.v, p.orbit.radius, p.orbit.angle), i * 3)
+      this.positions.set(
+        orbitPosition(center, p.orbit.u, p.orbit.v, p.orbit.radius, p.orbit.angle),
+        i * 3,
+      )
     }
     this.geometry.getAttribute('position').needsUpdate = true
   }
 
   positionOf(index: number): Vector3 {
-    return new Vector3(this.positions[index * 3], this.positions[index * 3 + 1], this.positions[index * 3 + 2])
+    return new Vector3(
+      this.positions[index * 3],
+      this.positions[index * 3 + 1],
+      this.positions[index * 3 + 2],
+    )
   }
 
   dispose(): void {

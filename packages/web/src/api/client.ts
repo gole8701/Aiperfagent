@@ -34,8 +34,16 @@ interface RequestOptions {
 }
 
 async function request<T>(method: string, path: string, options: RequestOptions = {}): Promise<T> {
-  if (IS_STATIC) throw new ApiError('This needs the installed tool.', 'NOT_LOCAL_MODE', 'Run "npx perfagent" in your project to use this feature.')
-  const headers: Record<string, string> = { Authorization: `Bearer ${sessionToken()}`, ...options.headers }
+  if (IS_STATIC)
+    throw new ApiError(
+      'This needs the installed tool.',
+      'NOT_LOCAL_MODE',
+      'Run "npx perfagent" in your project to use this feature.',
+    )
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${sessionToken()}`,
+    ...options.headers,
+  }
   let body: BodyInit | undefined = options.rawBody
   if (options.body !== undefined) {
     headers['Content-Type'] = 'application/json'
@@ -45,13 +53,22 @@ async function request<T>(method: string, path: string, options: RequestOptions 
   try {
     response = await fetch(path, { method, headers, body })
   } catch {
-    throw new ApiError('Cannot reach the PerfAgent server.', 'NETWORK', 'Is "npx perfagent" still running in your terminal?')
+    throw new ApiError(
+      'Cannot reach the PerfAgent server.',
+      'NETWORK',
+      'Is "npx perfagent" still running in your terminal?',
+    )
   }
   const text = await response.text()
   const data: unknown = text ? safeJson(text) : {}
   if (!response.ok) {
     const err = (data ?? {}) as { error?: string; code?: string; hint?: string }
-    throw new ApiError(err.error ?? `Request failed (${response.status})`, err.code ?? 'HTTP', err.hint, response.status)
+    throw new ApiError(
+      err.error ?? `Request failed (${response.status})`,
+      err.code ?? 'HTTP',
+      err.hint,
+      response.status,
+    )
   }
   return data as T
 }
@@ -70,7 +87,13 @@ export const api = {
   put: <T>(path: string, body?: unknown): Promise<T> => request<T>('PUT', path, { body }),
   delete: <T>(path: string): Promise<T> => request<T>('DELETE', path),
   upload: <T>(path: string, file: Blob, filename: string): Promise<T> =>
-    request<T>('POST', path, { rawBody: file, headers: { 'X-Filename': encodeURIComponent(filename), 'Content-Type': 'application/octet-stream' } }),
+    request<T>('POST', path, {
+      rawBody: file,
+      headers: {
+        'X-Filename': encodeURIComponent(filename),
+        'Content-Type': 'application/octet-stream',
+      },
+    }),
   /** Downloads an authenticated file (exports) through a blob URL so the token never lands in a link. */
   download: async (path: string, filename: string): Promise<void> => {
     const response = await fetch(path, { headers: { Authorization: `Bearer ${sessionToken()}` } })

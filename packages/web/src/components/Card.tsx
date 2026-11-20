@@ -33,7 +33,13 @@ export function Spinner({ label = 'Loading' }: { label?: string }) {
   )
 }
 
-export function ErrorBox({ error, action }: { error: { message: string; hint?: string }; action?: ReactNode }) {
+export function ErrorBox({
+  error,
+  action,
+}: {
+  error: { message: string; hint?: string }
+  action?: ReactNode
+}) {
   return (
     <div className="error-box" role="alert">
       <strong>{error.message}</strong>
@@ -63,7 +69,13 @@ export function Progress({ fraction, label }: { fraction: number; label: string 
       <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>
         {label}
       </div>
-      <div className="progress" role="progressbar" aria-valuenow={Math.round(fraction * 100)} aria-valuemin={0} aria-valuemax={100}>
+      <div
+        className="progress"
+        role="progressbar"
+        aria-valuenow={Math.round(fraction * 100)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
         <div style={{ width: `${Math.round(fraction * 100)}%` }} />
       </div>
     </div>

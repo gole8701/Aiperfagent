@@ -37,7 +37,12 @@ export class GlobeScene {
   paused = false
 
   constructor(private readonly options: SceneOptions) {
-    this.renderer = new WebGLRenderer({ canvas: options.canvas, antialias: true, alpha: true, powerPreference: 'high-performance' })
+    this.renderer = new WebGLRenderer({
+      canvas: options.canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance',
+    })
     this.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio))
     this.points = new GlobePoints(options.layout, options.colors)
     this.decor = new GlobeDecor(options.colors.accent, options.colors.star)
@@ -61,7 +66,12 @@ export class GlobeScene {
     this.points.restyle(highlighted, selectedId, filtering)
     const index = selectedId ? this.options.layout.points.findIndex((p) => p.id === selectedId) : -1
     const point = index >= 0 ? this.options.layout.points[index] : undefined
-    const colour = point?.severity === 'critical' ? this.options.colors.critical : point?.severity === 'warning' ? this.options.colors.warning : this.options.colors.accent
+    const colour =
+      point?.severity === 'critical'
+        ? this.options.colors.critical
+        : point?.severity === 'warning'
+          ? this.options.colors.warning
+          : this.options.colors.accent
     this.decor.linkTo(index >= 0 ? this.points.positionOf(index) : undefined, colour)
   }
 
@@ -110,7 +120,11 @@ export class GlobeScene {
     const facing = world.clone().normalize().dot(this.camera.position.clone().normalize())
     const ndc = world.project(this.camera)
     const rect = this.options.canvas.getBoundingClientRect()
-    return { x: ((ndc.x + 1) / 2) * rect.width, y: ((1 - ndc.y) / 2) * rect.height, visible: index < 0 || facing > -0.1 }
+    return {
+      x: ((ndc.x + 1) / 2) * rect.width,
+      y: ((1 - ndc.y) / 2) * rect.height,
+      visible: index < 0 || facing > -0.1,
+    }
   }
 
   resize(): void {
@@ -150,18 +164,26 @@ export class GlobeScene {
     const dt = Math.min(0.05, (now - this.last) / 1000)
     this.last = now
     const motion = this.options.reducedMotion ? 0 : dt
-    if (!this.paused && !this.hovering && !this.dragging && !this.flying && motion) this.target.ry += motion * 0.08
+    if (!this.paused && !this.hovering && !this.dragging && !this.flying && motion)
+      this.target.ry += motion * 0.08
     if (this.flying) {
       const k = this.options.reducedMotion ? 1 : 1 - Math.exp(-dt * 6)
       this.globe.rotation.x += (this.target.rx - this.globe.rotation.x) * k
       this.globe.rotation.y += (this.target.ry - this.globe.rotation.y) * k
       this.camera.position.z += (this.target.distance - this.camera.position.z) * k
-      if (Math.abs(this.target.ry - this.globe.rotation.y) < 0.002 && Math.abs(this.target.distance - this.camera.position.z) < 0.002) this.snap()
+      if (
+        Math.abs(this.target.ry - this.globe.rotation.y) < 0.002 &&
+        Math.abs(this.target.distance - this.camera.position.z) < 0.002
+      )
+        this.snap()
     } else {
       this.globe.rotation.y = this.target.ry
     }
     this.globe.updateMatrixWorld()
-    const cameraDir = this.camera.position.clone().normalize().applyQuaternion(this.globe.quaternion.clone().invert())
+    const cameraDir = this.camera.position
+      .clone()
+      .normalize()
+      .applyQuaternion(this.globe.quaternion.clone().invert())
     this.points.tick(now / 1000, motion, cameraDir, this.renderer.getPixelRatio())
     this.decor.tick(now / 1000, motion)
     this.renderer.render(this.scene, this.camera)
@@ -169,7 +191,10 @@ export class GlobeScene {
 
   private pick(event: PointerEvent): string | undefined {
     const rect = this.options.canvas.getBoundingClientRect()
-    const ndc = new Vector2(((event.clientX - rect.left) / rect.width) * 2 - 1, -(((event.clientY - rect.top) / rect.height) * 2 - 1))
+    const ndc = new Vector2(
+      ((event.clientX - rect.left) / rect.width) * 2 - 1,
+      -(((event.clientY - rect.top) / rect.height) * 2 - 1),
+    )
     this.raycaster.setFromCamera(ndc, this.camera)
     const hits = this.raycaster.intersectObject(this.points.mesh)
     // Prefer problem points when several overlap; otherwise the nearest.
@@ -190,13 +215,22 @@ export class GlobeScene {
     })
     canvas.addEventListener('pointerdown', (event) => {
       this.dragging = true
-      this.pointerStart = { x: event.clientX, y: event.clientY, rx: this.target.rx, ry: this.target.ry }
+      this.pointerStart = {
+        x: event.clientX,
+        y: event.clientY,
+        rx: this.target.rx,
+        ry: this.target.ry,
+      }
       canvas.setPointerCapture(event.pointerId)
     })
     canvas.addEventListener('pointermove', (event) => {
       if (this.dragging) {
         this.target.ry = this.pointerStart.ry + (event.clientX - this.pointerStart.x) * 0.006
-        this.target.rx = clamp(this.pointerStart.rx + (event.clientY - this.pointerStart.y) * 0.006, -1.4, 1.4)
+        this.target.rx = clamp(
+          this.pointerStart.rx + (event.clientY - this.pointerStart.y) * 0.006,
+          -1.4,
+          1.4,
+        )
         this.globe.rotation.x = this.target.rx
         return
       }
@@ -206,13 +240,20 @@ export class GlobeScene {
     })
     canvas.addEventListener('pointerup', (event) => {
       this.dragging = false
-      const moved = Math.hypot(event.clientX - this.pointerStart.x, event.clientY - this.pointerStart.y)
+      const moved = Math.hypot(
+        event.clientX - this.pointerStart.x,
+        event.clientY - this.pointerStart.y,
+      )
       if (moved < 4) this.options.onSelect(this.pick(event))
     })
-    canvas.addEventListener('wheel', (event) => {
-      event.preventDefault()
-      this.zoom(event.deltaY * 0.002)
-    }, { passive: false })
+    canvas.addEventListener(
+      'wheel',
+      (event) => {
+        event.preventDefault()
+        this.zoom(event.deltaY * 0.002)
+      },
+      { passive: false },
+    )
   }
 }
 

@@ -1,7 +1,14 @@
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import { PerfAgentError, metricValue, type HistoryPoint, type Issue, type IssueStatus, type Report } from '@perfagent/core'
+import {
+  PerfAgentError,
+  metricValue,
+  type HistoryPoint,
+  type Issue,
+  type IssueStatus,
+  type Report,
+} from '@perfagent/core'
 import { parseReport } from '@perfagent/report-schema'
 
 /**
@@ -26,9 +33,18 @@ export class ReportStore {
     await this.init()
     await writeFile(this.reportPath(report.id), JSON.stringify(report), 'utf8')
     const history = await this.history()
-    const score = report.pages.length ? Math.round(report.pages.reduce((s, p) => s + (metricValue(p.metrics, 'score') ?? 0), 0) / report.pages.length) : 0
+    const score = report.pages.length
+      ? Math.round(
+          report.pages.reduce((s, p) => s + (metricValue(p.metrics, 'score') ?? 0), 0) /
+            report.pages.length,
+        )
+      : 0
     history.push({ reportId: report.id, at: report.createdAt, score, label: report.label })
-    await writeFile(path.join(this.dir, 'history.json'), JSON.stringify(history.slice(-200)), 'utf8')
+    await writeFile(
+      path.join(this.dir, 'history.json'),
+      JSON.stringify(history.slice(-200)),
+      'utf8',
+    )
   }
 
   async get(id: string): Promise<Report> {
@@ -57,7 +73,11 @@ export class ReportStore {
     await writeFile(path.join(this.dir, 'history.json'), JSON.stringify(history), 'utf8')
   }
 
-  async updateIssue(reportId: string, issueId: string, patch: Partial<Pick<Issue, 'status' | 'verified'>>): Promise<Issue> {
+  async updateIssue(
+    reportId: string,
+    issueId: string,
+    patch: Partial<Pick<Issue, 'status' | 'verified'>>,
+  ): Promise<Issue> {
     const report = await this.get(reportId)
     const issue = report.issues.find((i) => i.id === issueId)
     if (!issue) throw new PerfAgentError('NOT_FOUND', `Problem ${issueId} is not in this report`)
@@ -92,7 +112,9 @@ export class ReportStore {
 
   async appendLog(name: string, line: string): Promise<void> {
     await this.init()
-    await writeFile(path.join(this.dir, name), `${new Date().toISOString()} ${line}\n`, { flag: 'a' })
+    await writeFile(path.join(this.dir, name), `${new Date().toISOString()} ${line}\n`, {
+      flag: 'a',
+    })
   }
 
   private async history(): Promise<HistoryPoint[]> {
@@ -105,7 +127,13 @@ export class ReportStore {
       const id = f.replace(/\.json$/, '')
       const report = await this.get(id).catch(() => undefined)
       // The file name is the id we can load again; a copied report may carry another id inside.
-      if (report) points.push({ reportId: id, at: report.createdAt, score: report.pages[0] ? (metricValue(report.pages[0].metrics, 'score') ?? 0) : 0, label: report.label })
+      if (report)
+        points.push({
+          reportId: id,
+          at: report.createdAt,
+          score: report.pages[0] ? (metricValue(report.pages[0].metrics, 'score') ?? 0) : 0,
+          label: report.label,
+        })
     }
     return points.sort((a, b) => a.at.localeCompare(b.at))
   }

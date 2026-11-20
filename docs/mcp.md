@@ -4,9 +4,9 @@
 
 ## Transports
 
-| Mode            | Command                                | For                                                                                                                                  |
-| --------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| stdio (default) | `npx perfagent mcp`                    | Claude Code, Claude Desktop, Cursor, Windsurf, VS Code Copilot, Cline, Zed                                                           |
+| Mode            | Command                                | For                                                                                                                                   |
+| --------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| stdio (default) | `npx perfagent mcp`                    | Claude Code, Claude Desktop, Cursor, Windsurf, VS Code Copilot, Cline, Zed                                                            |
 | Streamable HTTP | `npx perfagent mcp --http --port 4546` | ChatGPT connectors, teams. Serves `/mcp` on `127.0.0.1` by default; every request needs `Authorization: Bearer <token>` (see Safety). |
 
 Options: `--root <path>` to point at another project; `--allow-writes` to enable the write tool; with `--http`, `--port` (default 4546) and `--host` (default `127.0.0.1`).
@@ -15,17 +15,17 @@ Options: `--root <path>` to point at another project; `--allow-writes` to enable
 
 Read-only by default. All return JSON text; errors come back as tool errors with a hint, not protocol failures. `reportId` is optional where shown and defaults to the latest report.
 
-| Tool                                               | Input                                                           | Returns                                                                             |
-| -------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `scan_url`                                         | `{ url, device?: 'mobile' \| 'desktop', runs?: 1–5 }`           | Measures one URL from the outside and saves a report: report id, pages, issues     |
-| `scan_project`                                     | `{ urls?: string[] (max 20) }`                                  | Scans the project source (and `urls` or the configured URLs); report id, framework, pages, issues |
-| `list_issues`                                      | `{ reportId?, filter?: 'metric:lcp' \| 'area:bundle', route? }` | Issue summaries with file:line, severity, gain and whether an automatic fix exists |
-| `explain_issue`                                    | `{ issueId, reportId?, useAi? }`                                | The full issue (chain, why, steps, before/after); with `useAi`, also an AI explanation |
-| `get_file_context`                                 | `{ file, line?, radius?: 1–200 (default 30) }`                  | Lines around `line` of a project file; path-guarded and secrets redacted            |
-| `suggest_fix`                                      | `{ issueIds (1–10), reportId? }`                                | Proposed code changes from the configured AI; nothing is applied                    |
-| `compare_runs`                                     | `{ a, b }` (report ids)                                         | Verdict, diffs and impact                                                           |
-| `ai_report`                                        | `{}`                                                            | AI calls measured by `watchAI` or the proxy: first-token p50/p95, cost, error rate  |
-| `open_dashboard`                                   | `{}`                                                            | The URL of the running local dashboard, if any                                      |
+| Tool                                               | Input                                                           | Returns                                                                                                                                                                                              |
+| -------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scan_url`                                         | `{ url, device?: 'mobile' \| 'desktop', runs?: 1–5 }`           | Measures one URL from the outside and saves a report: report id, pages, issues                                                                                                                       |
+| `scan_project`                                     | `{ urls?: string[] (max 20) }`                                  | Scans the project source (and `urls` or the configured URLs); report id, framework, pages, issues                                                                                                    |
+| `list_issues`                                      | `{ reportId?, filter?: 'metric:lcp' \| 'area:bundle', route? }` | Issue summaries with file:line, severity, gain and whether an automatic fix exists                                                                                                                   |
+| `explain_issue`                                    | `{ issueId, reportId?, useAi? }`                                | The full issue (chain, why, steps, before/after); with `useAi`, also an AI explanation                                                                                                               |
+| `get_file_context`                                 | `{ file, line?, radius?: 1–200 (default 30) }`                  | Lines around `line` of a project file; path-guarded and secrets redacted                                                                                                                             |
+| `suggest_fix`                                      | `{ issueIds (1–10), reportId? }`                                | Proposed code changes from the configured AI; nothing is applied                                                                                                                                     |
+| `compare_runs`                                     | `{ a, b }` (report ids)                                         | Verdict, diffs and impact                                                                                                                                                                            |
+| `ai_report`                                        | `{}`                                                            | AI calls measured by `watchAI` or the proxy: first-token p50/p95, cost, error rate                                                                                                                   |
+| `open_dashboard`                                   | `{}`                                                            | The URL of the running local dashboard, if any                                                                                                                                                       |
 | `apply_fix_to_branch` (only with `--allow-writes`) | `{ reportId, issueIds (1–20) }`                                 | Applies fixes without the dashboard review step on a new `perfagent/fix-<date>` branch through the fixer, runs the project checks; never pushes. Only offered when the server also has a fix service |
 
 Resources: `perfagent://report/latest` (the latest report as JSON) and `perfagent://guide/<topic>` (a built-in guide as Markdown, e.g. `lcp`, `chips`).

@@ -70,7 +70,12 @@ export function allowedAgentOrigins(config: AppContext['config']): Set<string> {
   return origins
 }
 
-export async function handleAgentRequest(req: IncomingMessage, res: ServerResponse, pathname: string, ctx: AppContext): Promise<void> {
+export async function handleAgentRequest(
+  req: IncomingMessage,
+  res: ServerResponse,
+  pathname: string,
+  ctx: AppContext,
+): Promise<void> {
   if (pathname === '/agent/perfagent.js') {
     await serveScript(req, res, ctx.agentScriptPath)
     return
@@ -78,7 +83,13 @@ export async function handleAgentRequest(req: IncomingMessage, res: ServerRespon
   const origin = req.headers.origin
   const allowed = origin !== undefined && allowedAgentOrigins(ctx.config).has(origin)
   if (req.method === 'OPTIONS') {
-    if (allowed) res.writeHead(204, { ...cors(origin), 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'content-type', 'Access-Control-Max-Age': '600' })
+    if (allowed)
+      res.writeHead(204, {
+        ...cors(origin),
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'content-type',
+        'Access-Control-Max-Age': '600',
+      })
     else res.writeHead(403)
     res.end()
     return
@@ -88,7 +99,14 @@ export async function handleAgentRequest(req: IncomingMessage, res: ServerRespon
     return
   }
   if (!allowed) {
-    sendError(res, new PerfAgentError('ORIGIN_REJECTED', 'This site is not in config.urls or config.environments', 'Add the site URL to perfagent.config to accept its real-user data.'))
+    sendError(
+      res,
+      new PerfAgentError(
+        'ORIGIN_REJECTED',
+        'This site is not in config.urls or config.environments',
+        'Add the site URL to perfagent.config to accept its real-user data.',
+      ),
+    )
     return
   }
   for (const [k, v] of Object.entries(cors(origin))) res.setHeader(k, v)
@@ -99,7 +117,8 @@ export async function handleAgentRequest(req: IncomingMessage, res: ServerRespon
     sendError(res, error)
     return
   }
-  for (const event of events) ctx.hub.broadcast({ type: 'live:tick', tick: { source: 'agent', ...event } })
+  for (const event of events)
+    ctx.hub.broadcast({ type: 'live:tick', tick: { source: 'agent', ...event } })
   await appendRum(ctx.store.dir, events)
   sendJson(res, 200, { received: events.length })
 }
@@ -115,8 +134,13 @@ function parseEvents(body: Buffer): AgentEvent[] {
   } catch {
     throw new PerfAgentError('IMPORT_INVALID', 'Agent batch is not valid JSON')
   }
-  const list = Array.isArray(raw) ? raw : typeof raw === 'object' && raw !== null && Array.isArray((raw as { events?: unknown }).events) ? ((raw as { events: unknown[] }).events) : undefined
-  if (!list) throw new PerfAgentError('IMPORT_INVALID', 'Agent batch must be a JSON array of events')
+  const list = Array.isArray(raw)
+    ? raw
+    : typeof raw === 'object' && raw !== null && Array.isArray((raw as { events?: unknown }).events)
+      ? (raw as { events: unknown[] }).events
+      : undefined
+  if (!list)
+    throw new PerfAgentError('IMPORT_INVALID', 'Agent batch must be a JSON array of events')
   const events: AgentEvent[] = []
   for (const item of list.slice(0, MAX_EVENTS)) {
     const parsed = eventSchema.safeParse(item)
@@ -137,13 +161,21 @@ async function appendRum(dir: string, events: AgentEvent[]): Promise<void> {
   }
 }
 
-async function serveScript(req: IncomingMessage, res: ServerResponse, file: string | undefined): Promise<void> {
+async function serveScript(
+  req: IncomingMessage,
+  res: ServerResponse,
+  file: string | undefined,
+): Promise<void> {
   if (req.method !== 'GET' || !file || !(await stat(file).catch(() => undefined))?.isFile()) {
     sendJson(res, 404, { error: 'The agent script is not built', code: 'NOT_FOUND' })
     return
   }
   // A public static script: a wildcard origin is fine here (and needed for crossorigin/SRI loads).
-  res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=3600', 'Access-Control-Allow-Origin': '*' })
+  res.writeHead(200, {
+    'Content-Type': 'text/javascript; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600',
+    'Access-Control-Allow-Origin': '*',
+  })
   createReadStream(file).pipe(res)
 }
 
@@ -160,7 +192,9 @@ function readBody(req: IncomingMessage): Promise<Buffer> {
       }
       chunks.push(chunk)
     })
-    req.on('end', () => { resolve(Buffer.concat(chunks)) })
+    req.on('end', () => {
+      resolve(Buffer.concat(chunks))
+    })
     req.on('error', reject)
   })
 }

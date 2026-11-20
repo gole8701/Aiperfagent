@@ -67,21 +67,21 @@ node packages/cli/dist/bin.js scan --root fixtures/demo-shop http://localhost:30
 
 The seeded problems and what PerfAgent reports for them (from `fixtures/reports/demo-shop-before.json`, mobile profile, score **54**, LCP **12.4 s**, 1.9 MB of JavaScript, 70 requests):
 
-| #   | Seeded problem                                                 | Rule                                                                                                | Reported at                                       |
-| --- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| 1   | Hero image lazy-loaded                                         | `general/lcp-image-lazy` (critical, LCP 12.4 s → est. 6.8 s, **+11 points**)                        | `src/components/HeroBanner.tsx:5`                 |
+| #   | Seeded problem                                                 | Rule                                                                                            | Reported at                                       |
+| --- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| 1   | Hero image lazy-loaded                                         | `general/lcp-image-lazy` (critical, LCP 12.4 s → est. 6.8 s, **+11 points**)                    | `src/components/HeroBanner.tsx:5`                 |
 | 2   | CartSummary re-renders on every keystroke (whole cart context) | `react/context-rerender` (critical); also surfaced by `react/eager-conditional-import` (~63 KB) | `src/components/CartSummary.tsx`, `src/App.tsx:3` |
-| 3   | Whole `date-fns` imported for two functions                    | `react/namespace-import` (**78 KB**)                                                                | `src/lib/dates.ts:2`                              |
-| 4   | WebSocket reconnect storm                                      | `realtime/reconnect-no-backoff` (critical)                                                          | `src/lib/socket.ts:11`                            |
-| 5   | RAG: embed, search and order lookup awaited one after another  | `ai/sequential-await` (first token 2.4 s → est. 0.9 s)                                              | `src/server/rag.ts:28`                            |
-| 5b  | 9,800-token system prompt sent uncached every call             | `ai/no-prompt-cache` (cost −50–60 %)                                                                | `src/server/rag.ts:28`                            |
-| 6   | Google Tag Manager loaded synchronously                        | `general/blocking-third-party` (critical, +8 points)                                                | `index.html:8`                                    |
-| 7   | Polling interval never cleared                                 | `react/effect-without-cleanup` (critical)                                                           | `src/components/LiveStock.tsx:8`                  |
-| 8   | `@font-face` without `font-display`                            | `general/font-display-missing`                                                                      | `src/styles/fonts.css:2`                          |
-| 9   | Unused legacy stylesheet                                       | `general/unused-css` (**234 KB** loaded on every page)                                              | `src/styles/legacy.css:1`                         |
-| 10  | `/api/products` without `Cache-Control`                        | `general/uncached-api`                                                                              | `src/server/api/products.ts:22`                   |
-| 11  | Product image without width/height                             | `general/image-missing-dimensions` (CLS 0.097 → est. 0.037)                                         | `src/components/ProductCard.tsx:10`               |
-| 12  | Chat widget imported eagerly, shown on demand                  | `react/eager-conditional-import` (**~81 KB**)                                                       | `src/components/Header.tsx:3`                     |
+| 3   | Whole `date-fns` imported for two functions                    | `react/namespace-import` (**78 KB**)                                                            | `src/lib/dates.ts:2`                              |
+| 4   | WebSocket reconnect storm                                      | `realtime/reconnect-no-backoff` (critical)                                                      | `src/lib/socket.ts:11`                            |
+| 5   | RAG: embed, search and order lookup awaited one after another  | `ai/sequential-await` (first token 2.4 s → est. 0.9 s)                                          | `src/server/rag.ts:28`                            |
+| 5b  | 9,800-token system prompt sent uncached every call             | `ai/no-prompt-cache` (cost −50–60 %)                                                            | `src/server/rag.ts:28`                            |
+| 6   | Google Tag Manager loaded synchronously                        | `general/blocking-third-party` (critical, +8 points)                                            | `index.html:8`                                    |
+| 7   | Polling interval never cleared                                 | `react/effect-without-cleanup` (critical)                                                       | `src/components/LiveStock.tsx:8`                  |
+| 8   | `@font-face` without `font-display`                            | `general/font-display-missing`                                                                  | `src/styles/fonts.css:2`                          |
+| 9   | Unused legacy stylesheet                                       | `general/unused-css` (**234 KB** loaded on every page)                                          | `src/styles/legacy.css:1`                         |
+| 10  | `/api/products` without `Cache-Control`                        | `general/uncached-api`                                                                          | `src/server/api/products.ts:22`                   |
+| 11  | Product image without width/height                             | `general/image-missing-dimensions` (CLS 0.097 → est. 0.037)                                     | `src/components/ProductCard.tsx:10`               |
+| 12  | Chat widget imported eagerly, shown on demand                  | `react/eager-conditional-import` (**~81 KB**)                                                   | `src/components/Header.tsx:3`                     |
 
 The same scan also reports `general/big-javascript`, `general/no-compression` and an eager `ProductGrid` import: 17 issues in total. Agent readiness is 85 (no JSON-LD).
 

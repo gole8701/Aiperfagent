@@ -8,7 +8,13 @@ interface HarEntry {
   startedDateTime?: string
   time?: number
   request?: { url?: string; method?: string }
-  response?: { status?: number; headersSize?: number; bodySize?: number; _transferSize?: number; content?: { mimeType?: string; size?: number; text?: unknown } }
+  response?: {
+    status?: number
+    headersSize?: number
+    bodySize?: number
+    _transferSize?: number
+    content?: { mimeType?: string; size?: number; text?: unknown }
+  }
   timings?: { wait?: number }
   _resourceType?: string
   _fromCache?: unknown
@@ -18,20 +24,41 @@ interface HarPage {
   id?: string
   startedDateTime?: string
   title?: string
-  pageTimings?: { onContentLoad?: number; onLoad?: number; _firstContentfulPaint?: number; _firstPaint?: number; _TTFB?: number }
+  pageTimings?: {
+    onContentLoad?: number
+    onLoad?: number
+    _firstContentfulPaint?: number
+    _firstPaint?: number
+    _TTFB?: number
+  }
 }
-interface Har { log: { entries: HarEntry[]; pages?: HarPage[]; creator?: { name?: string } } }
+interface Har {
+  log: { entries: HarEntry[]; pages?: HarPage[]; creator?: { name?: string } }
+}
 
-const isHar = (json: unknown): json is Har => typeof json === 'object' && json !== null && 'log' in json && Array.isArray((json as { log?: { entries?: unknown } }).log?.entries)
+const isHar = (json: unknown): json is Har =>
+  typeof json === 'object' &&
+  json !== null &&
+  'log' in json &&
+  Array.isArray((json as { log?: { entries?: unknown } }).log?.entries)
 
 export const harImporter: Importer = {
   format: 'har',
   matches: (_input, json) => isHar(json),
-  run: (input, json) => Promise.resolve({ format: 'har', report: fromHar(json as Har, input.filename ?? 'HAR'), detected: [], warnings: [], exact: true }),
+  run: (input, json) =>
+    Promise.resolve({
+      format: 'har',
+      report: fromHar(json as Har, input.filename ?? 'HAR'),
+      detected: [],
+      warnings: [],
+      exact: true,
+    }),
 }
 
 function fromHar(har: Har, label: string): ReturnType<typeof emptyReport> {
-  const pages = har.log.pages?.length ? har.log.pages : [{ id: undefined, startedDateTime: har.log.entries[0]?.startedDateTime }]
+  const pages = har.log.pages?.length
+    ? har.log.pages
+    : [{ id: undefined, startedDateTime: har.log.entries[0]?.startedDateTime }]
   const results: PageResult[] = []
   for (const page of pages.slice(0, 200)) {
     const entries = har.log.entries.filter((e) => page.id === undefined || e.pageref === page.id)
@@ -40,8 +67,17 @@ function fromHar(har: Har, label: string): ReturnType<typeof emptyReport> {
   const first = results[0]
   const created = pages[0]?.startedDateTime
   return emptyReport(label, {
-    createdAt: created && !Number.isNaN(Date.parse(created)) ? new Date(created).toISOString() : new Date().toISOString(),
-    environment: { name: har.log.creator?.name ?? 'har', url: first?.url, device: 'mobile', browser: 'chromium', mode: 'imported' },
+    createdAt:
+      created && !Number.isNaN(Date.parse(created))
+        ? new Date(created).toISOString()
+        : new Date().toISOString(),
+    environment: {
+      name: har.log.creator?.name ?? 'har',
+      url: first?.url,
+      device: 'mobile',
+      browser: 'chromium',
+      mode: 'imported',
+    },
     pages: results,
   })
 }
@@ -65,19 +101,33 @@ function pageFromEntries(page: HarPage, entries: HarEntry[]): PageResult {
       status: e.response?.status ?? 0,
       thirdParty: !sameSite(e.request?.url ?? '', url),
       cached: Boolean(e._fromCache) || e.response?.status === 304,
-      blocking: contentLoaded !== undefined && (type === 'script' || type === 'stylesheet') && startMs < contentLoaded ? true : undefined,
+      blocking:
+        contentLoaded !== undefined &&
+        (type === 'script' || type === 'stylesheet') &&
+        startMs < contentLoaded
+          ? true
+          : undefined,
       initiator: typeof e._initiator === 'object' ? e._initiator.url : undefined,
     }
   })
-  const sum = (filter: (r: RequestInfo) => boolean): number => requests.filter(filter).reduce((s, r) => s + r.transferBytes, 0)
+  const sum = (filter: (r: RequestInfo) => boolean): number =>
+    requests.filter(filter).reduce((s, r) => s + r.transferBytes, 0)
   const timings = page.pageTimings
-  return pageFromMetrics(url, {
-    ttfb: doc?.timings?.wait !== undefined && doc.timings.wait >= 0 ? doc.timings.wait : timings?._TTFB,
-    fcp: timings?._firstContentfulPaint ?? timings?._firstPaint,
-    requests: requests.length,
-    transferKb: sum(() => true) / 1024,
-    jsKb: sum((r) => r.type === 'script') / 1024,
-  }, 'mobile', requests)
+  return pageFromMetrics(
+    url,
+    {
+      ttfb:
+        doc?.timings?.wait !== undefined && doc.timings.wait >= 0
+          ? doc.timings.wait
+          : timings?._TTFB,
+      fcp: timings?._firstContentfulPaint ?? timings?._firstPaint,
+      requests: requests.length,
+      transferKb: sum(() => true) / 1024,
+      jsKb: sum((r) => r.type === 'script') / 1024,
+    },
+    'mobile',
+    requests,
+  )
 }
 
 function transferOf(e: HarEntry): number {

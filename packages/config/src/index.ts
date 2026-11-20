@@ -1,6 +1,13 @@
 import type { PerfAgentConfigInput } from './schema.js'
 
-export { configSchema, budgetSchema, DEFAULT_CONFIG, editorIds, aiProviders, themes } from './schema.js'
+export {
+  configSchema,
+  budgetSchema,
+  DEFAULT_CONFIG,
+  editorIds,
+  aiProviders,
+  themes,
+} from './schema.js'
 export type { PerfAgentConfig, PerfAgentConfigInput, BudgetConfig } from './schema.js'
 export { loadConfig, findConfigFile, envOverrides, deepMerge, CONFIG_FILES } from './load.js'
 export type { LoadOptions, LoadedConfig } from './load.js'
