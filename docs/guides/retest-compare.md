@@ -58,7 +58,7 @@ npx perfagent export <id> --format md --out pr-comment.md
 
 ```walkthrough
 [
-  { "screen": "globe", "area": "verdict", "title": "Re-test one fix", "text": "Predicted 6.9 s, actual 7.2 s: the fix worked. Mark fixed." },
+  { "screen": "globe", "area": "verdict", "title": "Re-test one fix", "text": "Predicted 6.8 s, actual 7.2 s: the fix worked. Mark fixed." },
   { "screen": "compare", "area": "sources", "title": "Sources A and B", "text": "A saved scan, a URL, a JSON, a PDF, an Excel sheet or a pasted table." },
   { "screen": "compare", "area": "detected-values", "title": "Detected values", "text": "For documents, each metric found with its confidence; low ones are flagged to check." },
   { "screen": "compare", "area": "verdict", "title": "Verdict in simple words", "text": "53 → 78. What improved, what got worse, the one thing to fix next." },

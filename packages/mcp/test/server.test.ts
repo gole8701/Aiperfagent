@@ -1,4 +1,4 @@
-import { cp, mkdir, mkdtemp, rm } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readFile, rm } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -17,10 +17,12 @@ const guides = path.resolve(here, '../../../docs/guides')
 
 let root: string
 let store: ReportStore
+let fixtureId: string
 beforeAll(async () => {
   root = await mkdtemp(path.join(os.tmpdir(), 'perfagent-mcp-'))
   await mkdir(path.join(root, '.perfagent', 'reports'), { recursive: true })
-  await cp(fixture, path.join(root, '.perfagent', 'reports', 'scan_mwnzcsiv269o3e.json'))
+  fixtureId = (JSON.parse(await readFile(fixture, 'utf8')) as { id: string }).id
+  await cp(fixture, path.join(root, '.perfagent', 'reports', `${fixtureId}.json`))
   store = new ReportStore(root)
 })
 afterAll(() => rm(root, { recursive: true, force: true }))
@@ -56,8 +58,8 @@ describe('PerfAgent MCP server', () => {
   it('lists issues from the saved report with a chip filter', async () => {
     const client = await connect()
     const all = JSON.parse(text(await client.callTool({ name: 'list_issues', arguments: {} }))) as { count: number; reportId: string }
-    expect(all.reportId).toBe('scan_mwnzcsiv269o3e')
-    expect(all.count).toBe(16)
+    expect(all.reportId).toBe(fixtureId)
+    expect(all.count).toBe(17)
     const lcp = JSON.parse(text(await client.callTool({ name: 'list_issues', arguments: { filter: 'metric:lcp' } }))) as { count: number; issues: { metrics: string[] }[] }
     expect(lcp.count).toBeGreaterThan(0)
     expect(lcp.issues.every((i) => i.metrics.includes('lcp'))).toBe(true)

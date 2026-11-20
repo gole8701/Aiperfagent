@@ -47,7 +47,7 @@ The score moves when the metrics behind it move. PerfAgent shows the estimated s
 - INP is not in the score (as in Lighthouse) because it needs a real interaction; it is reported separately.
 - Projected score after fixes: the sum of `gain.scoreDelta` of open problems, tapered by up to 35 % because gains on the same metric overlap.
 - Scores are from a throttled lab run (4× CPU slowdown, slow 4G on the mobile profile) and are the median of `runs` runs. Differences inside the 4 % noise band are reported as "no real change".
-- The demo shop before fixes scores 53 on mobile with LCP 12.5 s, FCP 10.8 s and CLS 0.107.
+- The demo shop before fixes scores 54 on mobile with LCP 12.4 s, FCP 10.8 s and CLS 0.097.
 
 ## Walkthrough
 

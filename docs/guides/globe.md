@@ -14,7 +14,7 @@ The core is the project root. Each ring outward is one folder level. Points puls
 
 ## Why it matters
 
-A list of 16 problems is hard to prioritise. On the globe you see in seconds where problems cluster: one folder with five glowing points, or one file that touches three metrics.
+A list of 17 problems is hard to prioritise. On the globe you see in seconds where problems cluster: one folder with five glowing points, or one file that touches three metrics.
 
 ## Use case
 
@@ -24,7 +24,7 @@ A list of 16 problems is hard to prioritise. On the globe you see in seconds whe
 
 ## How it helps your app
 
-The globe makes the connection between a metric and a place in the code visible. Clicking the glowing `HeroBanner.tsx` point opens the deep dive that explains why LCP is 12.5 s and how to fix it.
+The globe makes the connection between a metric and a place in the code visible. Clicking the glowing `HeroBanner.tsx` point opens the deep dive that explains why LCP is 12.4 s and how to fix it.
 
 ## How to do it in PerfAgent, step by step
 

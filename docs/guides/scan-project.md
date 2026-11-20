@@ -24,7 +24,7 @@ Numbers alone do not tell you what to change. A scan ends with a ranked list of 
 
 ## How it helps your app
 
-Every problem comes with the exact place to change and a built-in fix. On the demo shop, one scan finds 16 problems, from the lazy-loaded hero image (LCP 12.5 s, estimated +11 points) to the whole of `date-fns` imported for two functions (78 KB).
+Every problem comes with the exact place to change and a built-in fix. On the demo shop, one scan finds 17 problems, from the lazy-loaded hero image (LCP 12.4 s, estimated +11 points) to the whole of `date-fns` imported for two functions (78 KB).
 
 ## How to do it in PerfAgent, step by step
 

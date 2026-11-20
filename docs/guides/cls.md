@@ -25,7 +25,7 @@ Jumping content causes mis-clicks ("I tapped Buy and hit Cancel") and feels brok
 
 ## How it helps your app
 
-A calm page with no surprises. On the demo shop, PerfAgent finds two causes of CLS 0.107: product images without `width` and `height` (`ProductCard.tsx:10`) and a `@font-face` without `font-display` (`fonts.css:2`), with fixes for both.
+A calm page with no surprises. On the demo shop, PerfAgent finds two causes of CLS 0.097: product images without `width` and `height` (`ProductCard.tsx:10`) and a `@font-face` without `font-display` (`fonts.css:2`), with fixes for both.
 
 ## Good, needs work, poor
 

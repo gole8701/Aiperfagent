@@ -7,7 +7,7 @@ describe('PerfAgent and Lighthouse family', () => {
     const r = await importFixture('demo-shop-before.json')
     expect(r.format).toBe('perfagent')
     expect(r.exact).toBe(true)
-    expect(metric(r.report.pages[0], 'lcp')).toBe(12508)
+    expect(metric(r.report.pages[0], 'lcp')).toBe(12396)
   })
 
   it('imports a Lighthouse 12 report', async () => {
