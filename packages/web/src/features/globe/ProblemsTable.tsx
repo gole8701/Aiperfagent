@@ -60,7 +60,12 @@ const columns: Column<Issue>[] = [
 
 export function ProblemsTable({ issues, selectedId, onSelect, filterLabel }: ProblemsTableProps) {
   return (
-    <section className="card home-bottom" data-tour="bottom" aria-label="All problems">
+    <section
+      id="problems"
+      className="card home-bottom"
+      data-tour="bottom"
+      aria-label="All problems"
+    >
       <div className="card-title">
         <h3 className="label">
           All problems ({filterLabel}) · {issues.length} · click one to fly to it on the globe

@@ -6,7 +6,7 @@ import {
   type ChipFilter,
   type Issue,
 } from '@perfagent/core'
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 
 import { Button, LinkButton } from '../../components/Button'
@@ -30,6 +30,7 @@ export function HomeScreen() {
   const [params, setParams] = useSearchParams()
   const navigate = useNavigate()
   const [selectedPoint, setSelectedPoint] = useState<GlobePoint>()
+  const panel = useRef<HTMLDivElement>(null)
 
   const urlFilter = params.get('filter')
   useEffect(() => {
@@ -42,6 +43,14 @@ export function HomeScreen() {
   const selectedIssue = issueParam
     ? report?.issues.find((i) => i.id === decodeURIComponent(issueParam))
     : undefined
+  const missingIssue = Boolean(issueParam && report && !selectedIssue)
+
+  // Below 1200 px the deep dive sits under the globe; bring it into view when a problem opens.
+  useEffect(() => {
+    if (selectedIssue && window.matchMedia('(max-width: 1200px)').matches)
+      panel.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [selectedIssue])
+
   const layout = useMemo(
     () =>
       report
@@ -111,7 +120,7 @@ export function HomeScreen() {
   if (!report || !layout) return <NoScanYet />
 
   const page = report.pages[0]
-  const score = page ? (metricValue(page.metrics, 'score') ?? 0) : 0
+  const score = page ? metricValue(page.metrics, 'score') : undefined
   const filterLabel =
     filter.kind === 'all'
       ? 'all'
@@ -126,12 +135,16 @@ export function HomeScreen() {
       <div className="home-centre">
         <div className="row muted" style={{ justifyContent: 'space-between', fontSize: 12 }}>
           <span>
-            {layout.points.length} points ·{' '}
-            {report.issues.filter((i) => i.status === 'open').length} problems · showing:{' '}
-            {filterLabel}
+            {filter.kind === 'all'
+              ? `${layout.points.length} points`
+              : `${highlighted.size} of ${layout.points.length} points`}{' '}
+            · {issues.filter((i) => i.status === 'open').length} problems · showing: {filterLabel}
             {report.tree ? '' : ' · URL scan: domains and requests'}
           </span>
-          <span>Drag to rotate · click a glowing point to go deep</span>
+          <span>
+            Drag to rotate · click a glowing point to go deep, or use the{' '}
+            <a href="#problems">problems list</a>
+          </span>
         </div>
         <Suspense fallback={<div className="globe" aria-busy="true" />}>
           <Globe
@@ -140,7 +153,7 @@ export function HomeScreen() {
             highlighted={highlighted}
             filtering={filter.kind !== 'all'}
             onSelect={onPoint}
-            scoreLabel={`score ${score}`}
+            scoreLabel={score === undefined ? 'score not measured' : `score ${score}`}
             infoCard={
               selectedIssue
                 ? {
@@ -178,7 +191,16 @@ export function HomeScreen() {
           </div>
         </Card>
       </div>
-      <div className="home-right" data-tour="right">
+      <div className="home-right" data-tour="right" ref={panel}>
+        {missingIssue ? (
+          <ErrorBox
+            error={{
+              message: 'Problem not found in this report',
+              hint: 'The link may come from an older scan. Pick a problem from the list instead.',
+            }}
+            action={<Link to="/">Back to all problems</Link>}
+          />
+        ) : null}
         <DeepDive
           issue={selectedIssue}
           point={selectedPoint}

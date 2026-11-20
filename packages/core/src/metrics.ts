@@ -231,7 +231,7 @@ export const METRICS: Record<MetricId, MetricDefinition> = {
   agentReadiness: def({
     id: 'agentReadiness',
     name: 'Agent readiness',
-    short: 'Agents',
+    short: 'Agent score',
     unit: 'score',
     plain: 'How easily AI assistants can use your site',
     good: 80,

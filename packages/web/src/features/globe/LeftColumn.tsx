@@ -27,9 +27,9 @@ const RATING_LABEL = { good: 'Good', 'needs-work': 'Needs work', poor: 'Poor', n
 export function LeftColumn({ report, filter, onFilter }: LeftColumnProps) {
   const page = report.pages[0]
   const metrics = page?.metrics ?? []
-  const score = metricValue(metrics, 'score') ?? 0
+  const score = metricValue(metrics, 'score')
   const open = report.issues.filter((i) => i.status === 'open')
-  const projected = projectedScore(score, open)
+  const projected = score === undefined ? undefined : projectedScore(score, open)
   const counts = chipCounts(report)
   const bySeverity = {
     critical: open.filter((i) => i.severity === 'critical').length,
@@ -42,22 +42,47 @@ export function LeftColumn({ report, filter, onFilter }: LeftColumnProps) {
   return (
     <aside className="stack" data-tour="left" aria-label="Score, Web Vitals and filters">
       <Card>
-        <div className="score-ring">
-          <ScoreRing score={score} projected={projected} />
+        {score === undefined || projected === undefined ? (
           <div>
             <div className="label">Performance score</div>
-            <div style={{ fontSize: 13, marginTop: 4 }}>
-              Estimated <strong style={{ color: 'var(--accent-soft)' }}>{projected}</strong> after
-              all {open.length} fixes
+            <strong style={{ fontSize: 18 }}>Not measured</strong>
+            <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>
+              This scan only read the source. Add the app's URL in the Scan box to measure speed.
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="score-ring">
+            <ScoreRing score={score} projected={projected} />
+            <div>
+              <div className="label">Performance score</div>
+              <div style={{ fontSize: 13, marginTop: 4 }}>
+                Estimated <strong style={{ color: 'var(--accent-soft)' }}>{projected}</strong> after
+                all {open.length} fixes
+              </div>
+            </div>
+          </div>
+        )}
       </Card>
 
       <Card title={`Core Web Vitals · ${page?.device ?? 'mobile'}`}>
         {CORE_WEB_VITALS.map((id) => {
           const value = metricValue(metrics, id)
-          if (value === undefined) return null
+          if (value === undefined)
+            return (
+              <div className="vital-row" key={id}>
+                <span>{METRICS[id].short}</span>
+                <span
+                  className="muted"
+                  title={
+                    id === 'inp'
+                      ? 'No interaction ran during the scan. Use Live or the real-user agent.'
+                      : undefined
+                  }
+                >
+                  not measured
+                </span>
+              </div>
+            )
           const rating = rateMetric(id, value)
           return (
             <div className="vital-row" key={id}>

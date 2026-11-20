@@ -17,9 +17,20 @@
   background: var(--panel-2);
 }
 
-.btn:disabled {
-  opacity: 0.5;
+/* Solid muted colours instead of opacity: faded accent text was unreadable on the light theme. */
+.btn:disabled,
+.btn-primary:disabled,
+.btn-ai:disabled,
+.btn-danger:disabled {
+  background: var(--panel-2);
+  border-color: var(--border);
+  color: var(--muted);
+  filter: none;
   cursor: not-allowed;
+}
+
+.btn-link:disabled {
+  background: transparent;
 }
 
 .btn-primary {
@@ -98,8 +109,13 @@
   cursor: pointer;
 }
 
-.chip:hover {
+.chip:hover:not(:disabled) {
   border-color: var(--accent);
+}
+
+.chip:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 .chip[aria-pressed='true'] {
@@ -373,4 +389,15 @@
   height: 100%;
   background: var(--accent);
   transition: width 0.3s;
+}
+
+/* An action that reads as a link (inside badges and sentences). */
+.link-button {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--accent-soft);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
