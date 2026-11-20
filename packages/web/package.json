@@ -9,7 +9,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:static": "VITE_PERFAGENT_STATIC=1 vite build --outDir dist-static && node scripts/static-assets.mjs",
-    "preview:static": "vite preview --outDir dist-static --port 4173 --strictPort",
+    "preview:static": "vite preview --outDir dist-static --host 127.0.0.1 --port 4173 --strictPort",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "e2e": "PERFAGENT_GUIDES_DIR=e2e/fixtures/guides pnpm run build:static && playwright test"
