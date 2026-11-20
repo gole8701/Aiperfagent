@@ -114,4 +114,4 @@ API keys are never in this file; the dashboard stores them in the OS keychain.
 
 ## Command-line flags
 
-`--port`, `--root`, `--device`, `--runs`, `--url a,b`, `--label`, `--out`, `--json`, `--no-project`, `--no-open`, `--comment file.md` (ci), `--format` and `--out` (export), `--http`, `--allow-writes` (mcp), `--dev-origin` (dashboard development), `--force` (init). Flags win over environment variables and the file.
+`--port`, `--root`, `--device`, `--runs`, `--url a,b`, `--label`, `--out`, `--json`, `--no-project`, `--no-open`, `--comment file.md` (ci), `--format` and `--out` (export), `--http`, `--port` (default 4546), `--host` (default `127.0.0.1`), `--allow-writes` (mcp), `--target` and `--port` (ai-proxy, default 4547), `--dev-origin` (dashboard development), `--force` (init). Flags win over environment variables and the file.

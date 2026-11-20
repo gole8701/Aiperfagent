@@ -28,7 +28,7 @@ Google Chrome or Edge must be installed for collector tests; otherwise `npx play
 
 - TypeScript `strict`, no `any` (use `unknown` and narrow). Exported functions have explicit return types.
 - Small modules with one responsibility; files under about 300 lines; functions under about 40 lines unless there is a clear reason.
-- Pure logic in `core`; I/O at the edges. Packages only depend downwards (`core` ← `config/report-schema/security` ← `collectors/importers/scanner/rules` ← `engine` ← `server/ai/fixer/mcp` ← `cli`); lint enforces it.
+- Pure logic in `core`; I/O at the edges. Packages only depend downwards (`core` ← `config/report-schema/security` ← `scanner` ← `collectors/importers/rules` ← `engine` ← `server/ai/fixer/mcp` ← `cli`); lint enforces it.
 - Names say what the thing is: `buildRootCauseChain`, `lcpElement`, `reconnectBackoff`. Booleans read as questions: `isLocalMode`, `hasSourceMap`. Files are kebab-case after their main export; components PascalCase.
 - Comments explain _why_, one line, no banners, no narration, no emoji.
 - Errors are `PerfAgentError` with a `code` and a plain-language message plus a next step. Never swallow errors. Never log secrets. No `console.log` in committed code.

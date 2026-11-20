@@ -48,7 +48,7 @@ Faster on phones and slow networks. On the demo shop, PerfAgent finds 1.9 MB of 
 - `jsKb` is the sum of transfer bytes of script requests in the representative run; `requests` and `transferKb` count every request. Coverage comes from the Chrome DevTools Protocol (`Profiler.takePreciseCoverage`, `CSS.takeCoverageDelta`) on the first run.
 - Rules: `react/namespace-import` (`import * as` or a default import of `date-fns`, `lodash`, `moment`, `rxjs`, `@mui/icons-material`, `react-icons`, with known sizes), `react/eager-conditional-import` (a component rendered only behind a condition but imported statically, when its import subtree is over 12 KB or pulls a third-party package), `general/big-javascript` (over 500 KB), `general/too-many-requests` (over 120), `general/no-compression` (script or stylesheet over 100 KB without `br`, `gzip` or `zstd`), `general/unused-css`.
 - The subtree size behind a component is computed from the import graph in the project scan (`subtreeStats`), so the ~81 KB for `ChatWidget` includes `emoji-data.ts`.
-- Bundle stats from webpack, Vite or Next.js can be imported (`perfagent import stats.json`) to get per-chunk sizes; _planned_ in the importer registry.
+- Bundle stats (webpack stats, rollup-plugin-visualizer JSON, Vite or Next.js build manifests) can be imported (`perfagent import stats.json`) to get per-chunk sizes; the importer reports `bundle/large-chunk` and `bundle/duplicate-package` problems.
 - Budgets accept sizes: `js: '200kb'` or `'1.5mb'`.
 
 ## Walkthrough

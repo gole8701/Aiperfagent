@@ -51,7 +51,7 @@ npx perfagent export <id> --format md --out pr-comment.md
 - Metrics compared: score, LCP, INP, CLS, TTFB, FCP, TBT, JS size, requests, AI first token, AI cost. Changes inside `NOISE_RATIO` (4 %) are "No real change". Labels are `+N points` for scores and `N % better/worse` for the rest.
 - Impact signals: problems fixed / new / still open between A and B, new or bigger requests, bigger packages, new long tasks, more re-renders, server-timing changes, and a git diff when both reports carry commit SHAs. Without raw data the verdict says "cause unknown: re-scan to find the cause".
 - Fairness warnings: different device profile, different page, or real-user vs lab data.
-- Importers (`packages/importers`): `perfagent`, `psi`, `lighthouse` are implemented; `har`, `trace`, `bundle-stats`, `otel`, `web-vitals`, `csv`, `pdf`, `xlsx`, `docx`, `text` and `dashboard-link` are registered formats being completed for the first release. See `docs/import-formats.md`.
+- Importers (`packages/importers`): `perfagent`, `psi`, `lighthouse`, `har`, `trace`, `bundle-stats`, `otel`, `web-vitals`, `csv`, `pdf`, `xlsx`, `docx` and `text`; Compare also accepts a `dashboard-link`. See `docs/import-formats.md`.
 - A dashboard link source carries `?report=<id>`; an exported report link ends in `.json` and is fetched with a 15 s timeout.
 
 ## Walkthrough

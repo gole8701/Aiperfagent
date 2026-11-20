@@ -10,32 +10,33 @@ PerfAgent is a pnpm monorepo of small TypeScript packages. One npm package, `per
 | `@perfagent/config`          | 1     | The one zod schema for `perfagent.config.ts`, defaults, loader (file → `PERFAGENT_*` env → CLI flags), `describeConfig()` for docs and the Settings UI, `CONFIG_TEMPLATE`                                             |
 | `@perfagent/report-schema`   | 1     | zod schema for `perfagent-report.json`, `parseReport`, `MAX_IMPORT_BYTES` (60 MB)                                                                                                                                     |
 | `@perfagent/security`        | 1     | token, origin check, CSP headers, path guard, redaction, SSRF guard, mode detection                                                                                                                                   |
-| `@perfagent/collectors`      | 2     | Playwright + Chrome DevTools Protocol: `launchBrowser` (prefers the installed Chrome), `measurePage` (median of N runs, filmstrip, coverage, long tasks, LoAF, layout shifts), `collectReadiness`, `startLiveSession` |
-| `@perfagent/importers`       | 2     | Registry of importers: PerfAgent JSON, PageSpeed, Lighthouse implemented; HAR, trace, bundle stats, OTel, web-vitals, CSV, PDF, Excel, Word, text, dashboard link registered as formats                               |
+| `@perfagent/collectors`      | 3     | Playwright + Chrome DevTools Protocol: `launchBrowser` (prefers the installed Chrome), `measurePage` (median of N runs, filmstrip, coverage, long tasks, LoAF, layout shifts), `collectReadiness`, `startLiveSession` |
+| `@perfagent/importers`       | 3     | Registry of importers: PerfAgent JSON, PageSpeed, Lighthouse, HAR, Chrome trace, bundle stats, OpenTelemetry (incl. GenAI), web-vitals, CSV, PDF, Excel, Word, pasted text                                          |
 | `@perfagent/scanner`         | 2     | Project tree: files → imports → components → hooks → functions → JSX elements; framework detection from `package.json`                                                                                                |
-| `@perfagent/rules`           | 2     | Rule engine + packs: `general`, `react`, `next`, `realtime`, `ai`, `agents`; turns findings into `Issue`s with chain, gain and fix                                                                                    |
-| `@perfagent/engine`          | 3     | The pipeline (`runScan`, `retestIssue`), `ReportStore` (`.perfagent/`), budgets, git info, and the `AiService` / `FixService` contracts                                                                               |
-| `@perfagent/server`          | 4     | Local HTTP + WebSocket server, routes, editor launch, export, jobs                                                                                                                                                    |
-| `@perfagent/ai`              | 4     | Providers (Anthropic, OpenAI, OpenAI-compatible, Gemini, Ollama, in-browser), keychain storage, `watchAI()` wrapper, OTel GenAI import, local proxy                                                                   |
-| `@perfagent/fixer`           | 4     | Fix loop: proposals, review, apply on a new branch, tests, re-test, undo                                                                                                                                              |
-| `@perfagent/mcp`             | 4     | MCP server (stdio and Streamable HTTP) exposing read-only tools, optional write tool                                                                                                                                  |
+| `@perfagent/rules`           | 3     | Rule engine + packs: `general`, `react`, `next`, `realtime`, `ai`, `agents`; turns findings into `Issue`s with chain, gain and fix                                                                                    |
+| `@perfagent/engine`          | 4     | The pipeline (`runScan`, `retestIssue`), `ReportStore` (`.perfagent/`), budgets, git info, and the `AiService` / `FixService` contracts                                                                               |
+| `@perfagent/server`          | 5     | Local HTTP + WebSocket server, routes, editor launch, export, jobs                                                                                                                                                    |
+| `@perfagent/ai`              | 5     | Providers (Anthropic, OpenAI, OpenAI-compatible, Gemini, Ollama; in-browser runs in the dashboard), key storage, `watchAI()` wrapper, local measuring proxy                                                                  |
+| `@perfagent/fixer`           | 5     | Fix loop: proposals, review, apply on a new branch, tests, re-test, undo                                                                                                                                              |
+| `@perfagent/mcp`             | 5     | MCP server (stdio and Streamable HTTP) exposing read-only tools, optional write tool                                                                                                                                  |
 | `@perfagent/agent`           | —     | Real-user browser snippet (`perfagent.js`, under 8 KB, no dependencies)                                                                                                                                               |
 | `@perfagent/web`             | —     | The React + Vite dashboard; talks to the server only through `src/api`                                                                                                                                                |
-| `perfagent` (`packages/cli`) | 5     | The binary: `init`, start, `scan`, `ci`, `import`, `export`, `compare`, `mcp`; the programmatic API and `perfagent/ai`                                                                                                |
+| `perfagent` (`packages/cli`) | 6     | The binary: `init`, start, `scan`, `ci`, `import`, `export`, `compare`, `mcp`, `ai-proxy`; the programmatic API and `perfagent/ai`                                                                                    |
 
 `apps/site` is the public static website; `fixtures/demo-shop` is the sample project with 12 seeded problems; `fixtures/reports` holds sample inputs for importers.
 
 ## Dependency direction
 
-Enforced by the `perfagent/layer-direction` rule in `eslint.config.js`. A package may import only packages in a lower layer:
+Enforced by the `perfagent/layer-direction` rule in `eslint.config.mjs`. A package may import only packages in a lower layer:
 
 ```
 core
   ← config · report-schema · security
-      ← collectors · importers · scanner · rules
-          ← engine
-              ← server · ai · fixer · mcp
-                  ← cli
+      ← scanner
+          ← collectors · importers · rules
+              ← engine
+                  ← server · ai · fixer · mcp
+                      ← cli
 ```
 
 `web` is not in the layer list; it talks to `server` only over HTTP/WebSocket through `packages/web/src/api`. `agent` has no dependencies at all. Import cycles are a lint error (`import-x/no-cycle`), and importing a package's `dist/` is forbidden.
@@ -87,8 +88,10 @@ Everything is in `<root>/.perfagent/` (git-ignored by `perfagent init`):
 | `history.json`      | `{ reportId, at, score, label?, annotation? }[]`, last 200                                  |
 | `settings.json`     | Overlay of settings changed in the dashboard; `perfagent.config.ts` is never rewritten      |
 | `audit.log`         | One line per AI call and fix run: what was sent to which provider, which branch was created |
+| `ai-samples.jsonl`  | AI calls measured by `watchAI()`, `perfagent ai-proxy` or the agent snippet                 |
+| `rum.jsonl`         | Real-user agent events received at `/agent/collect`                                         |
 
-API keys are not in this folder; they are in the OS keychain. Nothing in `.perfagent/` leaves the machine unless you export it.
+API keys are not in this folder; they are in the OS keychain (or a 0600 file in `~/.perfagent` on Windows). Nothing in `.perfagent/` leaves the machine unless you export it.
 
 ## Dashboard routes (`packages/web`)
 

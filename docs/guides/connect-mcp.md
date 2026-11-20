@@ -137,8 +137,8 @@ npx perfagent mcp --allow-writes
 
 ## Expert detail
 
-- Transports: `stdio` (default, for editors and desktop apps) and Streamable HTTP (`--http --port 4546`, for ChatGPT connectors and teams). The HTTP transport requires login (OAuth) and is meant for a host you control; it is _planned_ for the first release together with the server implementation in `@perfagent/mcp`.
-- Tools: `scan_project`, `list_issues` (with chip and route filters), `explain_issue`, `get_report`, `compare_reports`, `retest_issue`; `apply_fix_to_branch` only with `--allow-writes`. All read tools return the same JSON the dashboard uses.
+- Transports: `stdio` (default, for editors and desktop apps) and Streamable HTTP (`--http --port 4546`, for ChatGPT connectors and teams). The HTTP transport serves `/mcp`, binds to `127.0.0.1` unless you pass `--host`, and needs `Authorization: Bearer <token>` on every request (set `PERFAGENT_MCP_TOKEN`, or copy the random token printed at start). Full OAuth is not implemented; put a reverse proxy in front if your client needs it.
+- Tools: `scan_url`, `scan_project`, `list_issues` (with chip and route filters), `explain_issue`, `get_file_context`, `suggest_fix`, `compare_runs`, `ai_report`, `open_dashboard`; `apply_fix_to_branch` only with `--allow-writes`. Resources: `perfagent://report/latest` and `perfagent://guide/<topic>`. All tools return JSON text.
 - The snippets above are `MCP_CONFIGS` in `packages/server/src/routes/ai.ts`, served by `GET /api/ai/mcp-config?client=<id>`; "Copy config" copies exactly these. Config formats change, so each tool's own MCP documentation is linked below.
 - `npx -y perfagent mcp` runs in the current project folder and reads `perfagent.config.ts` from there; add `--root path` to point elsewhere.
 - The MCP server has no way to push, merge or deploy; writes, when enabled, go through the same fixer, path guard and `protected` globs as the dashboard.

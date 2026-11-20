@@ -58,7 +58,7 @@ export default defineConfig({
 - Routes: `POST /api/live/start { url }` (SSRF-checked), `POST /api/live/stop` (returns `LiveStats` and saves a report), `GET /api/live/status`, `POST /api/agent/collect { events[] }` for the agent snippet (no auth needed, size-limited, up to 500 events per batch; it only broadcasts ticks).
 - Rules: `realtime/reconnect-no-backoff` (static: `onclose`/`'close'` handler that reconnects without a growing delay), `realtime/large-messages` (WebSocket frames over 2 MB). Metrics: `wsReconnects` (good ≤ 2, poor > 10) and `wsMessagesPerSec`.
 - The agent snippet collects Web Vitals, fetch/XHR timings, WebSocket frames, long tasks, errors, memory and browser-side AI calls; it is async, sampled and fail-silent, and never reads cookies or form values. Hosted collection for production traffic is _planned_; today the snippet reports to your local PerfAgent during development.
-- Clustering of live traffic into named groups (`live.clusters`) is part of the report format; the UI for it is _planned_.
+- Clustering of live traffic into named groups (`live.clusters`) is part of the report format; after **Stop**, the **Recorded session** card on **Live** lists the clusters.
 
 ## Walkthrough
 

@@ -6,7 +6,7 @@
 - It explains everything twice: in plain words for anyone on the team, and in technical terms for the person fixing it. Thirty-one built-in guides cover every metric and feature.
 - It is local, read-only by default and uses your own AI if you want AI at all. Nothing is uploaded, nothing phones home.
 
-> Status: early. The scan engine, rules, server, CLI and report format work on the demo project; the dashboard, importers for documents, AI providers, fixer and MCP server are being completed for the first release. Anything not finished is marked **planned** below.
+> Status: early, before the first release. The scan engine, rules, server, CLI, report format, dashboard, importers, AI providers, fixer and MCP server are in this repository. Anything not finished is marked **planned** below.
 
 ## 60-second start
 
@@ -25,13 +25,13 @@ Needs Node.js 20+ and Google Chrome or Edge on the machine (or `npx playwright i
 - **Deep dive** per problem: file:line with _Open in editor_ (VS Code, Cursor, Windsurf, Zed, Sublime, JetBrains, Vim, Neovim, Emacs, Notepad++), root cause chain (metric → element or request → component → code), why it happens, before/after fix, estimated gain, a budget to prevent it, docs links, re-test and mark fixed.
 - **Flow diagram** of the project from root to any depth, left to right, with problem counts on every branch.
 - **Charts in plain language**: eight tabs, every chart titled with a question and ending with one sentence of meaning; "In simple words" generated from the data, no AI needed.
-- **Compare anything**: before/after, page vs page, release vs release; sources can be saved scans, URLs, PerfAgent JSON, Lighthouse or PageSpeed JSON, a dashboard link, and (planned) HAR, traces, bundle stats, OpenTelemetry, CSV, PDF, Excel, Word or pasted text with a "detected values" check.
+- **Compare anything**: before/after, page vs page, release vs release; sources can be saved scans, URLs, PerfAgent JSON, Lighthouse or PageSpeed JSON, a dashboard link, HAR, Chrome traces, bundle stats, OpenTelemetry, web-vitals exports, CSV, PDF, Excel, Word or pasted text with a "detected values" check.
 - **A guide for every feature**: written steps naming the screen, an animated walkthrough over the real UI, beginner/expert, English, Hindi and Marathi.
 - **Live mode**: requests, latency, WebSocket messages, reconnects and memory every second from a browser PerfAgent controls, or from real users with a tiny agent snippet.
 - **AI performance** in the same dashboard: wrap your client with `watchAI()` to record first token, tokens, cost, cache hits, errors and agent steps; 15 static AI rules find problems without any measurement.
 - **Bring your own AI**: Anthropic, OpenAI, OpenAI-compatible or Gemini with your key in the OS keychain, a company endpoint, or free local Ollama.
-- **MCP server** for Claude Code, Claude Desktop, Cursor, Windsurf, VS Code Copilot, Cline, Zed and (planned, HTTP) ChatGPT: `npx perfagent mcp`.
-- **Fix loop** (planned for the first release): your AI proposes, you review, changes land on a new branch, your tests run, the page is re-tested, and _Undo_ restores everything.
+- **MCP server** for Claude Code, Claude Desktop, Cursor, Windsurf, VS Code Copilot, Cline, Zed and (over Streamable HTTP with a bearer token) ChatGPT: `npx perfagent mcp`.
+- **Fix loop**: your AI proposes, you review, changes land on a new branch, your tests run, the page is re-tested, and _Undo_ restores everything.
 - **Budgets in CI**: limits per route in the config; `npx perfagent ci` fails the build and writes a pull-request comment.
 
 ## How it is useful
@@ -49,7 +49,7 @@ Needs Node.js 20+ and Google Chrome or Edge on the machine (or `npx playwright i
 - Runs on `127.0.0.1` only, with a fresh secret token every start; requests from other websites are rejected.
 - Read-only by default. Code changes happen only in local mode (loopback, git repository, not production), on a new branch `perfagent/fix-<date>`, after your review. Write routes do not exist in deployed or hosted builds.
 - Never pushes, merges, force-pushes, rebases, tags or deploys. You do.
-- Your AI keys stay in your OS keychain and go only to the provider they belong to. Your tokens, your bill. PerfAgent has no keys, no AI server and no proxy of its own.
+- Your AI keys stay in your OS keychain (a private file on Windows) and go only to the provider they belong to. Your tokens, your bill. PerfAgent has no keys and no AI server; the optional `ai-proxy` only runs on your machine to measure your own app's calls.
 - Secrets are redacted before storage, display, export or AI. Imports are size-limited, schema-validated, never executed, rendered as text.
 - No telemetry.
 
@@ -95,7 +95,8 @@ perfagent ci              scan and fail when a budget is over its limit (--comme
 perfagent import <file>   import Lighthouse / HAR / PDF / Excel / Word / CSV / PerfAgent JSON
 perfagent export [id]     export a report (--format json|csv|md|html --out file)
 perfagent compare <a> <b> compare two reports (ids or files)
-perfagent mcp             run as an MCP server for Claude Code, Cursor, Copilot… (--http for remote)
+perfagent mcp             run as an MCP server for Claude Code, Cursor, Copilot… (--http --port 4546 --host 127.0.0.1 for remote, --allow-writes for the fix tool)
+perfagent ai-proxy        measure your app's AI calls with no code change (--target https://api.openai.com --port 4547)
 
 Options: --port 4545  --root .  --device mobile|desktop  --runs 3  --no-project  --json  --no-open
 ```
@@ -171,7 +172,7 @@ security/   THREAT_MODEL.md · CHECKLIST.md
 scripts/    perf-budget.mjs
 ```
 
-Dependency direction is enforced by lint: `core` ← `config/report-schema/security` ← `collectors/importers/scanner/rules` ← `engine` ← `server/ai/fixer/mcp` ← `cli`. See [docs/architecture.md](docs/architecture.md).
+Dependency direction is enforced by lint: `core` ← `config/report-schema/security` ← `scanner` ← `collectors/importers/rules` ← `engine` ← `server/ai/fixer/mcp` ← `cli`. See [docs/architecture.md](docs/architecture.md).
 
 ## Development
 
@@ -189,8 +190,8 @@ Contributing: [CONTRIBUTING.md](CONTRIBUTING.md). Code of conduct: [CODE_OF_COND
 
 ## Roadmap
 
-- First release: dashboard, document importers (PDF, Excel, Word, CSV, HAR, trace, OTel), AI providers and keychain, fix loop, MCP server (stdio).
-- Then: tests from other locations (hosted), MCP over HTTP with login, Vue/Nuxt, Angular and Svelte rule packs, more charts from analytics connectors, a VS Code extension, a regression finder (bisect by performance).
+- First release: polish and publish what is in this repository (dashboard, importers, AI providers, fix loop, MCP server over stdio and HTTP).
+- Then: tests from other locations (hosted), OAuth login for MCP over HTTP, Vue/Nuxt, Angular and Svelte rule packs, more charts from analytics connectors, a VS Code extension, a regression finder (bisect by performance).
 - Hosted team features (history, sharing, real-user collection) are planned in a separate repository under a different licence.
 
 ## Licence

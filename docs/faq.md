@@ -25,7 +25,7 @@ The Google Chrome or Edge already on your machine, through Playwright. If none i
 One of the local-mode checks failed. The reasons are printed at start and shown in Settings: not a git repository, `NODE_ENV=production`, not bound to loopback, or the hosted/static build. Fix the reason (for example `git init`) or, for `NODE_ENV`, set `PERFAGENT_FORCE_LOCAL=true` on purpose.
 
 **Where are my API keys stored?**
-In your operating system's keychain (macOS Keychain, Windows Credential Manager, libsecret on Linux), never in `perfagent.config.ts` or `.perfagent/`. The dashboard shows them masked.
+In your operating system's keychain (macOS Keychain, libsecret on Linux). On Windows, or without a keychain tool, in a file only you can read (`~/.perfagent`). Never in `perfagent.config.ts` or the project's `.perfagent/`. `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` and `GEMINI_API_KEY` are used when set. The dashboard shows them masked.
 
 **Can I use it in CI?**
 Yes: `npx perfagent ci` scans, checks the `budgets` in your config and exits 1 when a limit is broken. `--comment file.md` writes a pull-request comment. See the Budgets in CI guide and `.github/workflows/perfagent-example.yml`.

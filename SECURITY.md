@@ -31,7 +31,7 @@ PerfAgent is built so that it has no ability to do dangerous things, and a repor
 6. Imports are size-limited, schema-validated, never executed, and rendered as text.
 7. Secrets are redacted before storage, display, export or AI.
 8. AI output is only ever a proposed patch; the AI has no tools that write files, run commands or call the network. Writes go to a new branch after review. PerfAgent never pushes, merges or deploys.
-9. API keys live in the OS keychain and go only to their provider.
+9. API keys live in the OS keychain (a 0600 file in `~/.perfagent` on Windows or without a keychain tool) and go only to their provider.
 10. No telemetry.
 11. Supply chain: committed lockfile, no `postinstall` scripts, `npm publish --provenance`, 2FA on npm and GitHub, Dependabot, CodeQL.
 

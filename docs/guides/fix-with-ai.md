@@ -61,9 +61,10 @@ export default defineConfig({
 - Scopes: `{ kind: 'issue', issueIds }`, `{ kind: 'file', file }`, `{ kind: 'chip', chip }`, `{ kind: 'route', route }`, `{ kind: 'site' }`.
 - The AI only ever returns text (a `ProposedChange` with `file`, `before`, `after`, `explanation`); the fixer applies it after the path guard and the `protected` globs; it has no tool to run commands, install packages or call the network.
 - A failed check (tests red, or the re-test worse than before) rolls the change back automatically (`rolled-back` event).
-- If the working tree has uncommitted changes, PerfAgent asks first (stash / continue / cancel).
+- If the working tree has uncommitted changes, the run stops with an error unless the request sets `stashFirst: true`; then PerfAgent runs `git stash push -m perfagent` first and **Undo** pops the stash again.
 - Every run is logged to `.perfagent/audit.log` with scope and branch; code sent to the AI follows `ai.sendCode` (`snippets` by default) and is redacted.
-- The `@perfagent/fixer` implementation is being completed for the first release; the routes, events and config above are its contract.
+- Checks after each change, in order: `tsc --noEmit` (when `tsconfig.json` and a local `tsc` exist), the `lint` script, the tests (`fix.testCommand` or the `test` script, when `fix.runTests` is on) and the `build` script.
+- The run stops at `fix.maxRounds`, `fix.maxFiles` or `fix.maxCostUsd`, or when `fix.target.score` is reached; `target.lcp`, `target.inp` and `target.cls` are accepted but not yet used as stop conditions. `fix.autoAccept` and `fix.openPr` are accepted by the config but not used by the fixer yet; review is controlled by `fix.review`, and PerfAgent never opens pull requests.
 
 ## Walkthrough
 

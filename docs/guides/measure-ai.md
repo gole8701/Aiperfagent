@@ -66,7 +66,7 @@ export default defineConfig({
 })
 ```
 
-Other ways to get the data in: import an OpenTelemetry JSON export that follows the GenAI semantic conventions (`perfagent import traces.json`), or point your app's AI base URL at the local measuring proxy during development. The proxy is part of `@perfagent/ai` and is _planned_ for the first release.
+Other ways to get the data in: import an OpenTelemetry JSON export that follows the GenAI semantic conventions (`perfagent import traces.json`), or point your app's AI base URL at the local measuring proxy during development: `npx perfagent ai-proxy --target https://api.openai.com --port 4547`, then set `OPENAI_BASE_URL` (or `ANTHROPIC_BASE_URL`) to the printed URL. Samples go to `.perfagent/ai-samples.jsonl`.
 
 ## Expert detail
 
