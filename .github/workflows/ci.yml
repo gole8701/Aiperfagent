@@ -15,12 +15,13 @@ concurrency:
 jobs:
   checks:
     name: Node ${{ matrix.node }}
-    runs-on: ubuntu-latest
+    # Pinned: the Playwright version in use has no browser build for ubuntu-latest (26.04) yet.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22]
+        node: [22, 24]
     env:
       # Collector tests use the Google Chrome preinstalled on ubuntu runners (Playwright channel "chrome").
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'

@@ -5,7 +5,7 @@ Thank you for helping. PerfAgent is built by a small team following `perfagent-b
 ## Setup
 
 ```bash
-pnpm install              # pnpm 10, Node 20+
+pnpm install              # pnpm 10, Node 22+
 pnpm build
 pnpm lint && pnpm typecheck && pnpm test
 pnpm demo                 # the demo shop on http://localhost:3000

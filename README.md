@@ -16,7 +16,7 @@ npx perfagent init        # creates perfagent.config.ts, git-ignores .perfagent/
 npx perfagent             # → Dashboard: http://127.0.0.1:4545/?token=…
 ```
 
-Needs Node.js 20+ and Google Chrome or Edge on the machine (or `npx playwright install chromium`).
+Needs Node.js 22+ and Google Chrome or Edge on the machine (or `npx playwright install chromium`).
 
 ## What you get
 

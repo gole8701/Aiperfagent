@@ -4,7 +4,7 @@ One file, `perfagent.config.ts` (also `.js`, `.mjs` or `.json`), validated by th
 
 Load order: defaults → config file → `PERFAGENT_*` environment variables → command-line flags. Environment variables map by path: `PERFAGENT_SERVER_PORT=5000` → `server.port`, `PERFAGENT_AI_PROVIDER=ollama` → `ai.provider`, `PERFAGENT_URLS=http://a,http://b` → `urls` (comma lists become arrays; `true`/`false`/numbers are coerced).
 
-`perfagent.config.ts` needs Node 23+ or the `tsx` package on Node 20–22; otherwise use `.js`. Settings changed in the dashboard are stored as an overlay in `.perfagent/settings.json`; the config file is never rewritten.
+`perfagent.config.ts` needs Node 23+ or the `tsx` package on Node 22; otherwise use `.js`. Settings changed in the dashboard are stored as an overlay in `.perfagent/settings.json`; the config file is never rewritten.
 
 ```ts
 import { defineConfig } from 'perfagent'

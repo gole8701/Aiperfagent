@@ -59,7 +59,7 @@ Options on the command line: `--port 4545`, `--root .`, `--device mobile|desktop
 
 ## Expert detail
 
-- Requirements: Node.js 20 or newer. For `perfagent.config.ts` on Node 20–22 the `tsx` package must be installed; otherwise rename the file to `perfagent.config.js`. Node 23+ reads TypeScript config natively.
+- Requirements: Node.js 22 or newer. For `perfagent.config.ts` on Node 22 the `tsx` package must be installed; otherwise rename the file to `perfagent.config.js`. Node 23+ reads TypeScript config natively.
 - Browser: PerfAgent uses the Google Chrome (or Edge) already on your machine through Playwright. If none is found, `npx playwright install chromium` downloads one.
 - The server binds to `127.0.0.1` only and creates a fresh 32-byte token on every start. Requests without the token, or from another website, are rejected (`401` / `403`).
 - Everything PerfAgent remembers lives in `.perfagent/` inside your project: `reports/`, `history.json`, `settings.json` and `audit.log`.

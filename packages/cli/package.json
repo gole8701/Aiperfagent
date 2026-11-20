@@ -44,7 +44,7 @@
   "homepage": "https://github.com/gole8701/perfagent#readme",
   "bugs": "https://github.com/gole8701/perfagent/issues",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "build": "tsc -b",
