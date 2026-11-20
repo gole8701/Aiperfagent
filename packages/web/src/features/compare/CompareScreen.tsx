@@ -28,7 +28,7 @@ import { FixRunView } from '../deep-dive/FixRunView'
 
 import { DetectedValues } from './DetectedValues'
 import { Result } from './Result'
-import { SourceCard } from './Sources'
+import { SourceCard, scanTitle } from './Sources'
 import { MODES, type CompareMode, type SourceSpec } from './types'
 import './compare.css'
 
@@ -69,12 +69,16 @@ export default function CompareScreen() {
   }, [])
 
   useEffect(() => {
+    const title = (id: string): string => {
+      const scan = scans.find((s) => s.reportId === id)
+      return scan ? scanTitle(scan) : id
+    }
     if (a && b)
       setSources([
-        { kind: 'report', reportId: a, title: a },
-        { kind: 'report', reportId: b, title: b },
+        { kind: 'report', reportId: a, title: title(a) },
+        { kind: 'report', reportId: b, title: title(b) },
       ])
-  }, [a, b])
+  }, [a, b, scans])
 
   const palette = useMemo(() => readPalette(), [theme])
   const pagesOf = (index: number): string[] => {
@@ -123,6 +127,9 @@ export default function CompareScreen() {
     }
   }
 
+  const [first, second] = sources
+  const sameScan =
+    first?.kind === 'report' && second?.kind === 'report' && first.reportId === second.reportId
   const reportB = result?.reports[1]
   const ctx: ChartContext | undefined = reportB
     ? { report: reportB, page: reportB.pages[0], history: [], expert: false, palette }
@@ -204,9 +211,18 @@ export default function CompareScreen() {
         </div>
       ) : null}
       <div className="row" style={{ margin: '12px 0' }}>
-        <Button variant="primary" busy={busy} onClick={() => void run()} data-tour="run">
+        <Button
+          variant="primary"
+          busy={busy}
+          onClick={() => void run()}
+          disabled={sameScan}
+          data-tour="run"
+        >
           Compare
         </Button>
+        {sameScan ? (
+          <span className="muted">A and B are the same scan: pick another one.</span>
+        ) : null}
         {notice ? <span className="rating-good">{notice}</span> : null}
       </div>
       {error ? <ErrorBox error={error} /> : null}

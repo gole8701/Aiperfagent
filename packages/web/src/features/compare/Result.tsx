@@ -152,12 +152,8 @@ export function Result({
           ))}
         </ol>
         <div className="row no-print">
-          {canFix ? (
-            <Button
-              variant="ai"
-              onClick={onFixWorse}
-              disabled={!comparison.impact.some((i) => i.kind === 'new' && i.issue)}
-            >
+          {canFix && comparison.impact.some((i) => i.kind === 'new' && i.issue) ? (
+            <Button variant="ai" onClick={onFixWorse}>
               Fix what got worse with my AI
             </Button>
           ) : null}
@@ -238,8 +234,8 @@ function PagesGrid({ diffs }: { diffs: MetricDiff[] }) {
                       }
                     >
                       {DIRECTION_ICON[d.direction]}{' '}
-                      {d.from === undefined ? '—' : formatMetric(m, d.from)} →{' '}
-                      {d.to === undefined ? '—' : formatMetric(m, d.to)}
+                      {d.from === undefined ? 'not measured' : formatMetric(m, d.from)} →{' '}
+                      {d.to === undefined ? 'not measured' : formatMetric(m, d.to)}
                     </td>
                   )
                 })}
@@ -293,7 +289,7 @@ function pairedBars(diffs: MetricDiff[], labelA: string, labelB: string): ChartD
               position: 'right',
               color: p.muted,
               formatter: (x: { dataIndex: number }) =>
-                formatMetric(rows[x.dataIndex]?.metric ?? 'score', rows[x.dataIndex]?.from ?? 0),
+                maybeFormat(rows[x.dataIndex]?.metric, rows[x.dataIndex]?.from),
             },
           },
           {
@@ -316,7 +312,7 @@ function pairedBars(diffs: MetricDiff[], labelA: string, labelB: string): ChartD
               position: 'right',
               color: p.text,
               formatter: (x: { dataIndex: number }) =>
-                `${formatMetric(rows[x.dataIndex]?.metric ?? 'score', rows[x.dataIndex]?.to ?? 0)} · ${rows[x.dataIndex]?.label ?? ''}`,
+                `${maybeFormat(rows[x.dataIndex]?.metric, rows[x.dataIndex]?.to)} · ${rows[x.dataIndex]?.label ?? ''}`,
             },
           },
         ],
@@ -328,4 +324,8 @@ function pairedBars(diffs: MetricDiff[], labelA: string, labelB: string): ChartD
       return `${better} metric${better === 1 ? '' : 's'} got better, ${worse} got worse, the rest did not really change.`
     },
   }
+}
+
+function maybeFormat(metric: MetricDiff['metric'] | undefined, value: number | undefined): string {
+  return metric === undefined || value === undefined ? 'not measured' : formatMetric(metric, value)
 }

@@ -230,9 +230,15 @@ const vsTarget: ChartDefinition = {
       const v = metricValue(ctx.page?.metrics ?? [], id)
       return v !== undefined && rateMetric(id, v) === 'poor'
     })
+    const missing = CORE_WEB_VITALS.filter(
+      (id) => metricValue(ctx.page?.metrics ?? [], id) === undefined,
+    )
+    const notMeasured = missing.length
+      ? ` Not measured: ${missing.map((id) => METRICS[id].short).join(', ')}.`
+      : ''
     return poor.length
-      ? `Out of the green: ${poor.map((id) => METRICS[id].short).join(', ')}. Start there.`
-      : 'Every Core Web Vital is close to or inside the green zone.'
+      ? `Out of the green: ${poor.map((id) => METRICS[id].short).join(', ')}. Start there.${notMeasured}`
+      : `Every measured Core Web Vital is close to or inside the green zone.${notMeasured}`
   },
 }
 

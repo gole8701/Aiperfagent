@@ -75,7 +75,7 @@ export function SourceCard({ label, source, scans, onChange, onRemove }: SourceC
             { value: '', label: 'Pick a saved scan' },
             ...scans.map((s) => ({
               value: s.reportId,
-              label: `${s.label ?? s.reportId} · ${new Date(s.at).toLocaleString()} · score ${s.score}`,
+              label: `${s.target ?? s.label ?? 'Project'} · ${new Date(s.at).toLocaleString()} · score ${s.score ?? 'not measured'}`,
             })),
           ]}
           onChange={(id) => {
@@ -84,7 +84,7 @@ export function SourceCard({ label, source, scans, onChange, onRemove }: SourceC
               onChange({
                 kind: 'report',
                 reportId: id,
-                title: `${scan.label ?? id} · ${new Date(scan.at).toLocaleDateString()}`,
+                title: scanTitle(scan),
               })
           }}
         />
@@ -131,4 +131,9 @@ export function SourceCard({ label, source, scans, onChange, onRemove }: SourceC
       ) : null}
     </div>
   )
+}
+
+/** "Project · 20/11/2026, 10:14" or "www.flipkart.com · …": the side's label in the comparison. */
+export function scanTitle(scan: HistoryPoint): string {
+  return `${scan.target ?? scan.label ?? 'Project'} · ${new Date(scan.at).toLocaleString()}`
 }
