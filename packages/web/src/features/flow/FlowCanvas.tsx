@@ -5,6 +5,7 @@ import {
   MiniMap,
   Position,
   ReactFlow,
+  useReactFlow,
   type Edge,
   type Node,
   type NodeProps,
@@ -89,6 +90,24 @@ const TreeNodeView = memo(function TreeNodeView({ data }: NodeProps<FlowNode>) {
 
 const nodeTypes = { tree: TreeNodeView }
 
+/**
+ * The `fitView` prop only runs on mount, so after "Expand all" the new nodes sat off-screen.
+ * Refit whenever a layout lands, framing the top two levels so labels stay readable on big trees.
+ */
+function FitOnLayout({ positions, graph }: { positions: Positions; graph: VisibleGraph }) {
+  const { fitView } = useReactFlow()
+  useEffect(() => {
+    if (!positions.size) return
+    const top = graph.nodes.filter((n) => n.depth <= 1).map((n) => ({ id: n.node.id }))
+    // Wait a frame so React Flow has the new node positions in its store.
+    const frame = requestAnimationFrame(() => {
+      void fitView({ nodes: top, padding: 0.2, minZoom: 0.6, maxZoom: 1, duration: 250 })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [positions, graph, fitView])
+  return null
+}
+
 export function FlowCanvas({ graph, selectedId, onSelect, onToggle }: FlowCanvasProps) {
   const [positions, setPositions] = useState<Positions>(new Map())
 
@@ -153,8 +172,11 @@ export function FlowCanvas({ graph, selectedId, onSelect, onToggle }: FlowCanvas
         proOptions={{ hideAttribution: true }}
         aria-label="Project flow diagram"
       >
+        <FitOnLayout positions={positions} graph={graph} />
         <Background gap={24} color="var(--border)" />
         <MiniMap
+          bgColor="var(--panel-2)"
+          maskColor="color-mix(in srgb, var(--bg) 55%, transparent)"
           pannable
           zoomable
           nodeColor={(n) =>
