@@ -50,17 +50,6 @@ The AI feels fast. On the demo shop, `answerSupportQuestion()` in `src/server/ra
 - Tokens per second = output tokens ÷ (total time − first-token time).
 - Budget keys: `aiFirstTokenMs` (p95 limit) and `aiCacheHitRate` in `budgets`.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "charts", "area": "chart-1", "title": "Per model", "text": "p50 and p95 first-token time for each model you use." },
-  { "screen": "globe", "area": "chips", "title": "AI first token chip", "text": "Static findings with file:line." },
-  { "screen": "globe", "area": "chain", "title": "Four sequential steps", "text": "First token 2.4 s → 4 sequential steps in answerSupportQuestion() → rag.ts:28." },
-  { "screen": "globe", "area": "fix", "title": "Parallel and cached", "text": "Promise.all for independent steps; cache_control on the system prompt." }
-]
-```
-
 ## Learn more
 
 - [Anthropic: Streaming](https://docs.anthropic.com/en/docs/build-with-claude/streaming)

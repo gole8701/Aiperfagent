@@ -49,17 +49,6 @@ Everything starts sooner. On the demo shop, PerfAgent finds `/api/products` answ
 - Lab TTFB on localhost is not representative of production; test the deployed URL (see **Test any URL**) or import real-user data.
 - Keep `no-store` for personal data (cart, account); cache public data with `s-maxage` at the CDN and `stale-while-revalidate` for freshness.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "chips", "title": "TTFB chip", "text": "Server, API and caching problems in one place." },
-  { "screen": "globe", "area": "chain", "title": "The handler", "text": "TTFB → json() handler → products.ts:22, no Cache-Control." },
-  { "screen": "globe", "area": "fix", "title": "Add a cache header", "text": "res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')." },
-  { "screen": "charts", "area": "chart-2", "title": "Where do the seconds go?", "text": "Watch the server share shrink after the fix." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Time to First Byte](https://web.dev/articles/ttfb)

@@ -63,16 +63,17 @@ test('compare with two demo sources renders a verdict', async ({ page }) => {
   await expect(page.getByText(/No real change overall/)).toBeVisible()
 })
 
-test('guide lists groups and opens a topic with a walkthrough', async ({ page }) => {
+test('guide lists groups and opens a topic with a screenshot tour', async ({ page }) => {
   await page.goto('/guide')
   await expect(page.getByRole('region', { name: 'Explore' })).toBeVisible()
   await expect(page.getByRole('region', { name: 'Metrics' })).toBeVisible()
   await page.getByRole('link', { name: '3D project globe' }).click()
   await expect(page).toHaveURL(/\/guide\/globe/)
   await expect(page.getByRole('heading', { name: '3D project globe' })).toBeVisible()
-  await expect(page.getByRole('region', { name: /Animated walkthrough/ })).toBeVisible()
-  await page.getByRole('button', { name: 'Next step' }).click()
-  await expect(page.getByText('2. Filter with chips')).toBeVisible()
+  const tour = page.getByRole('region', { name: /How to check/ })
+  await expect(tour).toBeVisible()
+  await tour.getByRole('button', { name: 'Next step' }).click()
+  await expect(tour.getByText('Use these buttons to rotate, zoom or reset the view.')).toBeVisible()
 })
 
 test('metric guides show the "you" marker from the report', async ({ page }) => {

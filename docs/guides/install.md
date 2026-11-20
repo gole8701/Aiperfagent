@@ -66,18 +66,6 @@ Options on the command line: `--port 4545`, `--root .`, `--device mobile|desktop
 - The dashboard is a pre-built static app shipped inside the package. Your project does not need React or any other framework.
 - Config load order: defaults → `perfagent.config.ts` → `PERFAGENT_*` environment variables → command-line flags.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "terminal", "area": "command", "title": "Install", "text": "Run npm i -D perfagent in your project folder." },
-  { "screen": "terminal", "area": "command", "title": "Create the config", "text": "npx perfagent init writes perfagent.config.ts and git-ignores .perfagent/." },
-  { "screen": "terminal", "area": "command", "title": "Start", "text": "npx perfagent prints the dashboard URL with its token and opens the browser." },
-  { "screen": "globe", "area": "globe", "title": "Your project", "text": "The globe shows your project. Click Scan to measure the pages in your config." },
-  { "screen": "guide", "area": "guide", "title": "Help anywhere", "text": "The ? Guide button and every i button open this guide at the right topic." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Web Vitals](https://web.dev/articles/vitals)

@@ -44,18 +44,6 @@ Each fix is specific to your code, not generic advice. The chain shows evidence 
 - `prevent` is the budget suggestion shown as "Add to budgets"; it becomes a line in `budgets` in `perfagent.config.ts`.
 - Source snippets for the Before box come from `GET /api/files/snippet`, which is path-guarded and redacted.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "problems-table", "title": "Pick a problem", "text": "Click the row 'Your main picture loads late' (Hero image is lazy-loaded)." },
-  { "screen": "globe", "area": "deep-dive", "title": "File and line", "text": "src/components/HeroBanner.tsx:5, with an Open in editor button." },
-  { "screen": "globe", "area": "chain", "title": "Root cause chain", "text": "LCP 13 s → img.herobanner → <HeroBanner> → HeroBanner.tsx:5. Every step is evidence." },
-  { "screen": "globe", "area": "fix", "title": "Before and after", "text": "Remove loading=\"lazy\", add fetchpriority=\"high\". Estimated LCP 6.8 s, about +11 points." },
-  { "screen": "globe", "area": "verdict", "title": "Verify", "text": "Re-test measures again and shows predicted vs actual. Mark fixed closes it." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Optimize LCP](https://web.dev/articles/optimize-lcp)

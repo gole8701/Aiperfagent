@@ -20,10 +20,3 @@ npx perfagent
 
 ## How to do it in PerfAgent, step by step
 
-```walkthrough
-[
-  { "screen": "terminal", "area": "term", "title": "Install the package", "text": "npm install -D perfagent" },
-  { "screen": "terminal", "area": "term", "title": "Start PerfAgent", "text": "npx perfagent opens the dashboard with a secret token in the link." },
-  { "screen": "globe", "area": "scan", "title": "Run the first scan", "text": "Press Scan in the top bar." }
-]
-```

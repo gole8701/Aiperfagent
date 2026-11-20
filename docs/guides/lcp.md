@@ -49,18 +49,6 @@ Visitors see the page sooner, fewer leave, and the search ranking signal improve
 - Preloading the hero (`<link rel="preload" as="image">`) helps when the image URL is known at HTML time; `fetchpriority="high"` helps when the `<img>` is in the initial HTML.
 - Field LCP (p75 of real users) can be imported from CrUX or PageSpeed JSON and is shown next to the lab value with its sample count.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "chips", "title": "LCP chip", "text": "Filter to the problems that delay the main content." },
-  { "screen": "globe", "area": "chain", "title": "The LCP element", "text": "LCP 13 s → img.herobanner → <HeroBanner> → HeroBanner.tsx:5." },
-  { "screen": "charts", "area": "chart-1", "title": "Filmstrip", "text": "See the frame where the hero finally appears." },
-  { "screen": "globe", "area": "fix", "title": "The fix", "text": "Remove loading=\"lazy\" and add fetchpriority=\"high\". Estimated 6.8 s, +11 points." },
-  { "screen": "globe", "area": "verdict", "title": "Re-test", "text": "Measure again to see predicted vs actual." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Largest Contentful Paint](https://web.dev/articles/lcp)

@@ -69,18 +69,6 @@ export default defineConfig({
 - The project scanner reads only files matching `scan.include`, never `.env`, keys or `node_modules`.
 - The report format is one JSON object (`perfagent-report.json`) validated by zod; see `docs/architecture.md`.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "terminal", "area": "command", "title": "Start the dashboard", "text": "npx perfagent opens the dashboard for the project in this folder." },
-  { "screen": "globe", "area": "scan-button", "title": "Scan", "text": "Click Scan. PerfAgent reads your files, then measures each page three times in a throttled mobile browser." },
-  { "screen": "globe", "area": "chips", "title": "Counts per metric and area", "text": "Chips show how many problems touch LCP, INP, CLS, images, bundle, AI and more." },
-  { "screen": "globe", "area": "problems-table", "title": "The ranked list", "text": "Problems are sorted by severity and estimated gain. Each row shows the file and line." },
-  { "screen": "globe", "area": "deep-dive", "title": "Open one", "text": "Click a row to see the root cause chain, why it happens and the before/after fix." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Lab and field data](https://web.dev/articles/lab-and-field-data-differences)

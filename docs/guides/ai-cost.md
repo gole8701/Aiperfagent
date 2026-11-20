@@ -50,17 +50,6 @@ Lower bills and no surprises. On the demo shop, `ai/no-prompt-cache` flags the 9
 - The AI that PerfAgent itself uses for fixes has its own limits: `ai.monthlyBudgetUsd` (default 20), `ai.maxPerFixUsd` (0.2) and `fix.maxCostUsd` (5), tracked in `.perfagent/` and shown under **Settings → AI**.
 - Comparing models: **AI → Which AI option is the best deal?** plots speed × quality × cost per model from your own measured calls.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "charts", "area": "chart-3", "title": "Cost per day", "text": "Daily cost with your budget line." },
-  { "screen": "charts", "area": "chart-5", "title": "Cache reuse", "text": "How much of each prompt was served from cache." },
-  { "screen": "globe", "area": "chain", "title": "Uncached prompt", "text": "system prompt ~9,800 tokens, sent uncached on every call → rag.ts:28." },
-  { "screen": "globe", "area": "fix", "title": "cache_control", "text": "Mark the stable prefix as cacheable; put the changing part last." }
-]
-```
-
 ## Learn more
 
 - [Anthropic: Prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)

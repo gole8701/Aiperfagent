@@ -99,17 +99,6 @@ The full example lives in the repository at `.github/workflows/perfagent-example
 - Chrome is preinstalled on GitHub's `ubuntu-latest` runners, so no browser download is needed; on other CI images run `npx playwright install chromium`.
 - Budgets fail on the median of `runs` runs; keep `runs: 3` or more in CI to avoid flaky failures, and set limits with some margin above the noise band (4 %).
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "deep-dive", "title": "Add to budgets", "text": "The deep dive suggests a limit from the problem's prevent field: lcp ≤ 2500 on /." },
-  { "screen": "settings", "area": "budgets", "title": "Per route", "text": "budgets: { '/checkout': { lcp: 2500, inp: 200, js: '200kb' } }" },
-  { "screen": "terminal", "area": "command", "title": "perfagent ci", "text": "A table with a tick or cross per budget; exit code 1 when one is over." },
-  { "screen": "terminal", "area": "command", "title": "Pull-request comment", "text": "--comment comment.md writes the Markdown that the action posts." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Performance budgets 101](https://web.dev/articles/performance-budgets-101)

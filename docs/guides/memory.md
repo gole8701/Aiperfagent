@@ -49,17 +49,6 @@ No slowdown or crash after long use. On the demo shop, `LiveStock` starts a `set
 - Other common leaks not yet covered by a rule: closures captured by global caches, detached DOM nodes held by listeners, growing arrays in module scope.
 - For the dashboard itself the budget is a flat heap after 20 route changes; `pnpm perf-budget` checks the initial JavaScript size and dashboard ready time.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "chips", "title": "Memory chip", "text": "Effects that start something and never stop it." },
-  { "screen": "globe", "area": "chain", "title": "The leaking effect", "text": "Memory → <LiveStock> → LiveStock.tsx:8, setInterval without cleanup." },
-  { "screen": "globe", "area": "fix", "title": "Return a cleanup", "text": "const id = setInterval(…); return () => clearInterval(id)." },
-  { "screen": "live", "area": "memory-chart", "title": "Watch the heap", "text": "Change routes in live mode; a flat line means the leak is gone." }
-]
-```
-
 ## Learn more
 
 - [react.dev: useEffect cleanup](https://react.dev/reference/react/useEffect#connecting-to-an-external-system)

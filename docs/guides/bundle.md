@@ -51,18 +51,6 @@ Faster on phones and slow networks. On the demo shop, PerfAgent finds 1.9 MB of 
 - Bundle stats (webpack stats, rollup-plugin-visualizer JSON, Vite or Next.js build manifests) can be imported (`perfagent import stats.json`) to get per-chunk sizes; the importer reports `bundle/large-chunk` and `bundle/duplicate-package` problems.
 - Budgets accept sizes: `js: '200kb'` or `'1.5mb'`.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "charts", "area": "chart-1", "title": "What takes up space?", "text": "A treemap of your code and the packages inside the bundle." },
-  { "screen": "globe", "area": "chips", "title": "Bundle chip", "text": "date-fns, ChatWidget and two more eager imports on the demo shop." },
-  { "screen": "globe", "area": "chain", "title": "Dependency to line", "text": "JS 1.9 MB → date-fns 78 KB → dates.ts:2." },
-  { "screen": "globe", "area": "fix", "title": "Import only what you use", "text": "import { formatDistanceToNow, parseISO } from 'date-fns'." },
-  { "screen": "globe", "area": "fix", "title": "Load on demand", "text": "const ChatWidget = lazy(() => import('./ChatWidget')) inside Suspense." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Reduce JavaScript payloads with code splitting](https://web.dev/articles/reduce-javascript-payloads-with-code-splitting)

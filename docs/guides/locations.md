@@ -55,16 +55,6 @@ npx perfagent compare <id-a> <id-b>
 - Real-user data is compared at p75 with the sample count shown (`MetricValue.p75`, `sampleCount`).
 - For a cheap approximation today, run `npx perfagent scan https://your-site` from a VM in the target region and import the JSON locally.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "settings", "area": "locations", "title": "Regions in config", "text": "locations: ['mumbai', 'frankfurt'] is accepted today; remote runs arrive with the hosted edition." },
-  { "screen": "charts", "area": "chart-2", "title": "Which countries wait the longest?", "text": "Fills from imported CrUX or PageSpeed data, or real-user samples." },
-  { "screen": "compare", "area": "sources", "title": "Compare two regions", "text": "Import two reports for the same page from different places and compare A vs B." }
-]
-```
-
 ## Learn more
 
 - [Chrome UX Report (CrUX)](https://developer.chrome.com/docs/crux)

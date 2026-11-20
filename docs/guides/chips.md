@@ -42,18 +42,6 @@ Focus. With the `Images` chip selected on the demo shop you see two problems: th
 - The API accepts the filter as `GET /api/issues?filter=metric:lcp` or `filter=area:bundle`, optionally with `&route=/checkout`.
 - The selected chip is part of the URL, so a filtered view can be bookmarked or shared with a teammate.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "chips", "title": "Counts", "text": "Each chip shows how many open problems touch that metric or area." },
-  { "screen": "globe", "area": "chips", "title": "Pick a metric", "text": "Click LCP. Only files whose problems delay the main content stay lit." },
-  { "screen": "globe", "area": "problems-table", "title": "Same filter in the list", "text": "The problems table shows the same subset, still sorted by severity and gain." },
-  { "screen": "charts", "area": "chart-1", "title": "Same filter in Charts", "text": "Charts keep the chip, so the bars count only the filtered problems." },
-  { "screen": "globe", "area": "chips", "title": "Clear", "text": "Click All, or the chip again, to see everything." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Core Web Vitals](https://web.dev/articles/vitals)

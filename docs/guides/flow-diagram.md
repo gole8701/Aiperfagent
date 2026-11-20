@@ -43,18 +43,6 @@ Every node is a link to the exact line. Clicking a component opens it in your ed
 - The tree is only present for local project scans (`report.tree`); a URL scan has none, and the screen says so with a link to **Scan your project**.
 - Reduced motion disables the expand animation; the whole diagram is keyboard navigable (arrow keys move, Enter expands, `o` opens in editor).
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "flow", "area": "flow-root", "title": "Root on the left", "text": "The project root expands into folders. Counts show problems inside each branch." },
-  { "screen": "flow", "area": "flow-node", "title": "Follow the red path", "text": "Red edges lead to critical problems: src → components → HeroBanner.tsx." },
-  { "screen": "flow", "area": "problems-only", "title": "Problems only", "text": "Hide healthy branches to see only what needs work." },
-  { "screen": "flow", "area": "search", "title": "Search", "text": "Type ChatWidget to jump straight to that component." },
-  { "screen": "editor", "area": "editor-line", "title": "Open the line", "text": "Clicking a node opens the exact line in your editor." }
-]
-```
-
 ## Learn more
 
 - [React Flow](https://reactflow.dev/learn)

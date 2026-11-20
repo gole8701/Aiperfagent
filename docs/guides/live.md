@@ -60,18 +60,6 @@ export default defineConfig({
 - The agent snippet collects Web Vitals, fetch/XHR timings, WebSocket frames, long tasks, errors, memory and browser-side AI calls; it is async, sampled and fail-silent, and never reads cookies or form values. Hosted collection for production traffic is _planned_; today the snippet reports to your local PerfAgent during development.
 - Clustering of live traffic into named groups (`live.clusters`) is part of the report format; after **Stop**, the **Recorded session** card on **Live** lists the clusters.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "live", "area": "url-box", "title": "Start", "text": "Enter the page URL and press Start. A controlled browser opens it." },
-  { "screen": "live", "area": "chart-1", "title": "Every second", "text": "Requests, p95 latency and memory stream in; peaks are marked." },
-  { "screen": "live", "area": "websocket-chart", "title": "WebSocket", "text": "Messages per second, bytes, RTT and reconnects. Stop the backend and watch the storm." },
-  { "screen": "globe", "area": "deep-dive", "title": "The cause", "text": "socket.ts:11 reconnects instantly in onclose. The fix adds exponential backoff with jitter." },
-  { "screen": "live", "area": "stop", "title": "Save", "text": "Stop saves the session as a report you can compare with the next one." }
-]
-```
-
 ## Learn more
 
 - [MDN: Writing WebSocket client applications](https://developer.mozilla.org/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications)

@@ -77,18 +77,6 @@ Other ways to get the data in: import an OpenTelemetry JSON export that follows 
 - The static AI pack (`packages/rules/src/packs/ai.ts`) has 15 rules: `ai/sequential-await`, `ai/no-streaming`, `ai/no-prompt-cache`, `ai/oversized-context`, `ai/model-overkill`, `ai/missing-max-tokens`, `ai/no-retry-backoff`, `ai/no-timeout`, `ai/no-semantic-cache`, `ai/embed-in-loop`, `ai/unstructured-parse`, `ai/huge-tool-list`, `ai/agent-loop`, `ai/client-side-key`, `ai/no-batch-for-offline`. They find AI call sites by SDK imports and call patterns.
 - Everything measured stays in `.perfagent/`; nothing is sent to PerfAgent's authors. Samples are redacted before storage.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "editor", "area": "editor-line", "title": "Wrap the client", "text": "const client = watchAI(new Anthropic()). Nothing else changes." },
-  { "screen": "charts", "area": "ai-tiles", "title": "Four tiles", "text": "First word, cost today, cache reuse, failures." },
-  { "screen": "charts", "area": "chart-4", "title": "Where does the AI spend its time?", "text": "A timeline of each LLM, tool and retrieval step in an agent run." },
-  { "screen": "globe", "area": "chips", "title": "AI chip", "text": "Static findings with file:line, such as sequential awaits in rag.ts:28." },
-  { "screen": "globe", "area": "fix", "title": "Promise.all", "text": "Run embed, search and lookup at the same time: seconds saved per answer." }
-]
-```
-
 ## Learn more
 
 - [Anthropic: Streaming](https://docs.anthropic.com/en/docs/build-with-claude/streaming)

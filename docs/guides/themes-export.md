@@ -57,19 +57,8 @@ npx perfagent export <id> --format html --out report.html
 - CSV has two tables: `page, metric, value, unit` and `severity, title, plain, file, line, metric, gain_points, first_step`.
 - Markdown contains the "in simple words" summary, a metric table per page with ratings, and each open problem with why, fix steps and the first before/after diff.
 - Settings changed in the dashboard are an overlay in `.perfagent/settings.json`; `perfagent.config.ts` is never rewritten. Only these sections can be changed from the UI: `device`, `runs`, `editor`, `theme`, `language`, `ai`, `fix`, `live`, `budgets`, `rules`, `urls`.
-- Themes meet WCAG contrast in all four modes; the palette is colour-blind safe and every coloured element also has a label, value or icon. Reduced motion is respected (globe rotation, flow animation, walkthrough pointer). The layout works at 390 px wide.
+- Themes meet WCAG contrast in all four modes; the palette is colour-blind safe and every coloured element also has a label, value or icon. Reduced motion is respected (globe rotation, flow animation, guide diagrams and screenshot pointer). The layout works at 390 px wide.
 - Exports are redacted like everything else; secrets never reach a file.
-
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "settings", "area": "theme", "title": "Theme", "text": "System, dark, light or high contrast. Colour is never the only signal." },
-  { "screen": "settings", "area": "language", "title": "Guide language", "text": "English, Hindi or Marathi for the guides." },
-  { "screen": "globe", "area": "export", "title": "Export the report", "text": "JSON re-imports exactly; Markdown is ready for a pull request; HTML is one offline file." },
-  { "screen": "charts", "area": "export", "title": "Export a chart", "text": "PNG per chart, PDF for the page." }
-]
-```
 
 ## Learn more
 

@@ -49,17 +49,6 @@ The score moves when the metrics behind it move. PerfAgent shows the estimated s
 - Scores are from a throttled lab run (4× CPU slowdown, slow 4G on the mobile profile) and are the median of `runs` runs. Differences inside the 4 % noise band are reported as "no real change".
 - The demo shop before fixes scores 54 on mobile with LCP 12.4 s, FCP 10.8 s and CLS 0.097.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "score-card", "title": "The score", "text": "The corner card shows 53 for the demo shop: usable, but visitors notice." },
-  { "screen": "globe", "area": "problems-table", "title": "Points per problem", "text": "Every problem shows its estimated score gain, e.g. +11 for the lazy hero image." },
-  { "screen": "charts", "area": "chart-4", "title": "How fast vs target?", "text": "Bullet charts show each metric against its good and poor thresholds." },
-  { "screen": "compare", "area": "verdict", "title": "Before and after", "text": "Compare shows 53 → 78 with a sentence on what improved." }
-]
-```
-
 ## Learn more
 
 - [Chrome: Lighthouse performance scoring](https://developer.chrome.com/docs/lighthouse/performance/performance-scoring)

@@ -20,14 +20,6 @@ You see where problems cluster in seconds instead of reading a long list.
 2. Click a chip to filter the globe.
 3. Click a glowing point to open the deep dive.
 
-```walkthrough
-[
-  { "screen": "globe", "area": "globe", "title": "Look at the globe", "text": "Folders sit on the sphere, files orbit them. Glowing points are problems." },
-  { "screen": "globe", "area": "chips", "title": "Filter with chips", "text": "Pick LCP or Images to light up only matching problems." },
-  { "screen": "globe", "area": "right", "title": "Open the deep dive", "text": "Click a glowing point: the panel shows file:line, the root cause and the fix." }
-]
-```
-
 ## Expert detail
 
 Points are drawn with one instanced Points mesh so 5,000 nodes stay at 60 fps.

@@ -3,16 +3,6 @@ import type { GuideDoc, GuideMeta } from '../../api/types'
 import { loadStaticGuide, loadStaticGuides } from '../../static/data'
 import { IS_STATIC } from '../../static/env'
 
-export const GROUP_ORDER = [
-  'Get started',
-  'Explore',
-  'Metrics',
-  'Live & locations',
-  'AI',
-  'Fix & connect',
-  'Settings',
-]
-
 export type Language = 'en' | 'hi' | 'mr'
 export const LANGUAGES: { id: Language; label: string }[] = [
   { id: 'en', label: 'English' },
@@ -65,12 +55,17 @@ export async function fetchGuide(
   }
 }
 
-const SECTION_NAME: Record<Language, string> = { en: 'English', hi: 'Hindi', mr: 'Marathi' }
+// Guides head their translations in English or in the language itself.
+const SECTION_NAME: Record<Language, string> = {
+  en: 'English',
+  hi: '(?:Hindi|हिन्दी)',
+  mr: '(?:Marathi|मराठी)',
+}
 
 /** Extracts a `## Hindi` (or `## Marathi`) section from a guide, if the author wrote one. */
 export function sectionFor(body: string, language: Language): string | undefined {
   const match = new RegExp(
-    `^## ${SECTION_NAME[language]}\\s*$([\\s\\S]*?)(?=^## (?:English|Hindi|Marathi)\\s*$|(?![\\s\\S]))`,
+    `^## ${SECTION_NAME[language]}\\s*$([\\s\\S]*?)(?=^## (?:English|Hindi|Marathi|हिन्दी|मराठी)\\s*$|(?![\\s\\S]))`,
     'm',
   ).exec(body)
   const text = match?.[1]?.trim()
@@ -78,5 +73,7 @@ export function sectionFor(body: string, language: Language): string | undefined
 }
 
 export function stripTranslations(body: string): string {
-  return body.replace(/^## (Hindi|Marathi)\s*$[\s\S]*?(?=^## |(?![\s\S]))/gm, '').trim()
+  return body
+    .replace(/^## (Hindi|Marathi|हिन्दी|मराठी)\s*$[\s\S]*?(?=^## |(?![\s\S]))/gm, '')
+    .trim()
 }

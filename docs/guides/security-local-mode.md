@@ -63,17 +63,6 @@ export default defineConfig({
 - Supply chain: a committed lockfile, no `postinstall` scripts, `npm publish --provenance`, 2FA, Dependabot, CodeQL and an OpenSSF Scorecard. See `SECURITY.md` and `security/THREAT_MODEL.md` in the repository.
 - No telemetry of any kind. The only outbound connections are the ones you configure: the pages you scan and the AI provider you connect.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "terminal", "area": "command", "title": "Token and mode", "text": "Dashboard: http://127.0.0.1:4545/?token=… · Mode: local (can open files and apply fixes)." },
-  { "screen": "settings", "area": "mode-banner", "title": "Why suggest-only?", "text": "The reasons are listed: not a git repository, NODE_ENV is production, hosted build." },
-  { "screen": "settings", "area": "limits", "title": "What leaves the machine", "text": "sendCode, redaction and the audit log control and record every AI call." },
-  { "screen": "settings", "area": "protected", "title": "Protected paths", "text": "Globs the AI may never edit, such as src/payments/**." }
-]
-```
-
 ## Learn more
 
 - [OWASP: Server-Side Request Forgery](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html)

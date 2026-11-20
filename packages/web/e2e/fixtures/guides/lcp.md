@@ -20,13 +20,6 @@ Visitors judge "loaded" by the main content. A late hero image feels like a slow
 1. Open Charts → Overview and look at "How fast is it compared with the target?".
 2. Click the LCP chip on the globe to see every LCP problem.
 
-```walkthrough
-[
-  { "screen": "charts", "area": "bullets", "title": "Check the target", "text": "The marker shows your LCP against the green zone." },
-  { "screen": "globe", "area": "chips", "title": "Filter by LCP", "text": "Only LCP problems stay lit." }
-]
-```
-
 ## Official docs
 
 - [web.dev: Largest Contentful Paint](https://web.dev/articles/lcp)

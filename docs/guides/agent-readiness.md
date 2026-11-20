@@ -49,17 +49,6 @@ Works for the new wave of AI visitors, and is more accessible for everyone. The 
 - Rule: `agents/readiness-low` fires under 70 with the count of unnamed controls in the chain.
 - This is a heuristic, not a standard; it is labelled "estimate" and the notes list is the actionable part.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "charts", "area": "chart-4", "title": "Can AI assistants use your site?", "text": "A gauge with the score and the missing items." },
-  { "screen": "globe", "area": "chips", "title": "Agents chip", "text": "The readiness problem with its notes." },
-  { "screen": "globe", "area": "deep-dive", "title": "What is missing", "text": "No structured data (JSON-LD) on the demo shop: 15 points." },
-  { "screen": "editor", "area": "editor-line", "title": "Add names and data", "text": "aria-label on icon buttons, JSON-LD for products, a /llms.txt file." }
-]
-```
-
 ## Learn more
 
 - [llms.txt](https://llmstxt.org)

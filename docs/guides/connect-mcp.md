@@ -144,18 +144,6 @@ npx perfagent mcp --allow-writes
 - `npx -y perfagent mcp` runs in the current project folder and reads `perfagent.config.ts` from there; add `--root path` to point elsewhere.
 - The MCP server has no way to push, merge or deploy; writes, when enabled, go through the same fixer, path guard and `protected` globs as the dashboard.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "settings", "area": "mcp-config", "title": "Pick your tool", "text": "Claude Code, Claude Desktop, Cursor, Windsurf, VS Code Copilot, Cline, Zed or ChatGPT." },
-  { "screen": "settings", "area": "mcp-config", "title": "Copy config", "text": "One click copies the snippet in that tool's format, with the file name to paste it into." },
-  { "screen": "terminal", "area": "command", "title": "Paste and restart", "text": "claude mcp add perfagent -- npx -y perfagent mcp" },
-  { "screen": "assistant", "area": "prompt", "title": "Ask", "text": "Use PerfAgent to fix all performance issues on /checkout." },
-  { "screen": "assistant", "area": "tool-calls", "title": "Tools", "text": "scan_project → list_issues → explain_issue, then changes on a branch for you to review." }
-]
-```
-
 ## Learn more
 
 - [Model Context Protocol](https://modelcontextprotocol.io)

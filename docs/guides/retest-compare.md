@@ -54,18 +54,6 @@ npx perfagent export <id> --format md --out pr-comment.md
 - Importers (`packages/importers`): `perfagent`, `psi`, `lighthouse`, `har`, `trace`, `bundle-stats`, `otel`, `web-vitals`, `csv`, `pdf`, `xlsx`, `docx` and `text`; Compare also accepts a `dashboard-link`. See `docs/import-formats.md`.
 - A dashboard link source carries `?report=<id>`; an exported report link ends in `.json` and is fetched with a 15 s timeout.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "verdict", "title": "Re-test one fix", "text": "Predicted 6.8 s, actual 7.2 s: the fix worked. Mark fixed." },
-  { "screen": "compare", "area": "sources", "title": "Sources A and B", "text": "A saved scan, a URL, a JSON, a PDF, an Excel sheet or a pasted table." },
-  { "screen": "compare", "area": "detected-values", "title": "Detected values", "text": "For documents, each metric found with its confidence; low ones are flagged to check." },
-  { "screen": "compare", "area": "verdict", "title": "Verdict in simple words", "text": "53 → 78. What improved, what got worse, the one thing to fix next." },
-  { "screen": "compare", "area": "impact", "title": "Where is the impact?", "text": "Each change with its type, effect and file:line; Fix this opens the deep dive." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Lab and field data](https://web.dev/articles/lab-and-field-data-differences)

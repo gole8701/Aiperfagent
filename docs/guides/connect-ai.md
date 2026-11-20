@@ -69,17 +69,6 @@ ollama serve
 - Default models when `ai.model` is empty: Anthropic `claude-sonnet-4-5`, OpenAI `gpt-4.1-mini`, Gemini `gemini-2.5-flash`, Ollama `qwen2.5-coder:7b`; OpenAI-compatible needs a model. The in-browser AI (WebGPU) runs in the dashboard, not the server.
 - Spending limits are enforced before each call: `ai.monthlyBudgetUsd` and, for fixes, `ai.maxPerFixUsd` (`AI_BUDGET_EXCEEDED` when a call could go over).
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "settings", "area": "provider-list", "title": "Providers", "text": "Ollama (free), Anthropic, OpenAI, OpenAI-compatible, Gemini, in-browser." },
-  { "screen": "settings", "area": "key-field", "title": "Paste a key", "text": "Stored in your OS keychain, shown masked, never in your project." },
-  { "screen": "settings", "area": "test-connection", "title": "Test", "text": "One call confirms the model answers and shows the latency." },
-  { "screen": "settings", "area": "limits", "title": "Limits and privacy", "text": "sendCode, monthly budget, per-fix cap, redaction and audit log." }
-]
-```
-
 ## Learn more
 
 - [Ollama](https://ollama.com)

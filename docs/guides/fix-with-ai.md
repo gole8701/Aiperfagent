@@ -64,18 +64,6 @@ export default defineConfig({
 - Checks after each change, in order: `tsc --noEmit` (when `tsconfig.json` and a local `tsc` exist), the `lint` script, the tests (`fix.testCommand` or the `test` script, when `fix.runTests` is on) and the `build` script.
 - The run stops at `fix.maxRounds`, `fix.maxFiles` or `fix.maxCostUsd`, or when `fix.target.score` is reached; `target.lcp`, `target.inp` and `target.cls` are accepted but not yet used as stop conditions. Review is controlled by `fix.review`, and PerfAgent never opens pull requests.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "settings", "area": "fix-settings", "title": "Limits first", "text": "Review on, tests on, max rounds, protected paths, target score." },
-  { "screen": "globe", "area": "fix-button", "title": "Pick a scope", "text": "One problem, a chip, a route or the whole site." },
-  { "screen": "globe", "area": "diff-review", "title": "Review each diff", "text": "Accept, Edit or Skip. Accepted changes go to the perfagent/fix-<date> branch." },
-  { "screen": "terminal", "area": "command", "title": "Tests and re-test", "text": "Your tests run; the page is measured again. Worse results roll back." },
-  { "screen": "globe", "area": "verdict", "title": "Summary and undo", "text": "Score before → after, cost, applied and skipped. Undo restores everything." }
-]
-```
-
 ## Learn more
 
 - [Git: Branching](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell)

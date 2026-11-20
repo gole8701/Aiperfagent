@@ -43,18 +43,6 @@ Every bar links back to the problem on the globe, so a decision made in Charts t
 - "Where do the seconds go" uses `page.phases` (server, download, script, render) from the representative run.
 - Estimates are labelled "estimate". Colour is never the only signal: every bar has its value and a label.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "charts", "area": "summary", "title": "In simple words", "text": "A headline and three sentences from the data: what is slow now, what the top three fixes give, where to start." },
-  { "screen": "charts", "area": "chart-1", "title": "What slows your page the most?", "text": "Bars sorted by estimated gain. Click one to open its deep dive." },
-  { "screen": "charts", "area": "chart-2", "title": "Where do the seconds go?", "text": "Server, download, script and render time as one stacked bar." },
-  { "screen": "charts", "area": "tabs", "title": "Eight tabs", "text": "Speed, Code & files, Network, Live & server, AI, Users & places, Business impact." },
-  { "screen": "charts", "area": "export", "title": "Export", "text": "PNG per chart, PDF for the page, Markdown for a pull request." }
-]
-```
-
 ## Learn more
 
 - [Apache ECharts](https://echarts.apache.org/en/index.html)

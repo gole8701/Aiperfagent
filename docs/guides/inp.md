@@ -49,18 +49,6 @@ The app feels responsive instead of sluggish. On the demo shop, `CartSummary` su
 - Long Animation Frames (`long-animation-frame`) give the script URL, function name and character position of the worst script in each frame; PerfAgent maps those to source when source maps are available.
 - Fix patterns: `scheduler.yield()` or `setTimeout` to split work, `startTransition` for non-urgent updates, Web Workers for heavy computation, virtualised lists.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "chips", "title": "INP or Re-renders", "text": "Either chip finds the components that redraw too often." },
-  { "screen": "globe", "area": "chain", "title": "Input to component", "text": "input → list below it → <CartSummary> 40 renders → CartSummary.tsx:7." },
-  { "screen": "charts", "area": "chart-3", "title": "Which parts redraw most?", "text": "Components ranked by render count." },
-  { "screen": "globe", "area": "fix", "title": "Split the context", "text": "Read only the slice you need and wrap the list in memo()." },
-  { "screen": "globe", "area": "verdict", "title": "Re-test", "text": "INP after the fix, predicted vs actual." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Interaction to Next Paint](https://web.dev/articles/inp)

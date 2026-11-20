@@ -1,4 +1,4 @@
-// Checks every guide in docs/guides: front matter, heading order, walkthrough JSON. Run: pnpm docs:check
+// Checks every guide in docs/guides: front matter, heading order and step format. Run: pnpm docs:check
 import { readFile, readdir } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -36,6 +36,7 @@ const TOPICS = [
   'budgets-ci',
   'security-local-mode',
   'themes-export',
+  'fcp',
 ]
 const GROUPS = [
   'Get started',
@@ -46,18 +47,6 @@ const GROUPS = [
   'Fix & connect',
   'Settings',
 ]
-const SCREENS = [
-  'globe',
-  'flow',
-  'charts',
-  'compare',
-  'terminal',
-  'settings',
-  'editor',
-  'assistant',
-  'guide',
-  'live',
-]
 const HEADINGS = [
   'What it is',
   'Why it matters',
@@ -67,7 +56,6 @@ const HEADINGS = [
   'How to do it in PerfAgent, step by step',
   'Commands & config',
   'Expert detail',
-  'Walkthrough',
   'Learn more',
   'हिन्दी',
   'मराठी',
@@ -117,27 +105,6 @@ for (const topic of files.filter((f) => TOPICS.includes(f))) {
   if (found.join('|') !== expected.join('|'))
     fail(`headings out of order or missing. Found: ${found.join(' > ')}`)
 
-  const blocks = [...text.matchAll(/```walkthrough\n([\s\S]*?)```/g)]
-  if (blocks.length !== 1) {
-    fail(`expected exactly one walkthrough block, found ${blocks.length}`)
-    continue
-  }
-  let steps
-  try {
-    steps = JSON.parse(blocks[0][1])
-  } catch (e) {
-    fail(`walkthrough is not valid JSON: ${e.message}`)
-    continue
-  }
-  if (!Array.isArray(steps) || steps.length < 3 || steps.length > 6)
-    fail('walkthrough needs 3–6 steps')
-  for (const [i, s] of (Array.isArray(steps) ? steps : []).entries()) {
-    if (!SCREENS.includes(s.screen))
-      fail(`walkthrough step ${i + 1}: screen "${s.screen}" is not one of ${SCREENS.join('|')}`)
-    for (const key of ['area', 'title', 'text'])
-      if (typeof s[key] !== 'string' || !s[key])
-        fail(`walkthrough step ${i + 1}: "${key}" must be a non-empty string`)
-  }
   const stepsSection =
     text.split('## How to do it in PerfAgent, step by step')[1]?.split('\n## ')[0] ?? ''
   if (!/^\d+\. \*\*[^*]+:\*\*/m.test(stepsSection))

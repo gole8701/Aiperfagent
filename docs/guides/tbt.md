@@ -49,17 +49,6 @@ The page becomes usable sooner. On the demo shop, the Google Tag Manager script 
 - On the mobile profile CPU is slowed 4×, so TBT in the lab is often higher than on a developer laptop; that is intentional and matches PageSpeed Insights.
 - `scheduler.yield()` support is reported in `page.features.schedulerYield`; when absent, fall back to `setTimeout(0)` chunks.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "chips", "title": "TBT chip", "text": "Problems that keep the main thread busy during load." },
-  { "screen": "globe", "area": "chain", "title": "The blocking script", "text": "TBT → gtm.js (third party, blocking) → index.html:8." },
-  { "screen": "globe", "area": "fix", "title": "async", "text": "<script async src=\"https://www.googletagmanager.com/gtm.js?id=…\">" },
-  { "screen": "charts", "area": "chart-3", "title": "Which outside tools slow your page?", "text": "Third-party scripts ranked by blocking time." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Total Blocking Time](https://web.dev/articles/tbt)

@@ -64,18 +64,6 @@ export default defineConfig({
 - A report from a different commit is still usable; the mismatch warning names both SHAs so you can check out the right one.
 - Never included in a report: cookies, auth headers, tokens, form values, personal data; redaction runs at collection time and again at import.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "terminal", "area": "command", "title": "Export from the deployed site", "text": "npx perfagent scan https://staging… --no-project --json > perfagent-report.json" },
-  { "screen": "globe", "area": "import-drop", "title": "Import locally", "text": "Drop the JSON onto the dashboard. It is validated, cleaned and mapped to your files." },
-  { "screen": "globe", "area": "banner", "title": "Commit check", "text": "A warning shows if your checkout differs from the report's commit." },
-  { "screen": "globe", "area": "deep-dive", "title": "Fix locally", "text": "Production problems on local files: open in editor or fix with AI on a branch." },
-  { "screen": "compare", "area": "verdict", "title": "Before vs after deploy", "text": "The next production report compared with this one." }
-]
-```
-
 ## Learn more
 
 - [MDN: Source maps](https://developer.mozilla.org/docs/Glossary/Source_map)

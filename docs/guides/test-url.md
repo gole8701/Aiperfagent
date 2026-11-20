@@ -49,17 +49,6 @@ npx perfagent scan https://example.com --device desktop --runs 5 --json > exampl
 - The static website build (`apps/site`) does not run scans at all; its "Quick test" calls the PageSpeed Insights API from your browser.
 - The lab profile is throttled; for real-user numbers import a CrUX or PageSpeed JSON, or add the real-user agent snippet (see **Live mode**).
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "url-box", "title": "Paste an address", "text": "Type or paste any public URL and press Enter." },
-  { "screen": "globe", "area": "globe", "title": "The page as a globe", "text": "Without code, rings are domains and points are requests: scripts, styles, images, fonts, APIs." },
-  { "screen": "globe", "area": "problems-table", "title": "Runtime problems", "text": "Slow server, long tasks, big JavaScript and blocking third parties are found from the browser alone." },
-  { "screen": "globe", "area": "deep-dive", "title": "Suggest-only", "text": "Fixes are shown as text and snippets. Nothing can be written because the code is not here." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Why lab and field data can differ](https://web.dev/articles/lab-and-field-data-differences)

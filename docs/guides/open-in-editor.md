@@ -57,17 +57,6 @@ Install the command-line tool for your editor if the button says it was not foun
 - `jetbrains` tries `webstorm`, `idea`, `phpstorm`, `pycharm` in that order; `emacs` tries `emacsclient` then `emacs`.
 - `GET /api/editor/link?file=&line=` returns only the URL scheme, for the fallback link.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "settings", "area": "editor-select", "title": "Choose your editor", "text": "Settings → Display → Editor. Auto-detect works for most setups." },
-  { "screen": "globe", "area": "deep-dive", "title": "Open in editor", "text": "Press the button next to src/components/HeroBanner.tsx:5." },
-  { "screen": "editor", "area": "editor-line", "title": "Exact line", "text": "The editor opens the file with the cursor on line 5." },
-  { "screen": "globe", "area": "fallback-link", "title": "If the command is missing", "text": "A vscode:// or cursor:// link is offered, with a hint to install the CLI tool." }
-]
-```
-
 ## Learn more
 
 - [VS Code: Command line interface](https://code.visualstudio.com/docs/editor/command-line)

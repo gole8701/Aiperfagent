@@ -43,18 +43,6 @@ The globe makes the connection between a metric and a place in the code visible.
 - Deep links: `/issues/<issueId>` opens the globe with that deep dive; `/flow/<path>` opens the same file in the flow diagram.
 - Colour is never the only signal: severity is also shown by the icon and the text in the info card, and the palette is colour-blind safe.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "globe", "title": "Rotate and zoom", "text": "Drag to rotate, scroll to zoom. Rings are folders, points are files." },
-  { "screen": "globe", "area": "globe", "title": "Glowing points", "text": "Red pulses are critical problems, amber are warnings, blue are information. Bigger means more to gain." },
-  { "screen": "globe", "area": "info-card", "title": "Hover", "text": "The card names the file, its problems and the estimated gain." },
-  { "screen": "globe", "area": "deep-dive", "title": "Click to fly", "text": "The camera flies to the file and the deep dive opens with the root cause chain." },
-  { "screen": "globe", "area": "corner-cards", "title": "Corner cards", "text": "Score, top three problems, history and the current scan status sit in the corners." }
-]
-```
-
 ## Learn more
 
 - [Three.js](https://threejs.org/docs/)

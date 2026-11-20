@@ -49,18 +49,6 @@ A calm page with no surprises. On the demo shop, PerfAgent finds two causes of C
 - Other common causes not yet covered by a rule: content injected above existing content, animations of `top`/`left` instead of `transform`, iframes without reserved space.
 - `font-display: optional` avoids the swap entirely at the cost of sometimes showing the fallback font; `swap` shows text at once and may shift once.
 
-## Walkthrough
-
-```walkthrough
-[
-  { "screen": "globe", "area": "chips", "title": "CLS chip", "text": "Two problems on the demo shop: product images and the web font." },
-  { "screen": "globe", "area": "chain", "title": "What moved", "text": "CLS 0.11 → <img> in ProductCard → ProductCard.tsx:10." },
-  { "screen": "globe", "area": "fix", "title": "Reserve the space", "text": "Add width and height so the browser keeps room before the picture arrives." },
-  { "screen": "globe", "area": "fix", "title": "Font swap", "text": "Add font-display: swap to the @font-face in fonts.css." },
-  { "screen": "globe", "area": "verdict", "title": "Re-test", "text": "CLS after both fixes, estimated 0.05 or lower." }
-]
-```
-
 ## Learn more
 
 - [web.dev: Cumulative Layout Shift](https://web.dev/articles/cls)
