@@ -32,14 +32,8 @@ export class ReportStore {
   async save(report: Report): Promise<void> {
     await this.init()
     await writeFile(this.reportPath(report.id), JSON.stringify(report), 'utf8')
-    const history = await this.history()
-    const score = report.pages.length
-      ? Math.round(
-          report.pages.reduce((s, p) => s + (metricValue(p.metrics, 'score') ?? 0), 0) /
-            report.pages.length,
-        )
-      : 0
-    history.push({ reportId: report.id, at: report.createdAt, score, label: report.label })
+    const history = (await this.history()).filter((h) => h.reportId !== report.id)
+    history.push(historyPoint(report.id, report))
     await writeFile(
       path.join(this.dir, 'history.json'),
       JSON.stringify(history.slice(-200)),
@@ -57,9 +51,10 @@ export class ReportStore {
     }
   }
 
+  /** The newest project report; a URL scan of some other site never replaces it. Falls back to any report. */
   async latest(): Promise<Report | undefined> {
     const list = await this.list()
-    const last = list[list.length - 1]
+    const last = list.findLast((h) => !h.target) ?? list[list.length - 1]
     return last ? this.get(last.reportId) : undefined
   }
 
@@ -119,7 +114,8 @@ export class ReportStore {
 
   private async history(): Promise<HistoryPoint[]> {
     const stored = await this.readJson<HistoryPoint[]>('history.json', [])
-    if (stored.length) return stored
+    // Older versions could append the same report twice; keep the last entry.
+    if (stored.length) return [...new Map(stored.map((h) => [h.reportId, h])).values()]
     // Recover from report files if history.json is missing.
     const files = await readdir(this.reportsDir).catch(() => [])
     const points: HistoryPoint[] = []
@@ -127,18 +123,36 @@ export class ReportStore {
       const id = f.replace(/\.json$/, '')
       const report = await this.get(id).catch(() => undefined)
       // The file name is the id we can load again; a copied report may carry another id inside.
-      if (report)
-        points.push({
-          reportId: id,
-          at: report.createdAt,
-          score: report.pages[0] ? (metricValue(report.pages[0].metrics, 'score') ?? 0) : 0,
-          label: report.label,
-        })
+      if (report) points.push(historyPoint(id, report))
     }
     return points.sort((a, b) => a.at.localeCompare(b.at))
   }
 
   private reportPath(id: string): string {
     return path.join(this.reportsDir, `${id}.json`)
+  }
+}
+
+function historyPoint(reportId: string, report: Report): HistoryPoint {
+  const scores = report.pages
+    .map((p) => metricValue(p.metrics, 'score'))
+    .filter((v) => v !== undefined)
+  const url = report.pages[0]?.url ?? report.environment.url
+  return {
+    reportId,
+    at: report.createdAt,
+    score: scores.length
+      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+      : undefined,
+    target: report.tree || !url ? undefined : hostOf(url),
+    label: report.label,
+  }
+}
+
+function hostOf(url: string): string | undefined {
+  try {
+    return new URL(url).host
+  } catch {
+    return undefined
   }
 }

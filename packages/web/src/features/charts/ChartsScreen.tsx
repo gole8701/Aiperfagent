@@ -31,7 +31,11 @@ export default function ChartsScreen() {
     }
     api
       .get<HistoryPoint[]>('/api/scans')
-      .then(setHistory)
+      .then((all) => {
+        // One series per target: a URL scan of another site never mixes into the project trend.
+        const target = all.find((h) => h.reportId === report?.id)?.target
+        setHistory(all.filter((h) => h.target === target && h.score !== undefined))
+      })
       .catch(() => setHistory([]))
   }, [report?.id])
 

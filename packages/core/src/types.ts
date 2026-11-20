@@ -339,7 +339,10 @@ export interface DetectedValue {
 export interface HistoryPoint {
   reportId: string
   at: string
-  score: number
+  /** Missing when no page was measured (a source-only scan): never stored as 0. */
+  score?: number
+  /** Host of a URL-only scan ("flipkart.com"); missing for project reports. Each target is its own series. */
+  target?: string
   label?: string
   /** Note shown on the trend chart, e.g. "chat widget added". */
   annotation?: string

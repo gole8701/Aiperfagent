@@ -252,7 +252,7 @@ const trend: ChartDefinition = {
           {
             reportId: ctx.report.id,
             at: ctx.report.createdAt,
-            score: metricValue(ctx.page?.metrics ?? [], 'score') ?? 0,
+            score: metricValue(ctx.page?.metrics ?? [], 'score'),
           },
         ]
     const projected = projectedScore(points[points.length - 1]?.score ?? 0, openIssues(ctx))
@@ -270,7 +270,7 @@ const trend: ChartDefinition = {
       series: [
         {
           type: 'line',
-          data: [...points.map((h) => h.score), null],
+          data: [...points.map((h) => h.score ?? null), null],
           smooth: true,
           lineStyle: { color: p.accent, width: 3 },
           itemStyle: { color: p.accent },
@@ -285,15 +285,19 @@ const trend: ChartDefinition = {
             ],
           },
           markPoint: {
-            data: points
-              .filter((h) => h.annotation)
-              .map((h, i) => ({
-                name: h.annotation ?? '',
-                coord: [i, h.score],
-                value: h.annotation,
-                itemStyle: { color: p.warning },
-                label: { color: p.text, fontSize: 10 },
-              })),
+            data: points.flatMap((h, i) =>
+              h.annotation
+                ? [
+                    {
+                      name: h.annotation,
+                      coord: [i, h.score ?? 0],
+                      value: h.annotation,
+                      itemStyle: { color: p.warning },
+                      label: { color: p.text, fontSize: 10 },
+                    },
+                  ]
+                : [],
+            ),
           },
         },
         {

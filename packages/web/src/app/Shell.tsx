@@ -37,6 +37,8 @@ const GUIDE_BY_ROUTE: [RegExp, string][] = [
 
 export function Shell({ children }: { children: ReactNode }) {
   const status = useReport((s) => s.status)
+  const report = useReport((s) => s.report)
+  const reload = useReport((s) => s.load)
   const { theme, setTheme } = useDisplay()
   const location = useLocation()
   const header = useRef<HTMLElement>(null)
@@ -44,6 +46,8 @@ export function Shell({ children }: { children: ReactNode }) {
   useTopbarHeight(header)
 
   const topic = GUIDE_BY_ROUTE.find(([pattern]) => pattern.test(location.pathname))?.[1] ?? 'globe'
+  // A report without a project tree is a scan of some URL, not of this project.
+  const urlTarget = report && !report.tree && !IS_STATIC ? hostOf(report.pages[0]?.url) : undefined
   const framework = status?.project.framework
     ? `${status.project.framework}${status.project.frameworkVersion ? ` ${status.project.frameworkVersion}` : ''}`
     : undefined
@@ -55,7 +59,14 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="brand-mark" aria-hidden="true" />
           PerfAgent
         </Link>
-        {status ? (
+        {urlTarget ? (
+          <span className="badge" title={report?.pages[0]?.url}>
+            URL scan · {urlTarget}{' '}
+            <button type="button" className="link-button" onClick={() => void reload()}>
+              back to project
+            </button>
+          </span>
+        ) : status ? (
           <span className="badge" title={status.project.root || undefined}>
             {status.project.name ?? 'project'} · {status.mode} mode
           </span>
@@ -105,6 +116,14 @@ export function Shell({ children }: { children: ReactNode }) {
       <main id="main">{children}</main>
     </>
   )
+}
+
+function hostOf(url: string | undefined): string | undefined {
+  try {
+    return url ? new URL(url).host : undefined
+  } catch {
+    return undefined
+  }
 }
 
 /** Publishes the header height as --topbar-h so sticky panels sit right under it. */

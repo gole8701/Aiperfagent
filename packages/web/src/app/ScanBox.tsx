@@ -13,6 +13,7 @@ import { quickTest } from '../static/psi'
 export function ScanBox() {
   const status = useReport((s) => s.status)
   const scan = useReport((s) => s.scan)
+  const report = useReport((s) => s.report)
   const setScan = useReport((s) => s.setScan)
   const useAsReport = useReport((s) => s.useReport)
   const navigate = useNavigate()
@@ -36,6 +37,14 @@ export function ScanBox() {
         return
       }
       const envUrl = environments.find(([name]) => name === environment)?.[1].url
+      // An empty box re-scans the project's pages; with none known, a scan would measure nothing.
+      const projectUrls = status?.config.urls.length
+        ? status.config.urls
+        : report?.tree
+          ? report.pages.map((p) => p.url)
+          : []
+      if (!target && !envUrl && !projectUrls.length)
+        throw new Error('Paste a URL to test, or add urls to perfagent.config.ts')
       const body = target
         ? {
             urls: [normalise(target)],
@@ -44,7 +53,7 @@ export function ScanBox() {
           }
         : envUrl
           ? { urls: [envUrl], environmentName: environment }
-          : {}
+          : { urls: projectUrls }
       const { jobId } = await api.post<{ jobId: string }>('/api/scans', body)
       setScan({ jobId, phase: 'queued', message: 'Starting scan', fraction: 0 })
     } catch (err) {
