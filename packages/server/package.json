@@ -27,7 +27,7 @@
     "@perfagent/importers": "workspace:*",
     "@perfagent/report-schema": "workspace:*",
     "@perfagent/security": "workspace:*",
-    "launch-editor": "2.11.1",
+    "launch-editor": "2.14.2",
     "ws": "8.18.3",
     "zod": "3.25.76"
   },
