@@ -22,10 +22,10 @@
   "dependencies": {
     "@perfagent/core": "workspace:*",
     "@perfagent/security": "workspace:*",
-    "playwright-core": "1.57.0",
+    "playwright-core": "1.65.1",
     "source-map-js": "1.2.1"
   },
   "optionalDependencies": {
-    "playwright": "1.57.0"
+    "playwright": "1.65.1"
   }
 }
